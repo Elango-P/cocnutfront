@@ -102,7 +102,7 @@ const QuickLinks = ({
       <Card title={"Quick Links"}>
           <View style={styles.bottomContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator = {false}>
-            {orderViewPermission && !devicePendingStatus && orderAddPermission && (
+            {!orderViewPermission && !devicePendingStatus && orderAddPermission && (
               <QuickLinksIcon
                 iconName="receipt"
                 label="New Order"
@@ -112,7 +112,7 @@ const QuickLinks = ({
               />
             )}
 
-            {transferViewPermission && !devicePendingStatus && transferAddPermission && (
+            {!transferViewPermission && !devicePendingStatus && transferAddPermission && (
               <QuickLinksIcon
                 iconName="truck-moving"
                 label="New Transfer"
@@ -121,7 +121,7 @@ const QuickLinks = ({
                 }}
               />
             )}
-            {salesSettlementViewPermission && salesSettlementAddPermission && (
+            {!salesSettlementViewPermission && salesSettlementAddPermission && (
               <QuickLinksIcon
                 iconName="file-invoice"
                 label="New Sales"
@@ -131,7 +131,7 @@ const QuickLinks = ({
                 }}
               />
             )}
-            {activityViewPermission && activityAddPermission && (
+            {!activityViewPermission && activityAddPermission && (
               <QuickLinksIcon
                 iconName="chart-line"
                 label="New Activity"
@@ -140,7 +140,7 @@ const QuickLinks = ({
                 }}
               />
             )}
-            {checkPermissionView && (
+            {!checkPermissionView && (
                  <QuickLinksIcon
                  iconName="barcode"
                  label="Check Price"
@@ -151,7 +151,7 @@ const QuickLinks = ({
             )}
            
 
-            {bulkOrderViewPermission && (
+            {!bulkOrderViewPermission && (
               <QuickLinksIcon
                 iconName="shopping-cart"
                 label="Bulk Order"

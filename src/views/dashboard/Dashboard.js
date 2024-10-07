@@ -566,19 +566,19 @@ const closeModal = () => {
           {/* Sync Section */}
          
           <VerticalSpace10 />
-          {geofencingViewPermission && (          
+          {!geofencingViewPermission && (          
           <><GeoFencing /><VerticalSpace10 /></>
           )
           }
 
 
           {/* Attendance Section */}
-          {attendanceCheckinCheckPermission && (
+          {!attendanceCheckinCheckPermission && (
             <AttendanceCard checkOut={checkOutValidation} isSubmit = {isSubmit} refreshing={refreshing} CheckIn={CheckIn} locationId = {locationId} workingDay={workingDay} leave={leave} additionalDay={additionalDay} checkIn={todayAttendance} navigation={navigation} setIsLoading={setIsLoading} />)}
 
     
           {/* Fine Section */}
-          {fineViewPermission && (
+          {!fineViewPermission && (
             <>
               <VerticalSpace10 />
 
@@ -587,7 +587,7 @@ const closeModal = () => {
           )}
 
           {/* {Ticket Section} */}
-          {ticketViewPermission && (
+          {!ticketViewPermission && (
            <><VerticalSpace10 /><TicketList /></>
           )}
           <VerticalSpace10 />

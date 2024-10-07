@@ -285,23 +285,23 @@ const BottomToolBar = (props) => {
 const filteredItems = toolBarItems.filter(item => {
     switch (item.label) {
         case "Orders":
-            return orderViewPermission && !devicePendingStatus;
+            return !orderViewPermission && !devicePendingStatus;
         case "Replenish":
-            return replenishViewPermission;
+            return !replenishViewPermission;
             case "Transfers":
-                return transferViewPermission && !devicePendingStatus;
+                return !transferViewPermission && !devicePendingStatus;
                 case "Distribution":
-                    return distributionViewPermission;
+                    return !distributionViewPermission;
                     case "Products":
-                        return productViewPermission && !devicePendingStatus;
+                        return !productViewPermission && !devicePendingStatus;
                         case "Delivery":
-                            return deliveryViewPermission;
+                            return !deliveryViewPermission;
                             case "Tickets":
-                                return ticketViewPermission;
+                                return !ticketViewPermission;
                                 case "Activities":
-                                    return activitiesViewPermission;
+                                    return !activitiesViewPermission;
                                     case "Reports":
-                                        return reportViewPermission;
+                                        return !reportViewPermission;
         default:
             return true;
     }

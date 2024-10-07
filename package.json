@@ -4,13 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start --clear",
-    "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start ",
     "rename-to-zunomart": "npx react-native-rename@latest 'zunomartstore' --skipGitStatusCheck ",
-    "rename-to-thidiff": "npx react-native-rename@latest 'thidiff' --skipGitStatusCheck ",
-    "change-android-app-icon": "node ./src/lib/File 'zunomart' 'thidiff' ./android/app/src/main/AndroidManifest.xml",
-    "change-ios-app-icon": "node ./src/lib/File 'zunomart' 'thidiff' ./ios/coconut/Images.xcassets/AppIcon.appiconset/Contents.json ./ios/coconut/Images.xcassets/SplashScreen.imageset/Contents.json ./ios/coconut/Images.xcassets/SplashScreenBackground.imageset/Contents.json"
+    "rename-to-thidiff": "npx react-native-rename@latest 'thidiff' --skipGitStatusCheck "
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",

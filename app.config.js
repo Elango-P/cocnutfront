@@ -1,30 +1,26 @@
-import 'dotenv/config';
-
 export default {
   expo: {
-    name: "coconut-mobile",
+    name: "Coconut Front",
     slug: "coconut-mobile",
     version: "1.0.0",
-    assetBundlePatterns: [
-      "**/*"
-    ],
-    plugins: [
-      [
-        "expo-notifications",
-        {
-          "sounds": [
-            "./src/assets/audio/message.mp3"
-          ]
-        }
-      ],
-      "expo-image-picker",
-      "react-native-background-fetch"
-    ],
+    orientation: "portrait",
+    icon: "./src/assets/icon.png",
+    userInterfaceStyle: "light",
+    splash: {
+      image: "./src/assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
+    },
+    android: {
+      package: "com.elango.coconutmobile", // Change the package name to use only allowed characters
+      versionCode: 1,
+    },
     extra: {
       eas: {
-        projectId: process.env.EXPO_PROJECT_ID
+        projectId: "445fdac8-9d8f-4ef1-8950-bbf347908ebb"
       }
     },
-    owner: process.env.EXPO_OWNER
-  }
+    owner: "elangoela"
+    // ...other config options
+  },
 };
