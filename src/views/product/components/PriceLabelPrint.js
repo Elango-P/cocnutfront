@@ -102,13 +102,13 @@ const PriceLabelPrint = (props) => {
 
     const getDeviceList = () => {
         try {
-            BlueTooth.isBlueToothEnabled((error, enabled) => {
-                if (enabled) {
-                    scanDevices();
-                } else {
-                    EnableBlueTooth();
-                }
-            })
+            // BlueTooth.isBlueToothEnabled((error, enabled) => {
+            //     if (enabled) {
+            //         scanDevices();
+            //     } else {
+            //         EnableBlueTooth();
+            //     }
+            // })
         } catch (err) {
             console.log(err);
         }

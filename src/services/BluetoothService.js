@@ -1,20 +1,21 @@
 
-import { BluetoothManager, BluetoothEscposPrinter } from "tp-react-native-bluetooth-printer";
+// import { BluetoothManager, BluetoothEscposPrinter } from "tp-react-native-bluetooth-printer";
 
 class BlueToothService {
 
 
   static isBlueToothEnabled(callback) {
     try {
-      BluetoothManager.isBluetoothEnabled().then(
-        (enabled) => {
-          return callback(null, enabled)
-        },
-        (err) => {
-          console.log(err);
-          return callback(err, null)
-        }
-      );
+      return callback(null, enabled)
+      // BluetoothManager.isBluetoothEnabled().then(
+      //   (enabled) => {
+      //     return callback(null, enabled)
+      //   },
+      //   (err) => {
+      //     console.log(err);
+      //     return callback(err, null)
+      //   }
+      // );
     } catch (err) {
       console.log(err);
       return callback(err, null)
@@ -23,24 +24,26 @@ class BlueToothService {
 
   static EnableBlueTooth(callback) {
     try {
-      BluetoothManager.enableBluetooth().then(
-        (r) => {
-          var paired = [];
-          if (r && r.length > 0) {
-            for (var i = 0; i < r.length; i++) {
-              try {
-                paired.push(JSON.parse(r[i]));
-              } catch (e) {
-                return callback(e, null)
-              }
-            }
-          }
-          return callback(null, paired)
-        },
-        (err) => {
-          return callback(err, null)
-        }
-      );
+      return callback(null, true)
+
+      // BluetoothManager.enableBluetooth().then(
+      //   (r) => {
+      //     var paired = [];
+      //     if (r && r.length > 0) {
+      //       for (var i = 0; i < r.length; i++) {
+      //         try {
+      //           paired.push(JSON.parse(r[i]));
+      //         } catch (e) {
+      //           return callback(e, null)
+      //         }
+      //       }
+      //     }
+      //     return callback(null, paired)
+      //   },
+      //   (err) => {
+      //     return callback(err, null)
+      //   }
+      // );
     } catch (err) {
       console.log(err);
     }
@@ -48,14 +51,16 @@ class BlueToothService {
 
   static DisableBlueTooth(callback) {
     try {
-      BluetoothManager.disableBluetooth().then(
-        () => {
-          return callback(null, true);
-        },
-        (err) => {
-          return callback(err, null);
-        }
-      );
+      return callback(null, true);
+
+      // BluetoothManager.disableBluetooth().then(
+      //   () => {
+      //     return callback(null, true);
+      //   },
+      //   (err) => {
+      //     return callback(err, null);
+      //   }
+      // );
     } catch (err) {
 
     }
@@ -65,22 +70,24 @@ class BlueToothService {
     try {
       let pairedDevies;
       let foundDevices;
-      BluetoothManager.scanDevices().then(
-        (scannedDevices) => {
-          if (scannedDevices) {
-            const devices = JSON.parse(scannedDevices);
-            if (devices) {
-              pairedDevies = devices.paired;
-              foundDevices = devices.found;
-            }
-          }
+      return callback(null, true);
 
-          return callback(null, pairedDevies, foundDevices)
-        },
-        (error) => {
-          return callback(error, [], [])
-        }
-      );
+      // BluetoothManager.scanDevices().then(
+      //   (scannedDevices) => {
+      //     if (scannedDevices) {
+      //       const devices = JSON.parse(scannedDevices);
+      //       if (devices) {
+      //         pairedDevies = devices.paired;
+      //         foundDevices = devices.found;
+      //       }
+      //     }
+
+      //     return callback(null, pairedDevies, foundDevices)
+      //   },
+      //   (error) => {
+      //     return callback(error, [], [])
+      //   }
+      // );
     } catch (err) {
       console.log(err);
       return callback(err, [], [])
@@ -89,9 +96,11 @@ class BlueToothService {
 
   static async Connect(address) {
     try {
-      if (address) {
-        await BluetoothManager.connect(address);
-      }
+      // if (address) {
+      //   await BluetoothManager.connect(address);
+      // }
+      console.log("await");
+      
     } catch (err) {
       console.log(err);
     }
@@ -99,17 +108,19 @@ class BlueToothService {
 
   static async ConnectToDevice(address, callback) {
     try {
-      if (address) {
-        BluetoothManager.connect(address) // the device address scanned.
-          .then(
-            (s) => {
-              return callback(null, true);
-            },
-            (e) => {
-              return callback(e, false);
-            }
-          );
-      }
+      return callback(null, true);
+
+      // if (address) {
+      //   BluetoothManager.connect(address) // the device address scanned.
+      //     .then(
+      //       (s) => {
+      //         return callback(null, true);
+      //       },
+      //       (e) => {
+      //         return callback(e, false);
+      //       }
+      //     );
+      // }
     } catch (err) {
       console.log(err);
       return callback(err, false);
@@ -118,17 +129,19 @@ class BlueToothService {
 
   static async disconnectDevice(address, callback) {
     try {
-      if (address) {
-        BluetoothManager.unpair(address) // the device address scanned.
-          .then(
-            (s) => {
-              return callback(null, true);
-            },
-            (e) => {
-              return callback(e, false);
-            }
-          );
-      }
+      return callback(null, true);
+
+      // if (address) {
+      //   BluetoothManager.unpair(address) // the device address scanned.
+      //     .then(
+      //       (s) => {
+      //         return callback(null, true);
+      //       },
+      //       (e) => {
+      //         return callback(e, false);
+      //       }
+      //     );
+      // }
     } catch (err) {
       console.log(err);
       return callback(err, false);
@@ -141,22 +154,22 @@ class BlueToothService {
 
         barCode = barCode.toString();
 
-        if (index % 11 == 0) {
-          await BluetoothEscposPrinter.printText(`\r\n`, {});
-        }
+        // if (index % 11 == 0) {
+        //   await BluetoothEscposPrinter.printText(`\r\n`, {});
+        // }
 
         let productPrintName = salePrice ? `${productName}\n` : `${productName}\n\n`;
 
-          await BluetoothEscposPrinter.printerAlign(1);
-          await BluetoothEscposPrinter.printText(productPrintName, {});
-          await BluetoothEscposPrinter.printerAlign(1);
-          await BluetoothEscposPrinter.setBold(1);
-          if (salePrice) {
-            await BluetoothEscposPrinter.printText(`Rs ${salePrice}\n`, { encoding: 'UTF-8' });
-          }
-          await BluetoothEscposPrinter.printerAlign(1);
-          await BluetoothEscposPrinter.printBarCode(barCode, 72, 3, 50, 0, 2); // barcode
-          await BluetoothEscposPrinter.printText(`\r\n\r\n`, {});
+          // await BluetoothEscposPrinter.printerAlign(1);
+          // await BluetoothEscposPrinter.printText(productPrintName, {});
+          // await BluetoothEscposPrinter.printerAlign(1);
+          // await BluetoothEscposPrinter.setBold(1);
+          // if (salePrice) {
+          //   await BluetoothEscposPrinter.printText(`Rs ${salePrice}\n`, { encoding: 'UTF-8' });
+          // }
+          // await BluetoothEscposPrinter.printerAlign(1);
+          // await BluetoothEscposPrinter.printBarCode(barCode, 72, 3, 50, 0, 2); // barcode
+          // await BluetoothEscposPrinter.printText(`\r\n\r\n`, {});
       };
 
     } catch (err) {
@@ -169,22 +182,22 @@ class BlueToothService {
 
         barCode = barCode.toString();
 
-        await BluetoothEscposPrinter.printerAlign(1);
+        // await BluetoothEscposPrinter.printerAlign(1);
 
-        await BluetoothEscposPrinter.printText(`${labelText}\n`, {
-          encoding: "GBK",
-          codepage: 0,
-          widthtimes: 1,
-          heigthtimes: 1,
-          fonttype: 1,
-        });
+        // await BluetoothEscposPrinter.printText(`${labelText}\n`, {
+        //   encoding: "GBK",
+        //   codepage: 0,
+        //   widthtimes: 1,
+        //   heigthtimes: 1,
+        //   fonttype: 1,
+        // });
 
-        await BluetoothEscposPrinter.printerAlign(1);
+        // await BluetoothEscposPrinter.printerAlign(1);
 
         // decrease width of barcode
-        await BluetoothEscposPrinter.printBarCode(barCode, 72, 2, 60, 5, 1);
+        // await BluetoothEscposPrinter.printBarCode(barCode, 72, 2, 60, 5, 1);
 
-        await BluetoothEscposPrinter.printText(`\r\n\r\n`, {});
+        // await BluetoothEscposPrinter.printText(`\r\n\r\n`, {});
 
       };
 

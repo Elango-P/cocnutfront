@@ -68,9 +68,9 @@ const expoProjectId = Constants?.expoConfig?.extra?.eas?.projectId;
 
 const { RNDeviceInfo } = NativeModules;
 let DeviceInfo;
-if (RNDeviceInfo) {
-  DeviceInfo = require("react-native-device-info");
-}
+// if (RNDeviceInfo) {
+//   DeviceInfo = require("react-native-device-info");
+// }
 
 const Login = ({ }) => {
   const [password, setPassword] = useState("");
