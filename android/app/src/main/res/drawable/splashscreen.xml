@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:drawable="@drawable/thidiff"/>
-  <item android:drawable="@drawable/zunomart"/>
-  <item android:drawable="@drawable/zunomartstore"/>
-</layer-list>

@@ -14,7 +14,7 @@
 	  "production": {
 		"autoIncrement": true,
 		"android": {
-		  "buildType": "apk" // You can also use "app-bundle" if you want an AAB instead of an APK
+		  "buildType": "apk" 
 		}
 	  }
 	},

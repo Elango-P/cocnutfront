@@ -46,11 +46,11 @@ import productService from "../../services/ProductService";
 import ProductListModal from "../../components/Modal/ProductListModal";
 import User from "../../helper/User";
 
-const { RNDeviceInfo } = NativeModules
+// const { RNDeviceInfo } = NativeModules
 let DeviceInfo;
-if (RNDeviceInfo) {
-  DeviceInfo = require('react-native-device-info');
-}
+// if (RNDeviceInfo) {
+//   DeviceInfo = require('react-native-device-info');
+// }
 
 
 
