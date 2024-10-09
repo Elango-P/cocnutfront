@@ -4,10 +4,10 @@ export default {
     slug: "coconut-mobile",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./src/assets/icon.png",
+    icon: "./src/assets/coconut.png",
     userInterfaceStyle: "light",
     splash: {
-      image: "./src/assets/icon.png",
+      image: "./src/assets/coconut.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
