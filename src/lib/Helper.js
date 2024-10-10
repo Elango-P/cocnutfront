@@ -12,6 +12,6 @@ export async function getSessionToken() {
 export async function isLoggedIn(navigation) {
     const Token = await AsyncStorage.getItem(AsyncStorageConstants.SESSION_TOKEN);
     if (!Token) {
-        navigation.navigate(AppID.isZunoMart() ? "Home" : "Login");
+        navigation.navigate("Login");
     }
 }

@@ -206,7 +206,7 @@ const AccountForm = (props) => {
         await accountService.update(id, updateData, async (err, response) => {
             if (response) {
                 setIsSubmit(false)
-                redirectionUrl ? navigation.navigate(redirectionUrl) : navigation.navigate("Accounts")
+                redirectionUrl ? navigation.navigate(redirectionUrl) : navigation.navigate("Vendor")
             } else {
                 setIsSubmit(false)
             }
@@ -319,7 +319,7 @@ const AccountForm = (props) => {
 
     return (
         <Layout
-            title={params ? `Accounts#: ${params?.id}` : "Account"}
+            title={"Account"}
             showBackIcon
             buttonLabel={activeTab === TabName.SUMMARY && allowEdit ? "Save" : !params ? "Save" : ""}
             buttonOnPress={handleSubmit(values => { updateAccount(values); })}

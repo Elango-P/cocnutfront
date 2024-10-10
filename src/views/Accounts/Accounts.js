@@ -104,12 +104,11 @@ const Accounts = () => {
 
   return(
     <Layout
-      title='Accounts'
+      title='Vendor'
       isLoading={isLoading}
       refreshing={refreshing}
       addButton={permission && permission.accountAdd ? true : false}
       buttonOnPress={permission && permission.accountAdd ? AddNew : ""}
-      showBackIcon={false}
     >
       <Refresh refreshing={refreshing} setRefreshing={setRefreshing} >
         <View style={styles.container}>

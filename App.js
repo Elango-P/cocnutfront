@@ -158,7 +158,7 @@ import UserForm from "./src/views/Users/UserForm";
 import PaymentForm from "./src/views/Payments/PaymentForm";
 
 
-import Bills from "./src/views/Bills";
+import Sales from "./src/views/Bills";
 
 import BillForm from "./src/views/Bills/BillForm";
 
@@ -281,7 +281,7 @@ export default function App(props) {
 						headerShown: false,
 						animation: 'none',
 					}}
-					initialRouteName={ AppID.isZunoMart() ? "Home" : initialRoute}
+					initialRouteName={initialRoute}
 				>
 
 					<Stack.Screen name="Home" component={Home} />
@@ -469,7 +469,7 @@ export default function App(props) {
 
 					{/* {Bills} */}
 
-					<Stack.Screen name="Bills" component={Bills} />
+					<Stack.Screen name="Sales" component={Sales} />
 					<Stack.Screen name="BillForm" component={BillForm} />
 
 					{/* {OrderSales Report} */}
@@ -484,7 +484,7 @@ export default function App(props) {
 					<Stack.Screen name="Payments/Form" component={PaymentForm} />
 
 					{/* Accounts */}
-					<Stack.Screen name="Accounts" component={Accounts} />
+					<Stack.Screen name="Vendor" component={Accounts} />
 
 					<Stack.Screen name="AccountForm" component={AccountForm} />
 

@@ -8,7 +8,7 @@ export default {
     userInterfaceStyle: "light",
     splash: {
       image: "./src/assets/coconut.jpg",
-      resizeMode: "contain",
+      resizeMode: "cover",
       backgroundColor: "#ffffff",
     },
     android: {

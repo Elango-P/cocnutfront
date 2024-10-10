@@ -186,12 +186,12 @@ const ActionBar = ({
 
         {showButton && buttonLabel && (
             <View style={[styles.layoutButton]}>
-            <Button title={buttonLabel} onPress={(e) => onPress(e)} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} />
+            <Button title={buttonLabel} onPress={(e) => onPress(e)} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} borderRadius={25}/>
           </View>
           )}
           {buttonLabel2 && (
             <View style={[styles.layoutButton]}>
-              <Button title={buttonLabel2} onPress={button2OnPress} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} />
+              <Button title={buttonLabel2} onPress={button2OnPress} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} borderRadius={25}/>
             </View>
           )}
            
@@ -210,8 +210,8 @@ const ActionBar = ({
           )}
           {addButton && (
             <View style={[styles.layoutButton]} >
-              <TouchableOpacity onPress={(e) => onPress(e)}>
-              <MaterialIcons name="add" size={30} color="black" />
+              <TouchableOpacity >
+              <Button onPress={(e) => onPress(e)} title="Add"  borderRadius={25} />
               </TouchableOpacity>
             </View>
           )}

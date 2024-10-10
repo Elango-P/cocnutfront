@@ -594,7 +594,7 @@ const AttendanceList = (props) => {
       actionItems={actionItems}
       showActionMenu={attendanceCheckinCheckPermission}
       closeModal={visible}
-      showBackIcon={false}
+      
       showActionButton={attendanceCheckinCheckPermission}
       filter={
         <DateFilter

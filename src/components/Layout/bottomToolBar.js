@@ -93,7 +93,7 @@ const BottomToolBar = (props) => {
     }
     
     const getHideToolBarDetail=()=>{
-        let showToolBarByRoute = ["Dashboard","Order","RecurringTask","Ticket","ProductReplenish","Report","Menu","Delivery","Sync","Location","OrderSalesSettlementDiscrepancyReport","StockEntry","Fine","Bonus","Lead","GatePass","Accounts","Inspection","Users","Visitor","Candidate","OrderProduct","Salary","Attendance","inventoryTransfer","distributionTransfer","BrandAndCategoryList","StoreReplenish","ReplenishmentProduct","WishListProducts","SalesSettlement","Bills","Purchase","PurchaseOrder","Payments","ActivityList","Customers","Settings","Reports","CustomerSelector","LocationAllocation","ContactList"]
+        let showToolBarByRoute = ["Dashboard","Order","RecurringTask","Ticket","ProductReplenish","Report","Menu","Delivery","Sync","Location","OrderSalesSettlementDiscrepancyReport","StockEntry","Fine","Lead","GatePass","Vendor","Inspection","Users","Visitor","Candidate","OrderProduct","Salary","Attendance","inventoryTransfer","distributionTransfer","BrandAndCategoryList","StoreReplenish","ReplenishmentProduct","WishListProducts","SalesSettlement","Sales","Purchase","PurchaseOrder","Payments","ActivityList","Customers","Settings","Reports","CustomerSelector","LocationAllocation","ContactList"]
        return showToolBarByRoute.includes(currentRoute ? currentRoute : "Dashboard" )
     }
 

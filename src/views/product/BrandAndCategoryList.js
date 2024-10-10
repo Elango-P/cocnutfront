@@ -54,7 +54,6 @@ const BrandAndCategoryList = (props) => {
       <Layout
         title={"Products"}
         refreshing={refreshing}
-        showBackIcon={false}
         showFilter={activeTab === TabName.PRODUCTS ? true : false}
         addButton={activeTab === TabName.PRODUCTS && addPermission ?  true : false}
         buttonOnPress={AddNew}

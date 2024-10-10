@@ -258,7 +258,6 @@ const Candidate = (props) => {
             buttonOnPress={AddNew}
             isLoading={isLoading}
             refreshing={refreshing}
-            showBackIcon={false}
             showFilter={true}
             onFilterPress={closeDrawer}
 

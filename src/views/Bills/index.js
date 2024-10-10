@@ -26,7 +26,7 @@ import StatusService from "../../services/StatusServices";
 import accountService from "../../services/AccountService";
 import styles from "../../helper/Styles";
 
-const Bills = () => {
+const Sales = () => {
   const [bill, setBill] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -77,6 +77,8 @@ const Bills = () => {
   }, [refreshing]);
 
   const AddNew = () => {
+    console.log("ddddddddddd---");
+    
     navigation.navigate("BillForm");
   };
   useEffect(() => {
@@ -310,14 +312,13 @@ const Bills = () => {
   };
   return (
     <Layout
-      title='Bills'
+      title='Sales'
       addButton={permission ? true : false}
       buttonOnPress={AddNew}
       isLoading={isLoading}
       refreshing={refreshing}
       showFilter={true}
       onFilterPress={closeDrawer}
-      showBackIcon={false}
     >
       <FilterDrawer
         values={values}
@@ -378,6 +379,6 @@ const Bills = () => {
     </Layout>
   )
 }
-export default Bills;
+export default Sales;
 
 

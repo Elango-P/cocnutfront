@@ -97,9 +97,9 @@ const Login = ({ }) => {
   const [isSubmit,setIsSubmit] = useState(false)
   const navigation = useNavigation();
 
-  useEffect(() => {
-      GetDeviceInformation();
-  }, []);
+  // useEffect(() => {
+  //     GetDeviceInformation();
+  // }, []);
 
   useEffect(() => {
     (async () => {
@@ -108,44 +108,44 @@ const Login = ({ }) => {
       if (!sessionToken) {
         navigation.navigate("Login");
       } else {
-        navigation.navigate(AppID.isZunoMart() ? "Home" : "Dashboard");
+        navigation.navigate("Dashboard");
       }
     })();
   }, []);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  const registerForPushNotifications = async () => {
-    if (device.isDevice) {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== 'granted') {
-      alert('You need to enable notifications in your settings.');
-      return;
-    }
-    const token = (await Notifications.getExpoPushTokenAsync({ projectId: expoProjectId })).data;
-    setPushNotificationToken(token)
-    }
-  };
+  // const registerForPushNotifications = async () => {
+  //   if (device.isDevice) {
+  //   const { status } = await Notifications.requestPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     alert('You need to enable notifications in your settings.');
+  //     return;
+  //   }
+  //   const token = (await Notifications.getExpoPushTokenAsync({ projectId: expoProjectId })).data;
+  //   setPushNotificationToken(token)
+  //   }
+  // };
 
-  registerForPushNotifications();
+  // registerForPushNotifications();
 
-  const subscription = Notifications.addNotificationReceivedListener(notification => {});
+  // const subscription = Notifications.addNotificationReceivedListener(notification => {});
 
-  return () => subscription.remove();
-  }, []);
+  // return () => subscription.remove();
+  // }, []);
 
-  const GetDeviceInformation = async () => {
-    await Device.getDeviceLocation((callback) => setLocation(callback));
-    await Device.GetIpAddress((callback) => setIpAddress(callback));
-    await Device.NetWorkStatus((callback) => setNetwork(callback));
-    let deviceName = await Device.GetDeviceName();
-    let brandName = await Device.GetDeviceBrandName();
-    await Device.GetBatteryPercentage((callback) => setBattery(callback));
-    setDeviceName(deviceName);
-    setBrandName(brandName);
+  // const GetDeviceInformation = async () => {
+  //   await Device.getDeviceLocation((callback) => setLocation(callback));
+  //   await Device.GetIpAddress((callback) => setIpAddress(callback));
+  //   await Device.NetWorkStatus((callback) => setNetwork(callback));
+  //   let deviceName = await Device.GetDeviceName();
+  //   let brandName = await Device.GetDeviceBrandName();
+  //   await Device.GetBatteryPercentage((callback) => setBattery(callback));
+  //   setDeviceName(deviceName);
+  //   setBrandName(brandName);
 
-    setAppVersion(version);
-  };
+  //   setAppVersion(version);
+  // };
 
   const LogInRedirection = async (response) => {
     try {      
@@ -283,12 +283,7 @@ const Login = ({ }) => {
             }
           );
         }
-      } else if (AppID.isZunoMart()) {
-          setPassword("");
-          setShowEmailPasswordFields(false);
-          setInputValue("");
-        navigation.navigate("Home");
-      } else {
+      }else {
         if (locationList && locationList.length == 1) {
           asyncStorageService.setSelectedLocationName(locationList[0].name);
           asyncStorageService.setSelectedLocationId(
@@ -306,13 +301,13 @@ const Login = ({ }) => {
     }
   };
 
-  const onUpdate = async () => {
-    if (Platform.OS === "ios") {
-      await Linking.openURL(`https://apps.apple.com/us/app/zunomart/id6464041231`);
-    } else if (Platform.OS === "android") {
-      await Linking.openURL(`https://play.google.com/store/apps/details?id=${AppID.getAppId()}`);
-    }
-  }
+  // const onUpdate = async () => {
+  //   if (Platform.OS === "ios") {
+  //     await Linking.openURL(`https://apps.apple.com/us/app/zunomart/id6464041231`);
+  //   } else if (Platform.OS === "android") {
+  //     await Linking.openURL(`https://play.google.com/store/apps/details?id=${AppID.getAppId()}`);
+  //   }
+  // }
   const getDeviceInfo = async(responseData)=>{
     const userId = await asyncStorageService.getUserId()
        
@@ -379,7 +374,7 @@ const Login = ({ }) => {
               if (response && response.data && response.data.appVersionUpdate) {
                 let appId = AppID.getAppId();
                 let showUpdateOption = Platform.OS == "ios" && (AppID.isZunoMart() || AppID.isZunoMartStore() || AppID.isThiDiff()) && appId ? true : Platform.OS == "android" && appId ? true : false;
-                Alert.Error(response.data.message, showUpdateOption ? onUpdate : null, showUpdateOption ? "Update" : "Ok","Update Required");
+                // Alert.Error(response.data.message, showUpdateOption ? onUpdate : null, showUpdateOption ? "Update" : "Ok","Update Required");
                 setIsSubmit(false)
               } else if (response && response.data && response.data.user) {
                 let token = response?.data?.user
@@ -390,73 +385,8 @@ const Login = ({ }) => {
                 setIsModalVisible(false);
                 setIsSubmit(false)
                 await asyncStorageService.setSessionToken(token);
-
-
-                if (AppID.isZunoMartStore() || AppID.isThiDiff() || AppID.isZunoStar) {
-
-                  let bodyData = {
-                    ipAddress: IpAddress,
-                    deviceName: deviceName,
-                    brandName: brandName,
-                    network: network,
-                    battery: battery,
-                    unique_id: uniqueId,
-                    user: response.data.user.id,
-                    versionNumber: appVersion,
-                    app_id : AppID.getAppId(),
-                  };
-
-                  UserDeviceInfoService.create(
-                    bodyData,
-                    token,
-                    async (error, userInfoResponse) => {
-                      await settingService.get(
-                        Setting.DEVICE_APPROVAL_REQUIRED,
-                        async (error, res) => {
-                          if (
-                            res?.settings &&
-                            res.settings.length > 0 &&
-                            res.settings[0].value === "true"
-                          ) {
-                            if (!DeviceInfo || platform.isIOS()) {
-                              getDeviceInfo(response)
-                            }
-                            if (
-                              userInfoResponse &&
-                              userInfoResponse.data &&
-                              userInfoResponse.data.deviceInfoDetail
-                            ) {
-                              let deviceInfo =
-                                userInfoResponse?.data?.deviceInfoDetail;
-                              if (deviceInfo) {
-                                let userDeviceInfoStatus =
-                                  deviceInfo?.status ==
-                                    UserDeviceInfo.STATUS_BLOCKED_VALUE
-                                    ? UserDeviceInfo.STATUS_BLOCKED_TEXT
-                                    : deviceInfo?.status ==
-                                      UserDeviceInfo.STATUS_PENDING_VALUE
-                                      ? UserDeviceInfo.STATUS_PENDING_TEXT
-                                      : deviceInfo?.status ==
-                                        UserDeviceInfo.STATUS_APPROVED_VALUE
-                                        ? UserDeviceInfo.STATUS_APPROVED_TEXT
-                                        : "";
-                                await asyncStorageService.setDeviceInfoStatus(
-                                  userDeviceInfoStatus
-                                );
-                                getDeviceInfo(response)
-                              }
-                            }
-                          } 
-                           else {
-                            getDeviceInfo(response)
-                          }
-                        }
-                      );
-                    }
-                  );
-                } else {
-                  getDeviceInfo(response)
-                }
+                getDeviceInfo(response)
+                
               } else if (error) {
                 let errorMessage;
                 const errorRequest = error?.response?.request;

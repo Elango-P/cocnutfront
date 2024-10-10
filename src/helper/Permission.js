@@ -1438,7 +1438,7 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
     {
       title: "Account",
       permission: [
-        { name: this.ACCOUNTS_VIEW, label: "Accounts View" },
+        { name: this.ACCOUNT_VIEW, label: "Vendor View" },
 
       ],
     },
