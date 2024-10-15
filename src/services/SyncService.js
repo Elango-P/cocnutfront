@@ -252,6 +252,7 @@ class SyncService {
                         next_status_id: statusList[i].nextStatusIds,
                         sort_order: Numbers.Get(statusList[i].sortOrder),
                         allowed_role_id: statusList[i].allowedRoleIds,
+                        object_id: statusList[i].objectId,
                         object_name: statusList[i].objectName,
                         update_quantity: Numbers.Get(statusList[i].updateQuantity),
                         company_id: Numbers.Get(statusList[i].companyId),
@@ -295,13 +296,11 @@ class SyncService {
     }
 
     static async SyncOrderType(masterList) {
-        console.log("SyncService  masterList------------------------", masterList)
 
         try {
+            await SQLLiteDB.runQuery(SQLLiteDB.DB, `DELETE FROM order_type`);
 
             let localList = await SQLLiteDB.runQuery(SQLLiteDB.DB, `SELECT * FROM order_type`);
-
-            console.log("SyncService  localList------------------------", localList)
 
             let orderTypeList = this.getSyncData(masterList, localList, "order_type_id");
 
@@ -316,18 +315,10 @@ class SyncService {
                         allow_store_order: Numbers.Get(orderTypeList[i].allow_store_order),
                         allow_delivery: Numbers.Get(orderTypeList[i].allow_delivery),
                     }
-
-
                     if (orderTypeList[i].isNew) {
-                    console.log("SyncService  orderTypeList[i].isNew------------------------", orderTypeList[i].isNew)
-                    console.log("SyncService  orderTypeList[i]------------------------", orderTypeList[i])
-
-
-
                         objectData.order_type_id = Numbers.Get(orderTypeList[i].id);
 
                         let updatedObj = ObjectLib.getKeyValue(objectData);
-                        console.log("SyncService  objectData---------new ---------------", objectData)
 
                         //insert data into sqlite
                         await SQLLiteDB.runQuery(SQLLiteDB.DB, `INSERT INTO order_type (${updatedObj.keyString}) VALUES (${updatedObj.createPlaceHolderString})`, updatedObj.valuesArrray);
@@ -341,15 +332,9 @@ class SyncService {
                     } else if (orderTypeList[i].isDeletion) {
 
                         await SQLLiteDB.runQuery(SQLLiteDB.DB, `DELETE FROM order_type where order_type_id = ${orderTypeList[i].id}`);
-
                     }
-                    console.log("SyncService  orderTypeList[i]------------completed------------")
-
-
                 }
             }
-
-
         } catch (err) {
             console.log(err);
         }
@@ -363,6 +348,7 @@ class SyncService {
 
             let statusList = response && response.data && response.data.statusList;
 
+
             let shiftData = response && response.data && response.data.shiftData;
 
             let currentLocationId = response && response.data && response.data.currentLocationId;
@@ -371,8 +357,6 @@ class SyncService {
 
 
             let orderTypeList = response && response.data && response.data.orderTypeList;
-            console.log("SyncService  orderTypeList------------------------", orderTypeList)
-
 
             if (Number.isNotNull(currentLocationId)) {
 
@@ -392,17 +376,17 @@ class SyncService {
               }
         
 
-            // if (statusList && statusList.length > 0) {
-            //     await this.SyncStatus(statusList);
-            // }
+            if (statusList && statusList.length > 0) {
+                await this.SyncStatus(statusList);
+            }
 
-            // if (productList && productList.length > 0) {
-            //     await this.syncProductToSQLite(productList, isSingleProductSync);
-            // }
+            if (productList && productList.length > 0) {
+                await this.syncProductToSQLite(productList, isSingleProductSync);
+            }
 
-            // if (priceList && priceList.length > 0) {
-            //     await this.syncProductPrice(priceList, isSingleProductSync);
-            // }
+            if (priceList && priceList.length > 0) {
+                await this.syncProductPrice(priceList, isSingleProductSync);
+            }
 
             if(shiftData){
                 await asyncStorageService.setShiftTime(`${shiftData?.shiftStartTime},${shiftData?.shiftEndTime}`);

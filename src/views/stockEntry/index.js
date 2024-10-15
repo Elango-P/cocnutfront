@@ -471,7 +471,7 @@ const Index = () => {
 		buttonOnPress={AddNew} 
 		isLoading={isLoading} 
         refreshing={refreshing}
-		
+		showBackIcon={false}
 		showFilter
 		onFilterPress={closeDrawer}
 

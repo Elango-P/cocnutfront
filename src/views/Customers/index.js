@@ -92,7 +92,7 @@ const Customers = ()=>{
       title='Customers'
       isLoading={isLoading}
       refreshing={refreshing}
-      
+      showBackIcon={false}
 
     >
       <Refresh refreshing={refreshing} setRefreshing={setRefreshing} >

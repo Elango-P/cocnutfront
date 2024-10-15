@@ -21,7 +21,7 @@ class BulkOrderService {
 
             let locationId = await AsyncStorage.getItem(AsyncStorageConstants.SELECTED_LOCATION_ID)
 
-            let orderStatus = await StatusService.getFirstStatus(ObjectName.ORDER);
+            let orderStatus = await StatusService.getFirstStatus(ObjectName.ORDER_TYPE);
 
             let orderId;
 

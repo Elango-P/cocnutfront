@@ -396,6 +396,7 @@ const Users = () => {
       isLoading={isLoading}
       refreshing={refreshing}
       onFilterPress={closeDrawer}
+      showBackIcon={false}
       showActionMenu={permission && permission.manageOthers}
       actionItems={actionList}
       closeModal={visible}

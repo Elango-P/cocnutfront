@@ -2,12 +2,12 @@ import { NativeModules } from "react-native";
 
 import CompanyHelper from "../helper/Company";
 
-// const { RNDeviceInfo } = NativeModules;
+const { RNDeviceInfo } = NativeModules;
 
 let DeviceInfo;
-// if (RNDeviceInfo) {
-//   DeviceInfo = require("react-native-device-info");
-// }
+if (RNDeviceInfo) {
+  DeviceInfo = require("react-native-device-info");
+}
 
 class AppID {
 

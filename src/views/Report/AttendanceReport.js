@@ -223,11 +223,11 @@ const AttendanceReport = () => {
                           <View style={style.alignType}>
                           {data.logoutTime  && data.shiftName && (
                               <Text>
-                                &nbsp;({data.shiftName}) {data.type === Attendance.TYPE_ADDITIONAL_DAY ? `-` : ""} 
+                                &nbsp;({data.shiftName}) {data?.attendanceTypeDetail?.is_additional_day ? `-` : ""} 
                               </Text>
                             )}
                           
-                            {data.type === Attendance.TYPE_ADDITIONAL_DAY &&
+                            {data?.attendanceTypeDetail?.is_additional_day &&
                              <Text style={style.colorText}>{` ${data.type}`}</Text>}
                              </View>
                             <VerticalSpace10 /></>

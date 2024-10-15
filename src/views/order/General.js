@@ -34,6 +34,9 @@ const General = (props) => {
     selectedUser,
     onPress,
   } = props;
+
+    let isDeliveryOrder = param?.type && param?.type?.allow_delivery == true ? true:false
+
   const allow =
     allowEdit &&
     (param?.allow_edit == Status.ALLOW_EDIT_ENABLED ? true : false);
@@ -122,7 +125,7 @@ const General = (props) => {
           onChange={handleStatusOnChange}
           placeholder={"Select Status"}
           showBorder={false}
-          object={ObjectName.ORDER}
+          object={ObjectName.ORDER_TYPE}
           divider
           data={param?.status_id ? Number.Get(param?.status_id) : ""}
           currentStatusId={param?.status_id}
@@ -151,7 +154,7 @@ const General = (props) => {
           divider={true}
         />
       </ScrollView>
-      {param?.type === Order.DELIVERY && param.group == Status.GROUP_DRAFT && (
+      {isDeliveryOrder && param.group == Status.GROUP_DRAFT && (
         <View style={{ width: "100%", borderRadius: 10 }}>
           <Button
             title={"COMPLETE"}

@@ -52,6 +52,7 @@ const BillForm = (props) => {
     const [MediaData, setMediaData] = useState([]);
     const [invoiceAmount, setInvoiceAmount] = useState("")
     const [rejectedAmount, setRejectedAmount] = useState(params?.rejectedProductAmount || "")
+    const [expiryReturnedProductAmount, setExpiryReturnedProductAmount] = useState(params?.expiryReturnedProductAmount || "")
     const [otherDeduction, setOtherDeduction] = useState(params?.otherDeductionAmount || "")
     const [cashDiscountPercentage, setCashDiscountPercentage] = useState(parseFloat(params?.cashDiscountPercentage) || "")
     const [cashDiscountAmount, setCashDiscountAmount] = useState(params && params?.cashDiscountAmount || "")
@@ -109,6 +110,7 @@ const BillForm = (props) => {
         rejectedItemAmount: null,
         paybleAmount: null,
         billId: params?.id ? params?.id : null,
+        expiryReturnedProductAmount: null,
     });    
 
     useEffect(() => {
@@ -179,7 +181,14 @@ const BillForm = (props) => {
                         ? Number.GetFloat(params?.rejectedProductAmount)
                         : 0;
 
-                       
+                        const expiryAmountUse =
+                        (billDataRef.current.expiryReturnedProductAmount == "" ||
+                            billDataRef.current.expiryReturnedProductAmount !== "") &&
+                            billDataRef.current.expiryReturnedProductAmount !== null
+                            ? Number.GetFloat(billDataRef.current.expiryReturnedProductAmount)
+                            : params?.expiryReturnedProductAmount
+                                ? Number.GetFloat(params?.expiryReturnedProductAmount)
+                                : 0;
 
             const otherDeductionAmountUse =
                 (billDataRef.current.otherDeductionAmount == "" ||
@@ -192,7 +201,7 @@ const BillForm = (props) => {
 
             const paybleAmountuse =
                 invoiceAmountUse -
-                (  otherDeductionAmountUse + rejectAmountUse );
+                (  otherDeductionAmountUse + rejectAmountUse + expiryAmountUse);
             setPaymentAmount(paybleAmountuse);
 
             let discountPercent =
@@ -250,7 +259,17 @@ const BillForm = (props) => {
         updateBillData();
     };
 
-   
+    const onExpiryReturnAmount = (value) => {
+        const expiryReturnedProductAmount = value
+        if(expiryReturnedProductAmount){
+            let total_amount = (CurrenCy.Get(invoiceAmount) - CurrenCy.Get(expiryReturnedProductAmount))
+            setNetAmount(total_amount|| "")
+        }
+        setExpiryReturnedProductAmount(value)
+        billDataRef.current.expiryReturnedProductAmount = value;
+
+        updateBillData();
+    };
     const onRejectedProductAmount = (value) => {
         const returnAmount = value
         if(returnAmount){
@@ -302,6 +321,7 @@ const BillForm = (props) => {
 
             rejectedProductAmount: values?.rejectedProductAmount ? values?.rejectedProductAmount : params?.rejectedProductAmount,
 
+            expiryReturnedProductAmount: values?.expiryReturnedProductAmount ? values?.expiryReturnedProductAmount : params?.expiryReturnedProductAmount,
 
             otherDeductionAmount: values.other_deduction_amount ? Number.GetFloat(values.other_deduction_amount) : params?.otherDeductionAmount,
 
@@ -331,7 +351,7 @@ const BillForm = (props) => {
             await billService.update(params?.id, updateData, (err, response) => {
                 if (response) {
                     setIsSubmit(false)
-                    navigation.navigate("Sales")
+                    navigation.navigate("Bills")
                 }else{
                     setIsSubmit(false)
                 }
@@ -340,7 +360,7 @@ const BillForm = (props) => {
             billService.create(updateData, (err, response) => {
                 if (response && response.data) {
                     setIsSubmit(false)
-                    navigation.navigate("Sales")
+                    navigation.navigate("Bills")
 
                 }else{
                     setIsSubmit(false)
@@ -402,12 +422,18 @@ const BillForm = (props) => {
             },
         ]
 
-        
+        if(billHistoryViewPermission){
+            title.push({
+            title: TabName.HISTORY,
+            tabName: TabName.HISTORY
+        })
+    }
+
     const billDelete = async () => {
         if (params?.id) {
             billService.Delete(params?.id, (res) => {
                 if (res) {
-                    navigation.navigate("Sales")
+                    navigation.navigate("Bills")
                 }
             })
         }
@@ -420,7 +446,7 @@ const BillForm = (props) => {
 
     return (
         <Layout
-            title={params ? `Sales#: ${params?.bill_number}` : "Add Bill"}
+            title={params ? `Bill#: ${params?.bill_number}` : "Add Bill"}
             showBackIcon={true}
             buttonLabel2={activeTab === TabName.SUMMARY && allowEdit && params ? "Save" : !params ? "Add" : ""}
             closeModal={visible}
@@ -466,8 +492,9 @@ const BillForm = (props) => {
                     <VerticalSpace10 paddingTop={5} />
 
                     <TextInput
-                        title="Invoice Number#"
+                        title="Vendor Invoice# "
                         name="invoice_number"
+                        required={true}
                         control={control}
                         editable={allowEdit}
                     />
@@ -548,7 +575,18 @@ const BillForm = (props) => {
                     />
                     <VerticalSpace10 />
 
-                     
+                     <Currency
+                        name="expiryReturnedProductAmount"
+                        title="Expiry Returned Amount"
+                        control={control}
+                        placeholder="Expiry Returned Amount"
+                        onInputChange={onExpiryReturnAmount}
+                        edit={allowEdit}
+                        values={expiryReturnedProductAmount.toString()}
+
+                    />
+                    <VerticalSpace10 />
+
                     <Currency
                         name="other_deduction_amount"
                         control={control}
@@ -681,7 +719,15 @@ const BillForm = (props) => {
                     getMediaList={getMediaList}
                 />
             )}
-            
+            {activeTab === TabName.HISTORY && (
+                <ScrollView>
+                    <HistoryList
+                        objectName={ObjectName.BILL}
+                        objectId={params?.id}
+                    />
+
+                </ScrollView>
+            )}
         </Layout>
     )
 }

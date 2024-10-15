@@ -9,29 +9,35 @@ import { Color } from "../../../helper/Color";
 
 const ActivityCard = (props) => {
   const {
-    date, user, type, id, onPress, lastName, alternative, imageUrl, status, statusColor, manageOthers
+    date,
+    user,
+    type,
+    id,
+    onPress,
+    lastName,
+    alternative,
+    imageUrl,
+    status,
+    statusColor,
+    manageOthers,
   } = props;
   return (
     <View style={styles.container}>
       <View>
         <TouchableOpacity
-          style={[styles.cardAttendance]}
+          style={[styles.cardAttendance, alternative]}
           onPress={onPress}
         >
           <View>
-            <View
-              style={styles.listContainers}
-            >
+            <View style={styles.listContainers}>
               {imageUrl ? (
-                <Image source={{ uri: imageUrl ? imageUrl : "" }} style={{ width: 55, height: 55, borderRadius: 30 }} />
-              ) : (
-                <UserAvatar
-                  size={55}
-                  name={user}
-                  bgColor={Color.PRIMARY}
+                <Image
+                  source={{ uri: imageUrl ? imageUrl : "" }}
+                  style={{ width: 55, height: 55, borderRadius: 30 }}
                 />
+              ) : (
+                <UserAvatar size={55} name={user} bgColor={Color.PRIMARY} />
               )}
-
             </View>
           </View>
           <View
@@ -42,27 +48,23 @@ const ActivityCard = (props) => {
             }}
           >
             {manageOthers && (
-              <Text
-                style={{ fontWeight: "700", textTransform: "capitalize" }}
-              >
+              <Text style={{ fontWeight: "700", textTransform: "capitalize" }}>
                 {user} {lastName}
               </Text>
             )}
-            <IdText id={id} />
-            <DateText date={date} />
-            <Text>
-              {type}
-            </Text>
             <View
-              style={style.container}
+              style={style.rowContainer}
             >
+              <IdText id={id} />
+              <DateText date={date} />
+            </View>
+            <Text>{type}</Text>
+          </View>
+            <View style={style.container}>
               {status && (
-                <Status
-                  status={status} backgroundColor={statusColor}
-                />
+                <Status status={status} backgroundColor={statusColor} />
               )}
             </View>
-          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -73,7 +75,13 @@ export default ActivityCard;
 
 const style = StyleSheet.create({
   container: {
-    alignItems: "flex-start",
+    alignItems: "flex-end",
     paddingTop: 5,
+    marginRight: 5,
   },
-})
+  rowContainer : {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    padding: 2,
+  }
+});

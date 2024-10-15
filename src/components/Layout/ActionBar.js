@@ -60,7 +60,8 @@ const ActionBar = ({
   showProfile,
   onProfileHandle,
   addButton,
-  isSubmit
+  isSubmit,
+  isAddButtonDisabled
 }) => {
    
 
@@ -186,12 +187,12 @@ const ActionBar = ({
 
         {showButton && buttonLabel && (
             <View style={[styles.layoutButton]}>
-            <Button title={buttonLabel} onPress={(e) => onPress(e)} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} borderRadius={25}/>
+            <Button title={buttonLabel} onPress={(e) => onPress(e)} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} />
           </View>
           )}
           {buttonLabel2 && (
             <View style={[styles.layoutButton]}>
-              <Button title={buttonLabel2} onPress={button2OnPress} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} borderRadius={25}/>
+              <Button title={buttonLabel2} onPress={button2OnPress} isSubmit = {isSubmit} color={Color.ACTIONBAR_TEXT} />
             </View>
           )}
            
@@ -210,8 +211,8 @@ const ActionBar = ({
           )}
           {addButton && (
             <View style={[styles.layoutButton]} >
-              <TouchableOpacity >
-              <Button onPress={(e) => onPress(e)} title="Add"  borderRadius={25} />
+              <TouchableOpacity onPress={(e) => onPress(e)}  disabled={isAddButtonDisabled} activeOpacity={isAddButtonDisabled ? 1 : 0.7}>
+              <MaterialIcons name="add" size={30}  color={isAddButtonDisabled ? 'gray' : 'black'} />
               </TouchableOpacity>
             </View>
           )}

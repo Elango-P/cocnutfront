@@ -8,6 +8,7 @@ import PhoneNumber from "./PhoneNumber";
 import VerticalSpace10 from "./VerticleSpace10";
 import AddButton from "./AddButton";
 import Link from "./Link";
+import platform from "../lib/Platform";
 
 
 function QrCodeScanner({ toggle, modalVisible, CancelAction,onPressSkip, handleScannedData,handleMobileNumberChange,handleMobileNumberUpdate, title,showCustomerMobileNumberOption,control }) {
@@ -47,7 +48,7 @@ function QrCodeScanner({ toggle, modalVisible, CancelAction,onPressSkip, handleS
             onRequestClose={() => {
                 toggle && toggle();
             }}>
-            <View style={styles.container}>
+            <View style={[styles.container,{marginTop : platform.isIOS() ? "12%" : 0}]}>
                 <View style={styles.cameraOverlay}>
                     <Scanner height="100%" onScan={handleScannedData} />
 

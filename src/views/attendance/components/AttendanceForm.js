@@ -1,17 +1,14 @@
 import React from "react";
-import { View } from "react-native";
-import Select from "../../../components/Select";
-import DatePicker from "../../../components/DatePicker";
-import TimePicker from "../../../components/TimePicker";
-import { useForm } from "react-hook-form";
-import UserSelect from "../../../components/UserSelect";
-import ShiftSelect from "../../../components/ShiftSelect";
-import LocationSelect from "../../../components/LocationSelect"
-import VerticalSpace10 from "../../../components/VerticleSpace10";
-import typeOptions, { Attendance } from "../../../helper/Attendance";
-import TextArea from "../../../components/TextArea";
-import CheckBox from "../../../components/CheckBox";
 import AttendanceTypeSelect from "../../../components/AttendanceTypeSelect";
+import CheckBox from "../../../components/CheckBox";
+import DatePicker from "../../../components/DatePicker";
+import LocationSelect from "../../../components/LocationSelect";
+import ShiftSelect from "../../../components/ShiftSelect";
+import TextArea from "../../../components/TextArea";
+import TimePicker from "../../../components/TimePicker";
+import UserSelect from "../../../components/UserSelect";
+import VerticalSpace10 from "../../../components/VerticleSpace10";
+import typeOptions from "../../../helper/Attendance";
 
 const AttendanceForm = (props) => {
   const {
@@ -31,7 +28,7 @@ const AttendanceForm = (props) => {
     onOutTimeChange,
     onDateSelect,
     selectedStore,
-    selectedShift,
+    typeList,
     selectedType,
     attendanceDetail,
     allowEdit,
@@ -43,8 +40,11 @@ const AttendanceForm = (props) => {
     handleApproveLateCheckin,
     allowEarlyCheckout,
     allowGoalMissing,
-    allowLateCheckin
+    allowLateCheckin,
+    attendanceTypeList
   } = props;
+
+  let attendanceTypeDetail = attendanceTypeList.find((data)=> data?.value == selectedType )
   return (
     
     <>
@@ -71,10 +71,11 @@ const AttendanceForm = (props) => {
         placeholder={"Select Type"}
         disable={!allowEdit}
         required
+        typeList={typeList}
 
       />
       <VerticalSpace10 />
-      {((selectedType !== Attendance.TYPE_ABSENT) && (selectedType !== Attendance.TYPE_LEAVE)) && (
+      {((!attendanceTypeDetail?.is_absent) && (!attendanceTypeDetail?.is_leave)) && (
     <>
         <LocationSelect
             name={"location"}
@@ -91,7 +92,7 @@ const AttendanceForm = (props) => {
 )}
 
 
-      {selectedType !== Attendance.TYPE_ABSENT && (
+      {!attendanceTypeDetail?.is_absent  && (
         <>
           <ShiftSelect
             name={"shift"}
@@ -111,7 +112,7 @@ const AttendanceForm = (props) => {
       <DatePicker title="Date" onDateSelect={onDateSelect} selectedDate={selectedDate} format={"DD-MMM-YYYY"} disabled={allowEdit} />
       <VerticalSpace10 />
 
-      {selectedType !== Attendance.TYPE_ABSENT && (
+      {!attendanceTypeDetail?.is_absent && (
         <>
           <TimePicker title="In Time" onTimeSelect={onInTimeChange} selectedTime={selectedInTime} placeholder={"Select InTime"} format={"hh:mm a"} disabled={allowEdit} />
           <VerticalSpace10 />
@@ -164,7 +165,7 @@ const AttendanceForm = (props) => {
 
           />
           <VerticalSpace10 />
-          {selectedType !== Attendance.TYPE_LEAVE && (
+          {!attendanceTypeDetail?.is_leave && (
             <>
               <LocationSelect
                 name={"location"}

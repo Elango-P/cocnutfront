@@ -111,6 +111,11 @@ const Billing = (props) => {
   const id = props?.route?.params?.id;
   const params = props?.route?.params;
 
+  let type = params?.type
+
+  let isDeliveryOrder = params?.type && params?.type?.allow_delivery == true ? true:false
+
+
   const [scannedCode, setScannedCode] = useState("");
   const [modalVisible, setScanModalVisible] = useState(false);
   const [quantityUpdateObject, setQuantityUpdateObject] = useState({});
@@ -271,7 +276,7 @@ const Billing = (props) => {
 
   useEffect(() => {
     if (params?.isNewOrder ) {
-      if(params?.collectCustomerInfo == "true"){
+      if(params?.collectCustomerInfo == true){
       qrScanToggle();
     }else{
       toggle()
@@ -368,7 +373,7 @@ const Billing = (props) => {
     setUpiAmount("")
     setTotalAmount("")
     {
-      params?.type === Order.DELIVERY
+     isDeliveryOrder
         ? navigation.navigate("Delivery")
         : navigation.navigate("Order");
     }
@@ -652,8 +657,10 @@ const Billing = (props) => {
   };
 
   const createOrderAddOrderProduct = async (quantity, scannedProduct) => {
+
     try {
       if (orderId) {
+
         addOrderProduct(quantity, scannedProduct, () => {
           setIsProductAdding(false);
         });
@@ -664,6 +671,7 @@ const Billing = (props) => {
   };
 
   const validateProductInOrderProduct = async (selectedProduct) => {
+
     //validate already added product list
     if (orderProducts && orderProducts.length > 0) {
       //find if a product with the same product_id already exists
@@ -761,15 +769,18 @@ const Billing = (props) => {
     }
   };
   const handleScan = async (data) => {
+
     try{
 
       let account_id = data?.data
+
       if(account_id){
         setQrCodeScanModalVisible(false);
       accountService.get(account_id, (err, response) => {
+let body={type:type?.id}
         if (response && response?.data && response?.data?.data?.vendorId) {          
           setAccountId(response?.data?.data?.vendorId)
-          orderService.createOrder({}, (error, response)=> {
+          orderService.createOrder(body, (error, response)=> {
             if(response.data && response?.data){
               setOrderId(response?.data?.orderId)
               setOrderNumber(response?.data?.orderDetail?.order_number)
@@ -786,7 +797,9 @@ const Billing = (props) => {
        
   }
   const createOrder = async()=>{
-    await orderService.createOrder({}, async (err, response) => {    
+    
+    let body={type:Number.Get(type?.id)}
+    await orderService.createOrder(body, async (err, response) => {    
       if (response && response?.data) {        
         setOrderId(response?.data?.orderId)
         setOrderNumber(response?.data?.orderDetail?.order_number)
@@ -800,7 +813,7 @@ const Billing = (props) => {
     const createDate = {
       acount_name: customerMobileNumber,
       status: Status.ACTIVE,
-      type : Account.TYPE_CUSTOMER,
+      accountType : Account.TYPE_CUSTOMER,
       mobile : customerMobileNumber
   }
 
@@ -862,6 +875,7 @@ const Billing = (props) => {
   }
   //scan product handler
   const handleScannedData = async (data) => {
+
     try {
       setScanModalVisible(false);
 
@@ -974,6 +988,8 @@ const Billing = (props) => {
       setProductCompleteModalOpen(!productCompleteModalOpen);
     } else {
       setProductCompleteModalOpen(!productCompleteModalOpen);
+      setIsSubmit(false)
+      setEnableButton(false)  
       setSelectedPayment(PaymentType.VALIDATION);
     }
   };
@@ -1014,7 +1030,7 @@ const Billing = (props) => {
     let data = {
       payment_type: selectedPayment,
       customer_account: params?.customerId ? params?.customerId : accountId,
-      type: params?.type,
+      type: type?.id,
     };
     if (selectedPayment === PaymentType.CASH_VALUE) {
       data.cash = totalAmount;
@@ -1047,6 +1063,8 @@ const Billing = (props) => {
         if (res) {
           setIsSubmit(false)
           clearStackNavigate();
+        }else{
+          setEnableButton(false)
         }
       });
     }
@@ -1380,7 +1398,7 @@ const Billing = (props) => {
     navigation.navigate("Invoice/invoiceProductList", {
       orderId: id,
       status: params?.status,
-      type: params?.type,
+      type: type?.id,
     });
     setVisible(true);
   };
@@ -1392,7 +1410,7 @@ const Billing = (props) => {
       Permission.ORDER_CANCEL
     );    
 
-   if(params?.type === Order.DELIVERY){
+   if(isDeliveryOrder){
     deliveryStatus && deliveryStatus.forEach(statusItem => {      
       if (statusItem.id !== params?.status_id) {
         actionItems.push(
@@ -1569,7 +1587,7 @@ const Billing = (props) => {
     },
   ];
 
-  if (params?.type === Order.DELIVERY) {
+  if (isDeliveryOrder) {
     title.push({
       title: TabName.CUSTOMER,
       tabName: TabName.CUSTOMER,
@@ -1592,7 +1610,7 @@ const Billing = (props) => {
     <>
     <Layout
       title={
-        params?.type === Order.DELIVERY
+        isDeliveryOrder
           ? orderNumber || params.orderNumber
             ? `Delivery# ${orderNumber ? orderNumber : params.orderNumber}`
             : "Delivery"
@@ -1637,7 +1655,7 @@ const Billing = (props) => {
       emptyMenu={
         params?.group == Status.GROUP_DRAFT || params?.isNewOrder ? true : false
       }
-      backButtonNavigationUrl= {`${params?.type === Order.DELIVERY?"Delivery":"Order"}`}
+      backButtonNavigationUrl= {`${isDeliveryOrder?"Delivery":"Order"}`}
       HideSideMenu={
         params?.group == Status.GROUP_DRAFT || params?.isNewOrder ? true : false
       }
@@ -1811,7 +1829,7 @@ const Billing = (props) => {
               )}`}
               toggle={productCompleteModalToggle}
               button1Label="PAID"
-              title={params?.type === Order.DELIVERY?"Complete Delivery" :"Complete Order"}
+              title={isDeliveryOrder?"Complete Delivery" :"Complete Order"}
               handlePaymentChange={handlePaymentChange}
               selectedPayment={selectedPayment}
               MediaData={images ? images : MediaData}
@@ -2066,7 +2084,7 @@ const Billing = (props) => {
                   orderProducts={orderProducts}
                   totalAmount={Number.GetFloat(totalAmount)}
                   cashPaid={cashPaid}
-                  delivery={params?.type === Order.DELIVERY}
+                  delivery={isDeliveryOrder}
                 />
               )}
           </View>

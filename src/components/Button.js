@@ -21,7 +21,7 @@ const CustomButton = (props) => {
       mode="contained"
       uppercase={false}
       style={{
-        backgroundColor: backgroundColor ? backgroundColor : Color.GREEN,
+        backgroundColor: backgroundColor ? backgroundColor : Color.BUTTON_BACKGROUND,
         opacity: isSubmit ? 0.7 : 1,
         borderRadius : borderRadius,
         width : width,
@@ -30,7 +30,7 @@ const CustomButton = (props) => {
       labelStyle={{
         color: textColor ? textColor : Color.BUTTON_TEXT,
         fontSize: fontSize?fontSize:14,
-        textAlign: textAlign?textAlign:"end",
+        textAlign: textAlign?textAlign:"center",
       }}
       onPress={handlePress}
       disabled={isDisabled?isDisabled:isSubmit}

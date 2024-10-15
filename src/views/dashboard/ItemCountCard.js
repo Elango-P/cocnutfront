@@ -99,7 +99,7 @@ const ItemCountCard = (props) => {
       if (stockEntryProducts) {
         cardValue.push({
           count: stockEntryProductsCount,
-          countLabel: 'Total Stock',
+          countLabel: 'StockEntry',
           backgroundColor: Color.BLUE,
           order: 3
         });

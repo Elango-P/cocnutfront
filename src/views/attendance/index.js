@@ -172,7 +172,7 @@ const AttendanceList = (props) => {
           for (let i = 0; i < list.length; i++) {
             optionList.push({
               label: list[i].name,
-              value: list[i].name,
+              value: list[i].id,
               id: list[i].id,
             });
           }
@@ -407,22 +407,22 @@ const AttendanceList = (props) => {
                )} 
                 <Text>{DateTime.formatDate(item?.date)}</Text>
 
-                {item.type !== "Leave" ? (
+                {!item?.attendanceTypeDetail?.is_leave  ? (
                <Text>
                {item.locationName ? item.locationName : ""}{item.locationName && item.shiftName ? ", " : ""}
                {item.shiftName ? item.shiftName : ""}
                </Text>
-                 ) : item.type === "Leave" && (
+                 ) : item?.attendanceTypeDetail?.is_leave && (
                   <Text>
                   {item.shiftName ? item.shiftName : ""}
                   </Text>
                  )}
                 {item?.type && (
-                  <Text>{item?.type}</Text>
+                  <Text>{item?.typeName}</Text>
                 )}
 
                 <View style={styles.container1}>
-                  {item.type !== "Leave" && (
+                  {!item?.attendanceTypeDetail?.is_leave && (
                     <>
                      {item?.login &&  <Text style={styles.item}>In: {DateTime.LocalTime(item?.login)}
                       </Text>
@@ -468,7 +468,7 @@ const AttendanceList = (props) => {
     if (value) {
       setValues((prevValues) => ({
         ...prevValues,
-        type: value.value,
+        type: value?.id,
       }));
     } else {
       setValues((prevValues) => ({
@@ -594,7 +594,7 @@ const AttendanceList = (props) => {
       actionItems={actionItems}
       showActionMenu={attendanceCheckinCheckPermission}
       closeModal={visible}
-      
+      showBackIcon={false}
       showActionButton={attendanceCheckinCheckPermission}
       filter={
         <DateFilter

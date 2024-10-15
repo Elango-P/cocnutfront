@@ -28,12 +28,12 @@ const TicketCard = (props) => {
                     )}
 
         </View>
+            <UserCard firstName={assignee_name} size={20} image ={avatarUrl} text/>
         <View style={style.summary}>
           <Text numberOfLines={2} style={style.font}>
            {summary}
           </Text>
         </View>
-            <UserCard firstName={assignee_name} size={20} image ={avatarUrl} text/>
       </View>
 
     </TouchableOpacity>

@@ -963,7 +963,8 @@ viewInvoiceButton: {
     width: '100%',
     borderColor: 'gray',
     borderRadius: 8,
-    paddingVertical:10
+    paddingVertical:10,
+    height : 50
 
 },
 textInputStyle : {

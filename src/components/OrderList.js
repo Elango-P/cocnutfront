@@ -36,8 +36,11 @@ import OrderCard from "../views/order/components/OrderCard";
 import DateFilter from "./DateFilter";
 import FilterDrawer from "./Filter";
 import styles from "../helper/Styles";
+import OrderType from "../helper/OrderType";
+import OrderTypeService from "../services/orderTypeService";
 
-const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
+const OrderList = ({ title, type, AddNew, onPress, showFilter,enableOrderIcon}) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -65,7 +68,6 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
     const[totalUpi,setTotalUpi] = useState("")
     const[totalAmount,setTotalAmount] = useState("")
     const [search, setSearch] = useState("");
-
     const stateRef = useRef();
     const isFocused = useIsFocused();
     const route = useRoute()
@@ -95,10 +97,10 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
 
 
     useEffect(() => {
-        getStatusList();
         getUserList();
         getStoreList();
         getShiftList();
+        getStatusList()
     }, [isFocused]);
 
     useEffect(() => {
@@ -114,7 +116,28 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
 
     const getStatusList = async () => {
         let status = [];
-        const response = await StatusService.list(ObjectName.ORDER);
+        let orderTypeData = await OrderTypeService.list()
+        let orderTypeIds = []
+        // Check if it's a store order
+      if (type && type?.isStoreOrder === OrderType.IS_STORE_ORDER) {
+      orderTypeIds = orderTypeData && orderTypeData.length > 0 
+        ? orderTypeData
+              .filter((value) => value.allow_store_order === true) // Only keep those with store order allowed
+              .map((value) => value.id) // Map to the relevant field, such as ID
+        : [];
+      } 
+
+// Check if it's a delivery order
+if (type && type?.isDeliveryOrder === OrderType.IS_DELIVERY_ORDER) {
+     orderTypeIds = orderTypeData && orderTypeData.length > 0 
+        ? orderTypeData
+              .filter((value) => value.allow_delivery === true) // Only keep those with delivery allowed
+              .map((value) => value.id) // Map to the relevant field, such as ID
+        : [];
+    
+}
+        //let orderTypeIds = orderTypeData && orderTypeData.length>0 ?orderTypeData.map((value=>value?))
+        const response = await StatusService.list(ObjectName.ORDER_TYPE,orderTypeIds);
 
         response && response.forEach((statusList) => {
             status.push({
@@ -202,7 +225,7 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
             
             let param
 
-            param = { type: type, sort: "createdAt", sortDir: "DESC", };
+            param = { sort: "createdAt", sortDir: "DESC", };
 
                 if (values?.startDate) {
                     param.startDate = DateTime.formatDate(values?.startDate);
@@ -210,7 +233,13 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
                 if (values?.endDate) {
                     param.endDate = DateTime.formatDate(values?.endDate);
                 }
-
+                if(type &&  type?.isStoreOrder == OrderType.IS_STORE_ORDER){
+                    param.isStoreOrder = OrderType.IS_STORE_ORDER
+                }
+               
+                if(type &&  type?.isDeliveryOrder == OrderType.IS_DELIVERY_ORDER){
+                    param.isDeliveryOrder = OrderType.IS_DELIVERY_ORDER
+                }
 
             if (values?.status) {
                 param.status = values?.status;
@@ -247,9 +276,7 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
                 setTotalUpi( response.data.totalUpi)
                 setTotalAmount(response.data.totalAmount)
             });
-
-           
-
+            getStatusList()
 
         } catch (err) {
             console.log(err);
@@ -328,7 +355,7 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
     const renderItem = ({ item, index }) => {
         return (
             <View style={styles.container}>
-                {item.type === Order.DELIVERY_TEXT ? (
+                {type && type?.isDeliveryOrder == OrderType.IS_DELIVERY_ORDER ? (
                     <OrderCard
                         order_number={item.order_number !== null ? item.order_number : ""}
                         date={item.date}
@@ -474,10 +501,15 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
                 search: search?search : "",
                 sort: "createdAt",
                 sortDir: "DESC",
-                type: type
             };
             
+            if(type &&  type?.isStoreOrder == OrderType.IS_STORE_ORDER){
+                params.isStoreOrder = OrderType.IS_STORE_ORDER
+            }
            
+            if(type &&  type?.isDeliveryOrder == OrderType.IS_DELIVERY_ORDER){
+                params.isDeliveryOrder = OrderType.IS_DELIVERY_ORDER
+            }
             if (values?.status) {
                 params.status = values?.status;
             }
@@ -555,6 +587,7 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
         title={title}
         addButton={permission && permission.orderAdd ? true : false}
         buttonOnPress={permission && permission.orderAdd ? AddNew : ""}
+        isAddButtonDisabled={!enableOrderIcon}
         refreshing={refreshing}
         showFilter={showFilter}
         onFilterPress={closeDrawer}
@@ -647,7 +680,7 @@ const OrderList = ({ title, type, AddNew, onPress, showFilter }) => {
             </Refresh>
           </>
       </Layout>
-      {type !== Order.DELIVERY && todayList && todayList.length > 0 && 
+      {type &&  type?.isStoreOrder == OrderType.IS_STORE_ORDER && todayList && todayList.length > 0 && 
         <OrderAmountCard totalCash = {totalCash} totalUpi = {totalUpi} totalAmount={totalAmount}/>
       }
          </>

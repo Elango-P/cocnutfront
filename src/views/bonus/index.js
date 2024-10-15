@@ -353,6 +353,7 @@ const Bonus = () => {
             refreshing={refreshing}
             showFilter={true}
             onFilterPress={closeDrawer}
+            showBackIcon={false}
             totalAmountValue={totalAmount}
             totalAmountLabel="Total Amount"
         >

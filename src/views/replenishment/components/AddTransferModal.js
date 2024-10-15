@@ -9,7 +9,7 @@ const AddTransferModal = ({ toggle,isSubmit, modalVisible, ConfirmationAction, q
 
     const modalHeader = (
         <View style={styles.modalHeader}>
-            <Text style={styles.title}>Updateuuu Quantity</Text>
+            <Text style={styles.title}>Update Quantity</Text>
             <View style={styles.divider}></View>
         </View>
     )

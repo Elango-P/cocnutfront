@@ -39,33 +39,37 @@ class UserService {
 
     async list(params, callback) {
         try {
-                let apiUrl = await Url.get(`${endpoints().UserAPI}/list`, params)
-
-                apiClient.get(apiUrl, (error, response) => {
-
-                    let userList = new Array();
-                    let data = response?.data?.data;
-                    if (data && data.length > 0) {
-                        for (let i = 0; i < data.length; i++) {
-                            userList.push({
-                                label: getFullName(data[i].first_name, data[i].last_name),
-                                value: data[i].id,
-                                id: data[i].id,
-                                image: data[i].media_url,
-                                firstName: data[i].first_name,
-                                lastName: data[i].last_name,
-                            });
+            let apiUrl = await Url.get(`${endpoints().UserAPI}/list`, params);
+    
+            apiClient.get(apiUrl, (error, response) => {
+                let userList = [];
+                let data = response?.data?.data;
+                if (data && data.length > 0) {
+                    for (let i = 0; i < data.length; i++) {
+                        const fullName = getFullName(data[i].first_name, data[i].last_name);
+                            if (!fullName) {
+                            continue;
                         }
+    
+                        userList.push({
+                            label: fullName,
+                            value: data[i].id,
+                            id: data[i].id,
+                            image: data[i].media_url,
+                            firstName: data[i].first_name,
+                            lastName: data[i].last_name,
+                        });
                     }
-                    // Set response in state
-                    callback && callback(userList);
-
-                });
-
+                }
+                // Set response in state
+                callback && callback(userList);
+            });
+    
         } catch (err) {
             console.log(err);
         }
     }
+    
 
     async search(params, callback) {
         try {
