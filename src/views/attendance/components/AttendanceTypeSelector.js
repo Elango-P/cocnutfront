@@ -230,6 +230,7 @@ const style = StyleSheet.create({
     iconContainer: {
         flexDirection: "row", // Align icons in a row if necessary
         alignItems: "center",
+        marginBottom:20
     },
     title: {
         fontSize: 16,

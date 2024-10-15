@@ -19,22 +19,34 @@ const Table = ({ arrayList = [], children, params = {}, apiURL, tableWidth = nul
     const [totalPages, setTotalPages] = useState(1);
     const [totalRowCount, setTotalRowCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        fetchData(currentPage);
+    }, [ArrayList.isArray(arrayList)]);
 
     useEffect(() => {
-        fetchData();
-    }, [apiURL, currentPage]);
+        fetchData(currentPage);
+    }, []);
 
-    const fetchData = async () => {
-        setIsLoading(true)
-        let apiUrl = await Url.get(apiURL, { ...params, page: currentPage, pageSize: rowsPerPage });
-        apiClient.get(apiUrl, (error, response) => {
-            const data = response?.data?.data;
-            setTableData(data);
-            const totalItems = response?.data?.totalCount || 0; 
+    const fetchData = async (currentPage) => {
+        if (apiURL) {
+            setIsLoading(true);
+            let apiUrl = await Url.get(apiURL, { ...params, page: currentPage, pageSize: rowsPerPage });
+            apiClient.get(apiUrl, (error, response) => {
+                const data = response?.data?.data;
+                setTableData(data);
+                const totalItems = response?.data?.totalCount || 0;
+                setTotalRowCount(totalItems);
+                setTotalPages(Math.ceil(totalItems / rowsPerPage));
+                setIsLoading(false);
+            });
+        } else if (arrayList?.length > 0) {
+            const totalItems = arrayList.length;
             setTotalRowCount(totalItems);
-            setTotalPages(Math.ceil(totalItems / rowsPerPage)); 
-            setIsLoading(false)
-        });
+            setTotalPages(Math.ceil(totalItems / rowsPerPage));
+            const paginatedData = arrayList.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+            setTableData(paginatedData);
+            setIsLoading(false);
+        }
     };
 
     const columns = React.Children.map(children, (child) => child?.props);
@@ -42,20 +54,18 @@ const Table = ({ arrayList = [], children, params = {}, apiURL, tableWidth = nul
     const renderHeader = () => (
         <View style={styles.row}>
             {React.Children.map(children, (child) => (
-                <View key={child.props.fieldName} style={[styles.headerCell, { width: child?.props?.width || 100 }]}>
+                <View key={child.props.fieldName} style={[styles.headerCell, { width: child?.props?.width || "100%", height: 40 }]}>
                     <Text style={styles.headerText}>{child?.props?.children}</Text>
                 </View>
             ))}
         </View>
     );
 
-    const rowDataList = apiURL ? tableData : arrayList;
-
     const renderRows = () => (
-        rowDataList.map((rowData, rowIndex) => (
+        tableData.map((rowData, rowIndex) => (
             <View key={rowIndex} style={styles.row}>
                 {columns.map((fieldProps, colIndex) => (
-                    <View key={colIndex} style={[styles.cell, { width: fieldProps.width || 100 }]}>
+                    <View key={colIndex} style={[styles.cell, { width: fieldProps.width || "100%", height: fieldProps.height || 40 }]}>
                         <Text style={[styles.cellText, fieldProps?.style]}>
                             {fieldProps?.renderField ? fieldProps?.renderField(rowData) : rowData[fieldProps?.fieldName]}
                         </Text>
@@ -73,50 +83,54 @@ const Table = ({ arrayList = [], children, params = {}, apiURL, tableWidth = nul
     );
 
     const handleNextPage = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+        if (currentPage < totalPages){
+            setCurrentPage(currentPage + 1);
+            fetchData(currentPage + 1)
+        } 
     };
-
+    
     const handlePreviousPage = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
+        if (currentPage > 1){
+            setCurrentPage(currentPage - 1);
+            fetchData(currentPage - 1)
+        }
     };
 
-    const pagination = () => {
-
-        return (
-            <View style={styles.paginationControls}>
-                <Text style={styles.pageText}>{`Page ${currentPage} of ${totalPages}`}</Text>
-                <View style={styles.chevronContainer}>
-                    <TouchableOpacity onPress={handlePreviousPage} disabled={currentPage === 1}>
-                        <View style={styles.chevronIconContainer}>
-                            <Icon name="chevron-back-outline" size={24} color={currentPage === 1 ? '#ccc' : '#000'} />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
-                        <View style={styles.chevronIconContainer}>
-                            <Icon name="chevron-forward-outline" size={24} color={currentPage === totalPages ? '#ccc' : '#000'} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+    const pagination = () => (
+        <View style={styles.paginationControls}>
+            <Text style={styles.pageText}>{`Page ${currentPage} of ${totalPages}`}</Text>
+            <View style={styles.chevronContainer}>
+                <TouchableOpacity onPress={() => handlePreviousPage()} disabled={currentPage === 1}>
+                    <View style={styles.chevronIconContainer}>
+                        <Icon name="chevron-back-outline" size={24} color={currentPage === 1 ? '#ccc' : '#000'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() =>handleNextPage()} disabled={currentPage === totalPages}>
+                    <View style={styles.chevronIconContainer}>
+                        <Icon name="chevron-forward-outline" size={24} color={currentPage === totalPages ? '#ccc' : '#000'} />
+                    </View>
+                </TouchableOpacity>
             </View>
-        )
-    }
+        </View>
+    );
 
     let isLoader = () => {
-        return <Spinner />
-    }
+        return <Spinner />;
+    };
 
     return (
         <ScrollView horizontal style={{ marginBottom: 5 }}>
             <View style={[styles.table, { width: tableWidth ? tableWidth : columns?.length <= 3 ? screenWidth : isLoading ? screenWidth : "100%", height: isLoading ? screenHeight : totalRowCount > 23 ? "100%" : screenHeight }]}>
                 {isLoading && isLoader()}
                 {!isLoading && renderHeader()}
-                {!isLoading && ArrayList.isArray(rowDataList) && renderRows()}
-                {!isLoading && !ArrayList.isArray(rowDataList) && noRecordFound()}
+                {!isLoading && ArrayList.isArray(tableData) && renderRows()}
+                {!isLoading && !ArrayList.isArray(tableData) && noRecordFound()}
                 {pagination()}
             </View>
         </ScrollView>
     );
 };
+
 
 const styles = StyleSheet.create({
     table: {

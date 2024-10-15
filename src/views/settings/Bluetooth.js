@@ -126,13 +126,13 @@ const Bluetooth = (props) => {
             );
     
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                // BlueTooth.isBlueToothEnabled((error, enabled) => {
-                //     if (enabled) {
-                //         scanDevices();
-                //     } else {
-                //         EnableBlueTooth();
-                //     }
-                // });
+                BlueTooth.isBlueToothEnabled((error, enabled) => {
+                    if (enabled) {
+                        scanDevices();
+                    } else {
+                        EnableBlueTooth();
+                    }
+                });
             } else {
                 console.log("Location permission denied");
             }

@@ -148,23 +148,7 @@ const invoiceProductList = (props) => {
     setPermission(editPermission);
   };
 
-  const clearStackNavigate = () => {
-    {
-      params?.type === Order.DELIVERY
-        ? navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Delivery" }],
-            })
-          )
-        : navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Order" }],
-            })
-          );
-    }
-  };
+
 
   const getDetails = () => {
     if (id) {

@@ -160,6 +160,7 @@ const ContactList = () => {
       buttonOnPress={AddNew}
       isLoading={isLoading}
       refreshing = {refreshing}
+      showBackIcon={false}
     >
       <DeleteConfirmationModal
         modalVisible={deleteModalOpen}

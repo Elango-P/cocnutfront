@@ -330,7 +330,7 @@ const Purchase = () => {
         buttonOnPress={onClickNew} 
         showFilter={true}
         onFilterPress={closeDrawer}
-        
+        showBackIcon={false}
 
         >
              <FilterDrawer 

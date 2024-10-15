@@ -133,7 +133,7 @@ const SalaryDetailPage = (props) => {
                 >
                   {item.userName} {item.lastName}
                 </Text>
-                {item.type !== "Leave" && item.locationName && (
+                {!item?.attendanceTypeDetail?.is_leave && item.locationName && (
                   <Text>
                     {item.locationName}, {item.shiftName}
                   </Text>
@@ -142,7 +142,7 @@ const SalaryDetailPage = (props) => {
                 {item?.type && <Text>Type: {item?.type}</Text>}
 
                 <View style={styles.container1}>
-                  {item.type !== "Leave" && (
+                  {!item?.attendanceTypeDetail?.is_leave && (
                     <>
                       <Text style={{ width: "50%" }}>
                         In: {DateTime.LocalTime(item?.login)}

@@ -11,6 +11,8 @@ import addressServices from '../../services/AddressService';
 import countryService from '../../services/CountryService';
 import userService from '../../services/UserService';
 import NetworkStatus from '../../lib/NetworkStatus';
+import SaveButton from "../../components/SaveButton";
+import { View } from 'react-native';
 
 const AddressForm = (props) => {
 
@@ -19,8 +21,8 @@ const AddressForm = (props) => {
     const [countryList, setCountryList] = useState([])
     const [stateList, setStateList] = useState([]);
     const [country, setCountry] = useState(null);
-    const [stateValue,setStateValue] = useState(null)
-    const [isSubmit,setIsSubmit] = useState(false)
+    const [stateValue, setStateValue] = useState(null)
+    const [isSubmit, setIsSubmit] = useState(false)
 
     const isFocused = useIsFocused();
 
@@ -41,7 +43,7 @@ const AddressForm = (props) => {
         if (data?.country || country) {
             getStateList()
         }
-    }, [data?.country,country])
+    }, [data?.country, country])
 
 
     let getDetail = async () => {
@@ -49,17 +51,17 @@ const AddressForm = (props) => {
             setDetail(res && res?.data)
 
         })
-    }     
+    }
 
     let getAddressData = async () => {
-        if(detail?.id){
+        if (detail?.id) {
             await userService.get(detail?.id && parseInt(detail?.id), (err, response) => {
-                if (response && response.data) {              
+                if (response && response.data) {
                     setData(response.data)
                 }
             })
         }
-      
+
     }
 
     const getCountryList = () => {
@@ -71,21 +73,21 @@ const AddressForm = (props) => {
         const country = countryList.find(c => c.value === countryName);
         return country ? country.id : null;
     }
-      
+
     const getStateList = async () => {
         let params = "";
         if (country || getCountryId(data?.country)) {
             params += "?stateList=true";
         }
-        
-        await countryService.getStateList(country ? country?.id  : getCountryId(data?.country), params, (response) => {
+
+        await countryService.getStateList(country ? country?.id : getCountryId(data?.country), params, (response) => {
             setStateList(response);
         })
     }
 
-    
-    const handleFormSubmit = async (values) => {     
-        setIsSubmit(true)      
+
+    const handleFormSubmit = async (values) => {
+        setIsSubmit(true)
         const formData = new Object();
         formData.address1 = values.address1;
         formData.user_id = data?.id;
@@ -97,18 +99,31 @@ const AddressForm = (props) => {
         formData.latitude = values.latitude;
         formData.longitude = values.longitude;
         formData.id = data?.addressId;
-        
-        await addressServices.update(data?.addressId, formData, (err, res) => {            
-            if(res && res?.data){
-                setIsSubmit(false)
-                navigation.navigate("Dashboard")
 
-            }else if(res && res?.status == NetworkStatus.STATUS_BAD_REQUEST){
-                setIsSubmit(false)
-            }else{
-                setIsSubmit(false)
-            }
-        })
+        if (data?.addressId) {
+            await addressServices.update(data?.addressId, formData, (err, res) => {
+                if (res && res?.data) {
+                    setIsSubmit(false)
+                    navigation.navigate("editProfile")
+
+                } else if (res && res?.status == NetworkStatus.STATUS_BAD_REQUEST) {
+                    setIsSubmit(false)
+                } else {
+                    setIsSubmit(false)
+                }
+            })
+        } else {
+            await addressServices.create(formData, async (err, response) => {
+                if (response) {
+                    setIsSubmit(false)
+                    navigation.navigate("editProfile")
+
+                } else {
+                    setIsSubmit(false)
+                }
+            })
+        }
+
     };
 
 
@@ -121,7 +136,7 @@ const AddressForm = (props) => {
                 }
             }
         });
-    };    
+    };
 
     let initialValues = {
         first_name: data?.name ? detail?.name : "",
@@ -146,11 +161,11 @@ const AddressForm = (props) => {
     };
 
 
-   
+
     const onChangeCountry = (value) => {
         setCountry(value)
     }
-    const onChangeSate = (value) =>{
+    const onChangeSate = (value) => {
         setStateValue(value.name)
     }
 
@@ -158,9 +173,7 @@ const AddressForm = (props) => {
         <Layout
             title={`Edit Address`}
             showBackIcon={true}
-             buttonLabel={"Save"}
-            buttonOnPress={handleSumbmit}
-            isSubmit = {isSubmit}
+            isSubmit={isSubmit}
         >
 
             <Form
@@ -169,17 +182,17 @@ const AddressForm = (props) => {
                 onSubmit={handleFormSubmit}
                 ref={formRef}
             >
-              
-          
-                 <Card>
+
+
+                <Card>
                     <Card.Content>
                         <TextInput name="address1" label="Address 1" />
                         <TextInput name="address2" label="Address 2" />
-                        <TextInput name="city" label="City"/>
+                        <TextInput name="city" label="City" />
                         <Select name="country" label="Country" options={countryList} onChange={onChangeCountry} />
-                        <Select name="state" label="State" options={stateList} onChange={onChangeSate}/>
-                        <TextInput name="pin_code" label="Pin Code"  />
-                        <TextInput name="latitude" label="Latitude"  />
+                        <Select name="state" label="State" options={stateList} onChange={onChangeSate} />
+                        <TextInput name="pin_code" label="Pin Code" />
+                        <TextInput name="latitude" label="Latitude" />
                         <TextInput name="longitude" label="Longitude" />
                         <Button
                             mode="contained"
@@ -188,6 +201,14 @@ const AddressForm = (props) => {
                         >
                             Get Current Location
                         </Button>
+                        <View style={{ width: "100%", marginTop: 10 }}>
+                            <SaveButton
+                                title={"Save"}
+                                onPress={() => {
+                                    handleSumbmit();
+                                }}
+                            />
+                        </View>
                     </Card.Content>
                 </Card>
             </Form>

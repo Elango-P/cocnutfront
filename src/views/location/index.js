@@ -31,7 +31,7 @@ const Index = () => {
       }
 
     return (
-        <Layout title={"Locations"}   addButton={ permission ? true : false} buttonOnPress = {()=> navigation.navigate("LocationAdd")}
+        <Layout title={"Locations"}   showBackIcon={false} addButton={ permission ? true : false} buttonOnPress = {()=> navigation.navigate("LocationAdd")}
          >
             <StoreSelector onPress={onStorePress}/>
         </Layout>

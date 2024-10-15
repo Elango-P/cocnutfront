@@ -16,6 +16,7 @@ import ObjectName from "../../../helper/ObjectName";
 import Number from "../../../lib/Number";
 import { Card } from "react-native-paper";
 import { useForm } from "react-hook-form";
+import platform from "../../../lib/Platform";
 
 const BottomModal = (props) => {
   const { title, modalVisible, toggle, item, BottonLabel1, updateAction } =
@@ -340,7 +341,7 @@ const BottomModal = (props) => {
     updateAction(initialValues);
   };
   return (
-    <View style={styles.container}>
+    <View>
       <Modal
         isVisible={modalVisible}
         style={styles.modal}
@@ -745,7 +746,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: Dimensions.get("window").height * 1, // Modal content height is 80% of screen
+    maxHeight: platform.isIOS() ? Dimensions.get("window").height * 0.94 : Dimensions.get("window").height, 
   },
   ProductEditDivider: {
     width: "100%",

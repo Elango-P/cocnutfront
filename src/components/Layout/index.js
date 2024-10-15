@@ -117,7 +117,8 @@ const Layout = ({
   addButton,
   totalAmountValue,
   totalAmountLabel,
-  isSubmit
+  isSubmit,
+  isAddButtonDisabled
 }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -409,6 +410,7 @@ const Layout = ({
               showLogo={showLogo}
               showProfile={showProfile}
               onProfileHandle={onProfileHandle}
+              isAddButtonDisabled={isAddButtonDisabled}
             />
 
             <View>

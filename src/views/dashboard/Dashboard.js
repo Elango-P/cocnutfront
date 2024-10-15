@@ -1,14 +1,8 @@
 // Import React and Component
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  Alert,
-  AppState,
-  BackHandler,
-  NativeModules,
-  View,
-} from "react-native";
+import { Alert, AppState, BackHandler, NativeModules, View } from "react-native";
 import Layout from "../../components/Layout";
 import MultiAlert from "../../components/Modal/MultiAlert";
 import Refresh from "../../components/Refresh";
@@ -24,10 +18,7 @@ import Boolean from "../../lib/Boolean";
 import device from "../../lib/Device";
 import Setting from "../../lib/Setting";
 import SystemSetting from "../../lib/SystemSettings";
-import {
-  default as AsyncStorageService,
-  default as asyncStorageService,
-} from "../../services/AsyncStorageService";
+import { default as AsyncStorageService, default as asyncStorageService } from "../../services/AsyncStorageService";
 import AttendanceService from "../../services/AttendanceService";
 import dashboardService from "../../services/DashboardService";
 import inventoryTransferService from "../../services/InventoryTransferService";
@@ -54,15 +45,23 @@ import BarcodeScanner from "../../components/BarcodeScanner";
 import productService from "../../services/ProductService";
 import ProductListModal from "../../components/Modal/ProductListModal";
 import User from "../../helper/User";
+import OrderTypeService from "../../services/orderTypeService";
+import Response from "../../lib/NetworkStatus";
 
-// const { RNDeviceInfo } = NativeModules
+const { RNDeviceInfo } = NativeModules
 let DeviceInfo;
-// if (RNDeviceInfo) {
-//   DeviceInfo = require('react-native-device-info');
-// }
+if (RNDeviceInfo) {
+  DeviceInfo = require('react-native-device-info');
+}
+
+
+
+
+
 
 const Dashboard = (props) => {
-  const param = props.route.params;
+
+  const param = props.route.params
 
   const [refreshing, setRefreshing] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -70,10 +69,7 @@ const Dashboard = (props) => {
   const [userName, setUserName] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [locationId, setLocationId] = useState();
-  const [
-    attendanceCheckinCheckPermission,
-    setAttendanceCheckinCheckPermission,
-  ] = useState("");
+  const [attendanceCheckinCheckPermission, setAttendanceCheckinCheckPermission] = useState("")
   const navigator = useNavigation();
   const focused = useIsFocused();
   const [transferTypeList, setTransferTypeList] = useState([]);
@@ -82,67 +78,60 @@ const Dashboard = (props) => {
   const [leave, setLeave] = useState([]);
   const [additionalDay, setAdditionalDay] = useState([]);
   const [todayAttendance, setTodayAttendance] = useState([]);
-  const [ticketViewPermission, setTicketViewPermission] = useState();
-  const [fineViewPermission, setFineViewPermission] = useState();
-  const [transferViewPermission, setTransferViewPermission] = useState();
-  const [geofencingViewPermission, setGeofencingViewPermission] = useState();
-  const [messageViewPermission, setMessageViewPermission] = useState();
-  const [transfermanageOtherPermission, setTransferManageOtherPermission] =
-    useState();
-  const [
-    salesettlementManageOtherPermission,
-    setSalesettlementManageOtherPermission,
-  ] = useState();
-  const [orderManageOtherPermission, setOrderManageOtherPemission] = useState();
-  const [forceLogout, setForceLogout] = useState();
-  const [collectCustomerInfo, setCollectCustomerInfo] = useState("");
-  const [appId, setAppId] = useState("");
+  const [ticketViewPermission, setTicketViewPermission] = useState()
+  const [fineViewPermission, setFineViewPermission] = useState()
+  const [transferViewPermission, setTransferViewPermission] = useState()
+  const[geofencingViewPermission,setGeofencingViewPermission] = useState()
+  const[messageViewPermission,setMessageViewPermission] = useState()
+  const [transfermanageOtherPermission,setTransferManageOtherPermission] = useState()
+  const [salesettlementManageOtherPermission,setSalesettlementManageOtherPermission] = useState()
+  const [orderManageOtherPermission,setOrderManageOtherPemission] = useState()
+  const [forceLogout, setForceLogout] = useState()
+  const[collectCustomerInfo,setCollectCustomerInfo] = useState("")
+  const [appId,setAppId] = useState("")
   const [userDetail, setUserDetail] = useState("");
   const [modalVisible, setScanModalVisible] = useState(false);
   const [productModalOpen, setProductSelectModalOpen] = useState(false);
   const [scannedProductList, setScannedProductList] = useState([]);
-  const [isSubmit, setIsSubmit] = useState(false);
+  const [isSubmit,setIsSubmit] = useState(false)
   useEffect(() => {
     getAsyncStorageItem();
     getTransferTypeByRole();
-    getUserDetail();
+    getUserDetail()
     getPermission();
     getAttendanceDetail();
     getForceLogout();
     getCustomerNumber();
-  }, [focused, isLoading]);
+  }, [focused, isLoading])
+  
 
   useEffect(() => {
-    const SystemSettings = async () => {
-      await settingService.getByObjectIdAndObjectName(
-        Setting.UNMUTE_PHONE_SOUND,
-        appId,
-        ObjectName.APP,
-        async (err, response) => {
-          if (response == 1) {
-            SystemSetting.setVolume(1);
-          }
-        }
-      );
-    };
-    SystemSettings();
-    getMessage();
-  }, [focused, refreshing]);
-
+   const SystemSettings = async()=>{
+    await settingService.getByObjectIdAndObjectName(Setting.UNMUTE_PHONE_SOUND,appId,ObjectName.APP,async (err,response)=>{
+      if(response == 1){
+           SystemSetting.setVolume(1)
+      }
+    })   
+  }
+  SystemSettings()
+  getMessage();
+  
+  }, [focused,refreshing])
+    
   useEffect(() => {
-    getUserDetail();
+    getUserDetail()
     const checkUserDetail = async () => {
       if (userDetail && userDetail.force_logout === User.FORCE_LOGOUT_ENABLE) {
         MultiAlert.addAlert({
           title: "Restarting",
           message: "Restarting the App",
         });
-
+  
         try {
-          userService.update(
+           userService.update(
             selectedUser,
             { force_logout_soft: false },
-            async (err, response) => {
+            async (err, response) => {              
               if (response && response?.data) {
                 await AsyncStorage.clearAll();
                 navigation.navigate("Login");
@@ -154,24 +143,28 @@ const Dashboard = (props) => {
         }
       }
     };
-
+  
     checkUserDetail();
   }, [userDetail && userDetail?.force_logout]);
-
+  
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({});
+} = useForm({
+});
 
   useEffect(() => {
+
     const loginSync = async () => {
       if (param?.login) {
-        await SyncService.Sync(() => {});
+        await SyncService.Sync(() => { });
+
       }
     };
-    loginSync();
-  }, [param?.login]);
+    loginSync()
+
+  }, [param?.login])
 
   useEffect(() => {
     // Add event listener
@@ -188,14 +181,14 @@ const Dashboard = (props) => {
 
   const handleAppStateChange = (nextAppState) => {
     if (nextAppState === "active") {
-      setRefreshing(true);
+      setRefreshing(true)
       setTimeout(() => {
-        setRefreshing(false);
+        setRefreshing(false)
       }, 1000);
     }
   };
 
-  const handleBackPress = () => {
+const handleBackPress =()=>{
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
@@ -204,65 +197,50 @@ const Dashboard = (props) => {
       }
     );
     return () => backHandler.remove();
-  };
+}
+
 
   const getTransferTypeByRole = () => {
     TransferTypeService.searchByRole(null, (error, response) => {
       if (response && response.data && response.data.data) {
-        setTransferTypeList(response.data.data);
+        setTransferTypeList(response.data.data)
       }
-    });
-  };
+    })
+  }
   const getUserDetail = async () => {
     const userId = await AsyncStorage.getItem(AsyncStorageConstants.USER_ID);
     if (userId) {
-      userService.get(userId, (err, response) => {
-        if (response && response.data) {
-          setUserDetail(response.data);
-        }
-      });
-    }
-  };
+        userService.get(userId, (err, response) => {
+            if (response && response.data) {              
+                setUserDetail(response.data)
+            }
+        })
+    } 
+}
+
 
   const getPermission = async () => {
-    const isExist = await PermissionService.hasPermission(
-      Permission.USER_MOBILE_CHECKIN
-    );
-    setAttendanceCheckinCheckPermission(isExist);
-    const ticketViewPermission = await PermissionService.hasPermission(
-      Permission.TICKET_VIEW
-    );
-    setTicketViewPermission(ticketViewPermission);
-    const fineViewPermission = await PermissionService.hasPermission(
-      Permission.FINE_VIEW
-    );
-    setFineViewPermission(fineViewPermission);
-    const transferViewPermission = await PermissionService.hasPermission(
-      Permission.TRANSFER_VIEW
-    );
-    setTransferViewPermission(transferViewPermission);
-    const transfermanageOtherPermission = await PermissionService.hasPermission(
-      Permission.TRANSFER_MANAGE_OTHERS
-    );
-    setTransferManageOtherPermission(transfermanageOtherPermission);
-    const salesettlementManageOtherPermission =
-      await PermissionService.hasPermission(
-        Permission.SALE_SETTLEMENT_MANAGE_OTHERS
-      );
-    setSalesettlementManageOtherPermission(salesettlementManageOtherPermission);
-    const orderManageOtherPermission = await PermissionService.hasPermission(
-      Permission.ORDER_MANAGE_OTHERS
-    );
-    setOrderManageOtherPemission(orderManageOtherPermission);
-    const messageViewPermission = await PermissionService.hasPermission(
-      Permission.MOBILEAPP_DASHBOARD_MENU_MESSAGES
-    );
-    setMessageViewPermission(messageViewPermission);
-    const geofencingViewPermission = await PermissionService.hasPermission(
-      Permission.MOBILEAPP_DASHBOARD_MENU_GEOFENCING
-    );
-    setGeofencingViewPermission(geofencingViewPermission);
-  };
+    const isExist = await PermissionService.hasPermission(Permission.USER_MOBILE_CHECKIN);
+    setAttendanceCheckinCheckPermission(isExist)
+    const ticketViewPermission = await PermissionService.hasPermission(Permission.TICKET_VIEW);
+    setTicketViewPermission(ticketViewPermission)
+    const fineViewPermission = await PermissionService.hasPermission(Permission.FINE_VIEW);
+    setFineViewPermission(fineViewPermission)
+    const transferViewPermission = await PermissionService.hasPermission(Permission.TRANSFER_VIEW);
+    setTransferViewPermission(transferViewPermission)
+    const transfermanageOtherPermission = await PermissionService.hasPermission(Permission.TRANSFER_MANAGE_OTHERS)
+    setTransferManageOtherPermission(transfermanageOtherPermission)
+    const salesettlementManageOtherPermission = await PermissionService.hasPermission(Permission.SALE_SETTLEMENT_MANAGE_OTHERS)
+    setSalesettlementManageOtherPermission(salesettlementManageOtherPermission)
+    const orderManageOtherPermission = await PermissionService.hasPermission(Permission.ORDER_MANAGE_OTHERS)
+    setOrderManageOtherPemission(orderManageOtherPermission)
+    const messageViewPermission = await PermissionService.hasPermission(Permission.MOBILEAPP_DASHBOARD_MENU_MESSAGES);
+    setMessageViewPermission(messageViewPermission)
+    const geofencingViewPermission = await PermissionService.hasPermission(Permission.MOBILEAPP_DASHBOARD_MENU_GEOFENCING);
+    setGeofencingViewPermission(geofencingViewPermission)
+
+    
+  }
   const getMessage = () => {
     messageService.unRead((err, response) => {
       if (response && response.data) {
@@ -270,15 +248,16 @@ const Dashboard = (props) => {
         if (messages && messages.length > 0) {
           messages.forEach(async (message) => {
             const { id, first_name, last_name, recent_last_message } = message;
-
+  
             Alert.alert(
-              "New Message Received",
+              'New Message Received',
               `${first_name} ${last_name}: ${recent_last_message}`,
               [
                 {
-                  text: "OK",
+                  text: 'OK',
                   onPress: async () => {
-                    await messageService.update(id, null, (response) => {});
+                    await messageService.update(id, null, (response) => {
+                    });
                   },
                 },
               ]
@@ -289,155 +268,253 @@ const Dashboard = (props) => {
     });
   };
 
+
+
+
   const getAsyncStorageItem = async () => {
-    let storeId = await AsyncStorageService.getSelectedLocationId();
-    setLocationId(storeId);
-    let locationName = await AsyncStorageService.getSelectedLocationName();
-    setLocationName(locationName);
-    let userName = await AsyncStorageService.getUserName();
-    setUserName(userName);
+    let storeId = await AsyncStorageService.getSelectedLocationId()
+    setLocationId(storeId)
+    let locationName = await AsyncStorageService.getSelectedLocationName()
+    setLocationName(locationName)
+    let userName = await AsyncStorageService.getUserName()
+    setUserName(userName)
     let userId = await AsyncStorageService.getUserId();
-    setSelectedUser(userId);
-    let appId = await AsyncStorageService.getAppId();
-    setAppId(appId);
-  };
+    setSelectedUser(userId)
+    let appId = await AsyncStorageService.getAppId()
+    setAppId(appId)
+  }
 
-  const getCustomerNumber = async () => {
-    await settingService.getByName(
-      Setting.COLLECT_CUSTOMER_INFO,
-      (err, response) => {
-        setCollectCustomerInfo(response);
-      }
+
+const getCustomerNumber = async ()=>{
+  await settingService.getByName(Setting.COLLECT_CUSTOMER_INFO,(err,response)=>{
+    setCollectCustomerInfo(response)
+  })
+}
+
+
+  const AddNew = async () => {
+    if(todayAttendance && !todayAttendance[0]?.login && !orderManageOtherPermission){
+      AlertMessage.Error("CheckIn record is missing","CheckIn Missing")
+    }else{
+    let orderTypeData = await OrderTypeService.list();
+      
+    let orderTypes = orderTypeData.filter(
+      (orderType) => orderType.allow_store_order == true
     );
-  };
-
-  const AddNew = () => {
-    if (
-      todayAttendance &&
-      !todayAttendance[0]?.login &&
-      !orderManageOtherPermission
-    ) {
-      AlertMessage.Error("CheckIn record is missing", "CheckIn Missing");
+    if (orderTypes && orderTypes.length > 1) {
+      navigation.navigate("Order/OrderTypeSelect", {
+        orderTypeList: orderTypes,
+        locationId: locationId,
+        locationName: locationName,
+        userName: userName,
+        selectedUser: selectedUser,
+        isNewOrder: true,
+        collectCustomerInfo: true,
+        userId: selectedUser,
+        owner: selectedUser,
+        
+      });
+      
     } else {
-      if (Boolean.isTrue(collectCustomerInfo)) {
-        navigation.navigate("Order/ProductList", {
-          collectCustomerInfo: collectCustomerInfo,
-          storeId: locationId,
-          locationName: locationName,
-          owner: selectedUser,
-          isNewOrder: true,
-          type: Order.STORE,
-        });
+      let orderTypeData =
+        orderTypes && orderTypes.length == 1 ? orderTypes[0] : null;
+
+      if (Boolean.isTrue(orderTypeData?.show_customer_selection)) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "Order/ProductList",
+                params: {
+                  storeId: locationId,
+                  locationName: locationName,
+                  ownerName: userName,
+                  owner: selectedUser,
+                  isNewOrder: true,
+                  collectCustomerInfo: true,
+                  type: orderTypeData,
+                  userId: selectedUser,
+                  
+                },
+              },
+            ],
+          })
+        );
       } else {
-        orderService.createOrder({}, (error, response) => {
+        let body = { type: orderTypeData && orderTypeData?.id };
+
+        orderService.createOrder(body, (error, response) => {
+          if(error && error.status >= Response.STATUS_BAD_REQUEST){
+          }
+
           if (response && response.data && response.data.orderId) {
-            navigation.navigate("Order/ProductList", {
-              orderDetail: response.data.orderDetail,
-              collectCustomerInfo: collectCustomerInfo,
-              orderId: response.data.orderId,
-              storeId: locationId,
-              locationName: locationName,
-              owner: selectedUser,
-              isNewOrder: true,
-              type: Order.STORE,
-            });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "Order/ProductList",
+                    params: {
+                      orderDetail: response.data.orderDetail,
+                      orderId: response.data.orderId,
+                      storeId: locationId,
+                      locationName: locationName,
+                      ownerName: userName,
+                      userId: selectedUser,
+                      isNewOrder: true,
+                      collectCustomerInfo: false,
+                      type: orderTypeData,
+                      owner: selectedUser,
+                     
+                    },
+                  },
+                ],
+              })
+            );
           }
         });
       }
     }
+  }
+      
   };
+
 
   const addNewSalesSettlement = async () => {
-    if (
-      todayAttendance &&
-      !todayAttendance[0]?.login &&
-      !salesettlementManageOtherPermission
-    ) {
-      AlertMessage.Error("CheckIn record is missing", "CheckIn Missing");
-    } else {
-      await saleSettlementService.ValidateSalesSettlementOnAdd(
-        (err, response) => {
-          if (response && response.status == 200) {
-            navigation.navigate("SalesSettlementForm");
-          }
+    if(todayAttendance && !todayAttendance[0]?.login  && !salesettlementManageOtherPermission){
+      AlertMessage.Error("CheckIn record is missing","CheckIn Missing")
+    }else{
+      await saleSettlementService.ValidateSalesSettlementOnAdd((err,response)=>{
+        if(response && response.status == 200){
+          navigation.navigate("SalesSettlementForm");
+
         }
-      );
+        })
     }
-  };
-  const addNewActivity = () => {
-    navigation.navigate("/ActivityTypeScreen", { isAddPage: true });
-  };
+        
+   
+
+  }
+  const addNewActivity =() => {
+    navigation.navigate("/ActivityTypeScreen",{ isAddPage:true })
+  }
 
   const CheckIn = async () => {
-    setIsSubmit(true);
+    setIsSubmit(true)
     if (!locationId) {
-      setIsSubmit(false);
-      AlertMessage.Error("Location Not Selected");
-    } else {
-      setIsSubmit(false);
-      navigation.navigate("shiftSelect", {
-        store_id: locationId,
-        navigation: navigation,
-        reDirectionUrl: "Dashboard",
-      });
-    }
-  };
+      setIsSubmit(false)
+      AlertMessage.Error("Location Not Selected")
+  } else{
+    setIsSubmit(false)
+    navigation.navigate("shiftSelect", {
+      store_id: locationId,
+      navigation: navigation,
+      reDirectionUrl: "Dashboard",
+    });
+  }
+  }
 
   const bulkOrder = () => {
-    navigation.navigate("CustomerSelector", {
-      reDirectUrl: "BulkOrder",
+    navigation.navigate("CustomerSelector",{
+      reDirectUrl: "BulkOrder"
     });
-  };
+  }
 
   const syncNavigation = async () => {
+
     navigator.navigate("Sync", { syncing: true });
   };
-  const getForceLogout = async () => {
-    const roleId = await asyncStorageService.getRoleId();
-    await settingService.get(
-      Setting.FORCE_LOGOUT_AFTER_CHECKOUT,
-      (err, response) => {
+  const getForceLogout = async ()=>{
+    const roleId = await asyncStorageService.getRoleId()
+    await settingService.get(Setting.FORCE_LOGOUT_AFTER_CHECKOUT, (err, response) => {
         if (response && response.settings && response.settings[0].value) {
-          const forceLogout =
-            response && response.settings && response.settings[0].value;
-          setForceLogout(forceLogout);
+            const forceLogout = response && response.settings && response.settings[0].value
+              setForceLogout(forceLogout)
         }
-      },
-      roleId
-    );
-  };
+  },roleId)
+  }
+
 
   const checkOutValidation = async (id) => {
-    setIsSubmit(true);
-    AttendanceService.CheckOutValidation(id, async (err, response) => {
+    setIsSubmit(true)
+    AttendanceService.CheckOutValidation(id, async (err, response) => {  
+      setIsSubmit(false) 
       if (response) {
-        setIsSubmit(false);
         if (device.isSamsungDevice()) {
           navigation.navigate("CameraScreen", {
             forceLogout,
             navigation,
             id,
-            isCheckOut: true,
-          });
+            isCheckOut: true
+          }
+        );
         } else {
           setIsLoading(true);
           AttendanceService.checkOut(id, false, async (err, response) => {
             setIsLoading(false);
-            setIsSubmit(false);
+            setIsSubmit(false)
             if (response) {
-              await AsyncStorage.clear(AsyncStorageConstants.SHIFT);
+              await AsyncStorage.clear(AsyncStorageConstants.SHIFT)
+              if (response?.data?.additionalHours) {
+                MultiAlert.addAlert({
+                  message: `You will get overtime bonus for ${response?.data?.additionalHours} today\nBonus Amount: ${response?.data?.additionalHoursBonus}`,
+                  title: "OverTime Bonus",
+                });
+              }
+
+              if (response?.data?.endAdditionalHours) {
+                MultiAlert.addAlert({
+                  message: `Bonus Amount: ${response?.data?.endAdditionalHoursBonus}`,
+                  title: "Late Checkout Bonus",
+                });
+              }
+              
+              if (response?.data?.noStockEntryFineAdd) {
+                MultiAlert.addAlert({
+                  message: `Fine Amount: ${response?.data?.noStockEntryFineAdd?.fineAmount}\nStock Entry Count: ${response?.data?.noStockEntryFineAdd?.stockEntryCount}\nMissing StockEntry Count: ${response?.data?.noStockEntryFineAdd?.missingStockEntryCount}`,
+                  title: "Stock Entry Fine",
+                });
+              }
+              
+              if (response?.data?.extraStockEntryBonusAdd) {
+                MultiAlert.addAlert({
+                  message: `Bonus Amount: ${response?.data?.extraStockEntryBonusAdd?.bonusAmount}\nStock Entry Count: ${response?.data?.extraStockEntryBonusAdd?.stockEntryCount}\nExtra StockEntry Count: ${response?.data?.extraStockEntryBonusAdd?.extraStockEntryCount}`,
+                  title: "Stock Entry Bonus",
+                });
+              }
+              
+              if (response?.data?.minimumReplenishmentCountFineAdd) {
+                MultiAlert.addAlert({
+                  message: `Fine Amount: ${response?.data?.minimumReplenishmentCountFineAdd?.fineAmount}\nStock Entry Count: ${response?.data?.minimumReplenishmentCountFineAdd?.replenishmentCount}\nMissing StockEntry Count: ${response?.data?.minimumReplenishmentCountFineAdd?.missingReplenishmentCount}`,
+                  title: "Replenishment Fine",
+                });
+              }
+              
+              if (response?.data?.extraReplenishmentBonusAdd) {
+                MultiAlert.addAlert({
+                  message: `Bonus Amount: ${response?.data?.extraReplenishmentBonusAdd?.bonusAmount}\nStock Entry Count: ${response?.data?.extraReplenishmentBonusAdd?.replenishmentCount}\nExtra StockEntry Count: ${response?.data?.extraReplenishmentBonusAdd?.extraReplenishmentCount}`,
+                  title: "Replenishment Bonus",
+                });
+              }
+              if (response?.data?.earlyCheckOutFineAdd) {
+                MultiAlert.addAlert({
+                  message: `Early Checkout Time: ${response?.data?.earlyCheckOutFineAdd?.earlyCheckOutTime}\nFine Amount: ${response?.data?.earlyCheckOutFineAdd?.fineAmount}`,
+                  title: "Early Checkout Fine",
+                });
+              }
+              
 
               if (forceLogout === "true") {
-                await AsyncStorage.clearAll();
+                await AsyncStorage.clearAll()
                 navigation.navigate("Login");
               }
             }
-          });
+          })
         }
       }
-    });
-  };
-  
+    })
+  }
   const getAttendanceDetail = async () => {
     await dashboardService.get(async (err, response) => {
       if (response && response.data) {
@@ -459,81 +536,84 @@ const Dashboard = (props) => {
         }
       }
     });
-  };
+  };;
+
 
   const addNewTransfer = () => {
-    if (
-      todayAttendance &&
-      !todayAttendance[0]?.login &&
-      !transfermanageOtherPermission
-    ) {
-      AlertMessage.Error("CheckIn record is missing", "CheckIn Missing");
-    } else {
-      inventoryTransferService.onTransferTypeClickStoreSelect(
-        transferTypeList,
-        navigation
-      );
+    if(todayAttendance && !todayAttendance[0]?.login && !transfermanageOtherPermission){
+      AlertMessage.Error("CheckIn record is missing","CheckIn Missing")
+    }else{
+      inventoryTransferService.onTransferTypeClickStoreSelect(transferTypeList, navigation);
+
     }
-  };
+  }
   const toggle = () => {
     setScanModalVisible(!modalVisible);
-  };
+}
 
-  const handleScannedData = async (data) => {
-    setScanModalVisible(false);
-    if (data?.data) {
-      const Product = await productService.getProductUpdatedPrice(data?.data);
-      if (Product && Product.length > 0) {
-        setScannedProductList(Product);
+const handleScannedData =async (data)=>{
+  setScanModalVisible(false)  
+  if(data?.data){ 
+   const Product = await productService.getProductUpdatedPrice(data?.data);       
+   if (Product && Product.length > 0) {
+    setScannedProductList(Product);
 
-        setProductSelectModalOpen(true);
-      } else {
-        setProductSelectModalOpen(true);
-      }
-    }
-  };
-  const closeModal = () => {
-    setProductSelectModalOpen(false);
-    setScannedProductList("");
-  };
+    setProductSelectModalOpen(true); 
+   }else{
+    setProductSelectModalOpen(true); 
 
-  let Name = getFullName(
-    userDetail?.first_name,
-    userDetail?.last_name ? userDetail?.last_name : ""
-  );
+   }
+   
+   
+  }
+}
+const closeModal = () => {
+  setProductSelectModalOpen(false)
+  setScannedProductList("");
+
+};
+
+  
+ let Name = getFullName(userDetail?.first_name,  userDetail?.last_name ? userDetail?.last_name : "");
 
   return (
     <Layout
       showPortalName
-      profileUrl={userDetail && userDetail?.avatarUrl}
-      mobileNumber={userDetail && userDetail?.mobileNumber1}
-      accountId={userDetail && userDetail?.account_id}
-      Name={Name}
+      profileUrl = {userDetail && userDetail?.avatarUrl}
+      mobileNumber = {userDetail && userDetail?.mobileNumber1}
+      accountId = {userDetail && userDetail?.account_id}
+      Name = {Name}
       hideFooterPadding={true}
-      showMessage={messageViewPermission ? true : false}
+      showMessage = {messageViewPermission ? true : false}
       isLoading={isLoading}
       refreshing={refreshing}
       showBackIcon={false}
-      backButtonNavigationOnPress={() => props && handleBackPress()}
+      backButtonNavigationOnPress = {()=>props && handleBackPress()}
       showLogo
     >
+  
       <View style={{ flex: 1, backgroundColor: Color.WHITE }}>
+     
+     
         <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
-          {modalVisible && (
-            <BarcodeScanner
-              modalVisible={modalVisible}
-              handleScannedData={handleScannedData}
-              toggle={toggle}
-            />
-          )}
+        {modalVisible && (
+        <BarcodeScanner
+         modalVisible={modalVisible}
+         handleScannedData={handleScannedData}
+         toggle={toggle}
+
+        />
+        )}
           {productModalOpen && (
             <ProductListModal
-              visible={productModalOpen}
-              products={scannedProductList}
-              onClose={closeModal}
+            visible={productModalOpen}
+            products = {scannedProductList}
+            onClose = {closeModal}
             />
           )}
+       
 
+      
           <VerticalSpace10 />
 
           {/* Header Section */}
@@ -545,44 +625,30 @@ const Dashboard = (props) => {
           <VerticalSpace10 />
 
           {/* QuickLinks Section  */}
-          <QuickLinks
-            AddNewOrder={AddNew}
-            CheckIn={CheckIn}
-            addNewTransfer={addNewTransfer}
-            syncNavigation={syncNavigation}
-            addNewSalesSettlement={addNewSalesSettlement}
-            bulkOrder={bulkOrder}
-            addNewActivity={() => addNewActivity()}
-            ScanProductbarcode={() => setScanModalVisible(true)}
-          />
+            <QuickLinks 
+             AddNewOrder={AddNew} 
+             CheckIn={CheckIn} 
+             addNewTransfer={addNewTransfer} 
+             syncNavigation={syncNavigation} 
+             addNewSalesSettlement={addNewSalesSettlement} 
+             bulkOrder={bulkOrder}
+             addNewActivity = {()=>addNewActivity()}
+             ScanProductbarcode = {()=>setScanModalVisible(true)}
+              />
           {/* Sync Section */}
+         
+          <VerticalSpace10 />
+          {geofencingViewPermission && (          
+          <><GeoFencing /><VerticalSpace10 /></>
+          )
+          }
 
-          <VerticalSpace10 />
-          <VerticalSpace10 />
-          {geofencingViewPermission && (
-            <>
-              <GeoFencing />
-              <VerticalSpace10 />
-            </>
-          )}
 
           {/* Attendance Section */}
           {attendanceCheckinCheckPermission && (
-            <AttendanceCard
-              checkOut={checkOutValidation}
-              isSubmit={isSubmit}
-              refreshing={refreshing}
-              CheckIn={CheckIn}
-              locationId={locationId}
-              workingDay={workingDay}
-              leave={leave}
-              additionalDay={additionalDay}
-              checkIn={todayAttendance}
-              navigation={navigation}
-              setIsLoading={setIsLoading}
-            />
-          )}
+            <AttendanceCard checkOut={checkOutValidation} isSubmit = {isSubmit} refreshing={refreshing} CheckIn={CheckIn} locationId = {locationId} workingDay={workingDay} leave={leave} additionalDay={additionalDay} checkIn={todayAttendance} navigation={navigation} setIsLoading={setIsLoading} />)}
 
+    
           {/* Fine Section */}
           {fineViewPermission && (
             <>
@@ -594,14 +660,13 @@ const Dashboard = (props) => {
 
           {/* {Ticket Section} */}
           {ticketViewPermission && (
-            <>
-              <VerticalSpace10 />
-              <TicketList />
-            </>
+           <><VerticalSpace10 /><TicketList /></>
           )}
           <VerticalSpace10 />
+
         </Refresh>
       </View>
+
     </Layout>
   );
 };

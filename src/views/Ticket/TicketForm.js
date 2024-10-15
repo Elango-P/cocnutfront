@@ -21,6 +21,7 @@ import ticketService from "../../services/TicketServices";
 import ticketTypeService from "../../services/TicketTypeService";
 import NetworkStatus from "../../lib/NetworkStatus";
 import DateTime from "../../lib/DateTime";
+import Media from "../../helper/Media";
 
 
 
@@ -186,37 +187,24 @@ const TicketForm = (props) => {
     }
 
 
-    const takePicture = async () => {
-
-        let permission = await ImagePicker.requestCameraPermissionsAsync()
-
-        let mediaPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (permission && permission.status == 'granted' && mediaPermission && mediaPermission.status == 'granted') {
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                quality: 1,
-            });
-
-
-            if (result && result.assets && result.assets.length > 0 && result.assets[0].uri) {
-                const response = await fetch(result.assets[0].uri);
-                if (response) {
-                    const blob = await response.blob();
-                    setFile(blob)
-                    setFiles([...files, blob])
-
-                    if (!result.canceled) {
-                        setImage(result.assets[0].uri);
-                        addNewEntry(blob, result.assets[0].uri);
-                        setImages([...images, { uri: result.assets[0].uri }]);
-
-
-                    }
-                }
+    const takePicture = async (e) => {
+        try{
+          const image = await Media.imageUpload();
+          if (image && image.assets && image.assets.length > 0) {
+            const response = await fetch(image.assets[0].uri);
+            if (response) {
+                const blob = await response.blob();
+                setFile(blob)
+                setFiles([...files, blob])
             }
-        }
-    }
+            const imageUrl = image.assets[0];
+            setImages((prevImages) => [...prevImages, imageUrl]);
+          }
+        }catch (error) {
+          console.error('Error taking picture:', error);
+      }
+       
+      };
 
     const ticketTypeList = () => {
         let params = {}
@@ -327,6 +315,7 @@ const TicketForm = (props) => {
                             handleAdd={() => takePicture()}
                             showDeleteButton={true}
                             deleteOnPress={handleDelete}
+                            swipeContent = {2}
                         />
                         <VerticalSpace10 />
                         <VoiceNoteRecorder setAudioRecordings={setAudioRecordings} isAddPage={true} />

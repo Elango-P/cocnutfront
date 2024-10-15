@@ -29,7 +29,12 @@ class OrderService {
 
         apiClient
           .post(orderCreate, bodyData, (error, response) => {
-              return callback(null, response)
+if(response){
+  return callback(null, response)
+  
+}else if(error && error?.response){
+  return callback(error?.response, response)
+}
           })
       }
     } catch (err) {

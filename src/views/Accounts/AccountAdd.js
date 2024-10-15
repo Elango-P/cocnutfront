@@ -31,7 +31,7 @@ const AccountAdd = () => {
         await accountService.create(createDate, async (err, response) => {
             if (response) {
                 setIsSubmit(false)
-                navigation.navigate("Vendor")
+                navigation.navigate("Accounts")
             }else{
                 setIsSubmit(false)
             }
@@ -41,7 +41,7 @@ const AccountAdd = () => {
 
     return (
         <Layout
-            title={"Add Vendor"}
+            title={"Add Account"}
             showBackIcon
             buttonLabel={"Save"}
             buttonOnPress={handleSubmit(values => { AddAccount(values); })}

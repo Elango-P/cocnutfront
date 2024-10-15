@@ -25,6 +25,9 @@ import { useForm } from 'react-hook-form';
 import ShareModal from "./components/ShareModal";
 import Number from '../../lib/Number';
 import UserSelect from '../../components/UserSelect';
+import Table, { Column } from '../../components/Table';
+import { endpoints } from '../../helper/ApiEndPoint';
+import UserCard from '../../components/UserCard';
 
 const LocationAllocationUserPage = (props) => {
   let data = props?.route?.params?.item;
@@ -275,8 +278,13 @@ const LocationAllocationUserPage = (props) => {
     setModalVisible(!modalVisible);
   }
 
+  const filteredUserList =
+  ArrayList.isArray(userList) &&
+  userList.filter(
+    (obj) => !detail?.map((data) => data?.user_id)?.includes(obj?.id)
+  );
   return (
-    <Layout title={`${data?.date}${Number.isNotNull(data?.statusName) ? `-${data?.statusName}` : ""}`} showBackIcon buttonLabel={"Share"} buttonOnPress={buttonOnPress} >
+    <Layout title={`${data?.date}${Number.isNotNull(data?.statusName) ? `-${data?.statusName}` : ""}`} showBackIcon buttonLabel={"Share"} buttonOnPress={() => buttonOnPress()} >
       <ShareModal
         visible={modalVisible}
         onClose={buttonOnPress}
@@ -307,7 +315,7 @@ const LocationAllocationUserPage = (props) => {
           );
         })}
       />
-
+<ScrollView>
       <ScrollView horizontal>
         <View style={{ width: '100%' }}>
           <ScrollView vertical>
@@ -351,6 +359,50 @@ const LocationAllocationUserPage = (props) => {
           </ScrollView>
         </View>
       </ScrollView>
+      <Table
+        apiURL={`${endpoints().LocationAllocationUserAPI}/leaveList`}
+        params={{
+          date: data?.date
+        }}
+      >
+        <Column
+          fieldName="userName"
+          style={{ textAlign: "left" }}
+          renderField={(row) => {
+            return <>
+              <UserCard
+                firstName={row.first_name}
+                lastName={row.last_name}
+                image={row.media_url}
+              />
+            </>;
+          }}
+        >
+          User Name
+        </Column>
+      </Table>
+      <Table
+    
+        arrayList={filteredUserList}
+      >
+        <Column
+          fieldName="userName"
+          style={{ textAlign: "left" }}
+          renderField={(row) => {
+            return <>
+              <UserCard
+                firstName={row.firstName}
+                lastName={row.lastName}
+                image={row.image}
+              />
+            </>;
+          }}
+        >
+          User Name
+        </Column>
+      </Table>
+      </ScrollView>
+      
     </Layout>
   );
 };

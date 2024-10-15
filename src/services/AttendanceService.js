@@ -224,7 +224,7 @@ class AttendanceService {
            if (imageUri || (image && image.canceled == false)) {
 
             let bodyData = {
-                type: "Working Day"
+                is_working_day: true
             };
 
             if (data && data.shift_id) {

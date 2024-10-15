@@ -236,7 +236,21 @@ const Menu = (props) => {
     );
   };
 
-
+  // Bonus Menu
+  const _renderBonus = () => {
+    const { setSideMenuOpen } = props;
+    return (
+      <SideMenuCard
+        onPress={() => {
+          navigator.navigate("Bonus")
+          setSideMenuOpen && setSideMenuOpen(false)
+        }}
+        name={"Bonus"}
+        Icon={"money-bill-alt"}
+        
+      />
+    );
+  };
   
   const _renderRecurringTask = () => {
     const { setSideMenuOpen } = props;
@@ -285,10 +299,10 @@ const Menu = (props) => {
     return (
       <SideMenuCard
         onPress={() => {
-          navigator.navigate("Vendor")
+          navigator.navigate("Accounts")
           setSideMenuOpen && setSideMenuOpen(false)
         }}
-        name={"Vendor"}
+        name={"Accounts"}
         Icon={"bank"}
         MaterialCommunityIcon
       />
@@ -567,10 +581,10 @@ const Menu = (props) => {
     return (
       <SideMenuCard
         onPress={() => {
-          navigator.navigate("Sales")
+          navigator.navigate("Bills")
           setSideMenuOpen && setSideMenuOpen(false)
         }}
-        name={"Sales"}
+        name={"Bills"}
         Icon="money-bill-wave-alt"
       />
     );
@@ -708,19 +722,39 @@ const Menu = (props) => {
       <View style={{ flex: 1 }}>
         <ScrollView style={{ height: "100%" }}>
           {permission?.enableAccounts && _renderAccounts()}
-          {permission?.enableBills && _renderBills &&_renderBills()}
-          {permission?.enablePayment && _renderPayments() && _renderPayments()}
-          {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
-          {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
-
+          {permission?.enableActivity && _renderActivity && _renderActivity()}
           {permission?.enableAttendance && _renderAttendance && _renderAttendance()}
+          {permission?.enableBills && _renderBills &&_renderBills()}
+          {permission?.enableBills && _renderBonus &&_renderBonus()}
+          {permission?.enableBulkOrder && _renderBulkOrder()}
+          {permission?.enableCandidate && _renderCandidate()}
           {permission?.enableCustomer && _customer && _customer()}
           {permission?.enableContact && renderContactScreen && renderContactScreen()}
+          {permission?.enableDistribution && _renderDistribution && _renderDistribution() }
+          {permission?.enableFine && _renderFine && _renderFine()}
+          {permission?.enableGatePass && _renderGatePass && _renderGatePass()}
+          {permission?.enableInspection && _renderInspection && _renderInspection()}
+          {permission?.enableLeads && _renderLeads && _renderLeads()}
           {permission?.enableLocation && _renderStore()}
+          {permission?.enableLocationAllocation &&  locationAllocation && locationAllocation()}
+          {permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
+          {permission?.enablePayment && _renderPayments() && _renderPayments()}
+          {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
+          {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
+          {permission?.enablePurchaseOrder && _renderPurchaseOrder && _renderPurchaseOrder()}
+          {permission?.enableRecurringTask && _renderRecurringTask &&  _renderRecurringTask()}
+          {permission?.enableReplenish && _renderReplenishProducts && _renderReplenishProducts()}
+          {permission?.enableSales && _renderSale && _renderSale()}
+          {permission?.enableSettings && _renderSettings && _renderSettings()}
           {permission?.enableStock && !devicePendingStatus &&  _renderStocks && _renderStocks()}
+          {permission?.enableReplenish && _renderStoreReplenish && _renderStoreReplenish()}
+          {permission?.enableSync && _renderSync() && _renderSync()}
           {permission?.enableSalary && _renderSalary() && _renderSalary()}
+          {permission?.enableTicket && _renderTicket()}
+          {permission?.enableTransfer && !devicePendingStatus && _renderInventoryTransfer && _renderInventoryTransfer()}
           {permission?.enableUser && _renderUser && _renderUser()}
           {permission?.enableVisitor && _renderVisitor()}
+          {permission?.enableWishList && _renderWishList()}
         </ScrollView>
         <VerticalSpace10/>
       </View>

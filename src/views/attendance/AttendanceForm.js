@@ -30,6 +30,7 @@ import TabName from "../../helper/Tab";
 // Lib
 import AsyncStorage from "../../lib/AsyncStorage";
 import dateTime from "../../lib/DateTime";
+import ArrayList from "../../lib/ArrayList";
 
 const AttendanceForm = (props) => {
   let params = props?.route?.params;
@@ -89,6 +90,8 @@ const AttendanceForm = (props) => {
   );
   const [isSubmit,setIsSubmit] = useState(false)
 
+  const [attendanceTypeList, setAttendanceTypeList] = useState([]);
+
 
   //get focused
   const isFocused = useIsFocused();
@@ -124,7 +127,7 @@ const AttendanceForm = (props) => {
 
   const preloadedValues = {
     shift: selectedShift ? selectedShift : attendanceDetail.shift_id,
-    type: selectedType ? selectedType : attendanceDetail.type,
+    type: selectedType ? ArrayList.isArray(attendanceTypeList) && attendanceTypeList?.find((data)=> data?.value == selectedType) : ArrayList.isArray(attendanceTypeList) && attendanceTypeList.find((data)=> data?.value == attendanceDetail?.type),
     location: selectedStore ? selectedStore : attendanceDetail.store_id,
     user: param ? param?.userId : attendanceDetail.user_id,
   };
@@ -555,6 +558,8 @@ const AttendanceForm = (props) => {
             allowLateCheckin={allowLateCheckin}
             allowEdit={allowEdit}
             control={control}
+            typeList={setAttendanceTypeList}
+            attendanceTypeList={attendanceTypeList}
           />
         </ScrollView>
       )}

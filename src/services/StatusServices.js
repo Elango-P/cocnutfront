@@ -106,23 +106,43 @@ class StatusService {
 
   }
 
-  static async list(objectName) {
+  static async list(objectName, objectId) {
     try {
-      let statusList = new Array();
-
+      let statusList = [];
+  
+      // Check if objectName is provided
       if (objectName) {
-
-        let ObjectName = objectName.toString()
-
-        let status = await SQLLiteDB.runQuery(SQLLiteDB.DB, `SELECT * FROM status WHERE object_name='${objectName}'`);
-        let StatusList = status?.filter((status) => status.object_name == objectName)
-        return StatusList
+        let objectNameStr = objectName.toString();
+  
+        // Initialize the base query
+        let query = `SELECT * FROM status WHERE object_name = ?`;
+        let params = [objectNameStr]; // Add objectName to the params array
+  
+        // Check if objectId is provided
+        if (objectId) {
+          if (Array.isArray(objectId) && objectId.length > 0) {
+            // If it's an array, use the IN clause
+            query += ` AND object_id IN (${objectId.map(() => '?').join(',')})`;
+            params.push(...objectId); // Add all IDs to params array
+          } else {
+            // If it's a single value, use the equality check
+            query += ` AND object_id = ?`;
+            params.push(objectId); // Add the single ID to params array
+          }
+        }
+  
+        // Execute the query with parameters
+        let status = await SQLLiteDB.runQuery(SQLLiteDB.DB, query, params);
+  
+        // Filter the status based on objectName (though this is redundant with the query)
+        statusList = status?.filter((status) => status.object_name === objectNameStr);
+  
+        return statusList;
       }
     } catch (err) {
       console.log(err);
-      return callback(err, null)
+      return callback(err, null);
     }
-
   }
 
   static async getList(objectName, projectId) {
