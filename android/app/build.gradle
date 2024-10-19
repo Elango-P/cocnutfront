@@ -72,8 +72,10 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 android {
     ndkVersion ndkVersion
     buildToolsVersion buildToolsVersion
-
-    namespace "com.coconutmobile"
+    
+    compileSdkVersion 34 // Updated to the latest SDK version
+    namespace "com.coconutmobile" // Corrected "mespace" to "namespace"
+    
     defaultConfig {
         applicationId "com.coconutmobile"
         minSdkVersion rootProject.ext.minSdkVersion
