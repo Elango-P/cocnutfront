@@ -6,7 +6,7 @@ import userService from "../services/UserService";
 import User from "../helper/User";
 
 
-const UserSelect = ({ selectedUserId, label, onChange, required, placeholder, divider, disable, control, name, showBorder }) => {
+const UserSelect = ({ selectedUserId, label, onChange, required, placeholder, divider, disable, control, name, showBorder, customOption=null }) => {
     const [userList, setUserList] = useState([]);
     const isFocused = useIsFocused();
 
@@ -26,7 +26,7 @@ const UserSelect = ({ selectedUserId, label, onChange, required, placeholder, di
     return (
         <Select
             control={control}
-            options={userList}
+            options={customOption ? customOption : userList}
             getDetails={(values) => onChange && onChange(values)}
             label={label}
             placeholder={placeholder}

@@ -20,7 +20,7 @@ import Boolean from "../../lib/Boolean";
 import { useIsFocused } from "@react-navigation/native";
 
 
-const AttendanceCard = ({ CheckIn,isSubmit, checkOut, workingDay,refreshing, leave, additionalDay, checkIn, navigation, locationId }) => {
+const AttendanceCard = ({ CheckIn,isSubmit, checkOut,refreshing, checkIn, navigation, locationId }) => {
 
     const [checkInPermission, setCheckInPermission] = useState("")
     const [devicePendingStatus, setDevicePendingStatus]=useState(false)
@@ -79,28 +79,7 @@ const AttendanceCard = ({ CheckIn,isSubmit, checkOut, workingDay,refreshing, lea
                 viewAllHander={() => navigation.navigate("Attendance")}
                 showViewAll
             >
-                <View style={styles.attendancecontainer}>
-                    <View style={styles.rowContainer}>
-                        <Text style={styles.label1}>Worked Days</Text>
-                        <View style={styles.circleContainer1}>
-                            <Text style={styles.circleText}>{workingDay}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rowContainer}>
-                        <Text style={styles.label2}>Additional</Text>
-                        <View style={styles.circleContainer2}>
-                            <Text style={styles.circleText}>{additionalDay}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.rowContainer}>
-                        <Text style={styles.label3}>Leave</Text>
-                        <View style={styles.circleContainer3}>
-                            <Text style={styles.circleText}>{leave}</Text>
-                        </View>
-                    </View>
-                </View>
-                <Divider />
-
+             
                 <View style={styles.containers}>
                     {checkIn && checkIn.length > 0 ? (
                         (() => {

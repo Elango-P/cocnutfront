@@ -16,11 +16,12 @@ import asyncStorageService from "../../services/AsyncStorageService";
 import AttendanceService from "../../services/AttendanceService";
 import attendanceTypeServie from "../../services/AttendanceTypeService";
 import shiftService from "../../services/ShiftService";
-import AttendanceTypeSelector from "./components/AttendanceTypeSelector";
+import AttendanceTypeSelector from "../../components/AttendanceTypeSelector";
+import alert from "../../components/Modal/Alert";
 
 
 const ApplyLeave = (props) => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState();
   const [applyLeaveModal, setApplyLeaveModal] = useState("");
   const [visible, setIsVisible] = useState(false);
   const [leaveTypeModel, setLeaveTypeModel] = useState(false);
@@ -31,7 +32,7 @@ const ApplyLeave = (props) => {
   const [shift, setShift] = useState("");
   const [isSubmit, setIsSubmit] = useState(false);
   const [activeTab, setActiveTab] = useState(TabName.DATE);
-
+  const [refreshing,setRefreshing] = useState(false)
   //get navigation object
   const navigation = useNavigation();
   const preloadedValues = {
@@ -54,10 +55,8 @@ const ApplyLeave = (props) => {
   }, [selectedDate]);
   const onDateSelect = (value) => {
     try {
-      if (value !== "") {
         setSelectedDate(value);
         setApplyLeaveModal(false);
-      }
     } catch (err) {
       console.log(err);
     }
@@ -66,9 +65,11 @@ const ApplyLeave = (props) => {
   const getAttendanceType = async () => {
     try {
       let date = (selectedDate && selectedDate != "") ? selectedDate : "";
-      await attendanceTypeServie.list({ date: DateTime.toISOStringDate(date) }, (res) => {
-        setLeaveTypeList(res);
-      });
+      if(date){
+        await attendanceTypeServie.list({ date: DateTime.toISOStringDate(date) }, (res) => {
+          setLeaveTypeList(res);
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -94,7 +95,7 @@ const ApplyLeave = (props) => {
       let createData = {
         user: selectedUser,
         date: selectedDate,
-        type: selectLeaveType && selectLeaveType?.name,
+        type: selectLeaveType && selectLeaveType?.id,
         leaveType: selectLeaveType && selectLeaveType?.id,
         reason: reason || "",
         shift: shift,
@@ -114,10 +115,9 @@ const ApplyLeave = (props) => {
     //create new rray
     let shiftListOption = new Array();
 
-    shiftService.getCurrentShiftList({}, (error, response) => {
+    shiftService.getShiftList({showAllowedShift:true}, (error, response) => {
       //validate shift list exist or nott
       let shiftList = response?.data?.data;
-
       //validate shift list
       if (shiftList && shiftList.length > 0) {
         if (shiftList && shiftList.length == 1) {
@@ -156,21 +156,23 @@ const ApplyLeave = (props) => {
       return "Submit"
     }
   }
-
-  const handleNextButton = () => {
-
-    if (activeTab == TabName.DATE) {
+  const handleNextButton = (e) => {
+    if (activeTab == TabName.DATE && selectedDate) {
       setActiveTab(TabName.TYPE);
+    }else if(activeTab == TabName.DATE && !selectedDate){
+      alert.Error("Select Leave Date");
     }
 
     if (activeTab == TabName.TYPE && selectLeaveType) {
       setActiveTab(TabName.SUMMARY);
+    }else if(activeTab == TabName.TYPE && !selectLeaveType){
+      alert.Error("Select Leave Type");
     }
 
   }
 
   const isDisable = () => {
-    if ((activeTab == TabName.DATE && selectedDate) || (activeTab == TabName.TYPE && selectLeaveType) || (activeTab == TabName.SUMMARY)) {
+    if ((activeTab == TabName.DATE && selectedDate) || (activeTab == TabName.TYPE && selectLeaveType) || (activeTab == TabName.SUMMARY) || (activeTab == TabName.TYPE && !selectLeaveType) || (activeTab == TabName.DATE && !selectedDate)) {
       return false
     } else {
       return true
@@ -182,6 +184,7 @@ const ApplyLeave = (props) => {
       title={activeTab == TabName.DATE ? "Select Date" : activeTab == TabName.TYPE ? "Select Leave Type" : "Leave"}
       showBackIcon={true}
       buttonLabel={"Cancel"}
+      refreshing = {activeTab == TabName.TYPE && refreshing}
       buttonOnPress={() => {
         navigation.navigate("Attendance")
       }}
@@ -213,15 +216,17 @@ const ApplyLeave = (props) => {
       {activeTab == TabName.DATE && (
         <View style={{ flex: 1, width: "100%" }}>
           <DatePicker
-            title={"Date"}
+            title={"Select Date"}
             onDateSelect={onDateSelect}
             selectedDate={selectedDate ? new Date(selectedDate) : ""}
-            visible={true}
+            onClear={()=>onDateSelect("")} 
+            disablePastDates = {true}
+
           />
         </View>
       )}
       {activeTab == TabName.TYPE && (
-        <AttendanceTypeSelector onPress={handleType} showSingleCheckBox params={{is_leave: true}} seletectedDate={selectedDate} />
+        <AttendanceTypeSelector setRefreshing = {setRefreshing} refreshing = {refreshing} onPress={handleType} showSingleCheckBox params={{is_leave: true}} seletectedDate={selectedDate} />
       )}
       <ScrollView>
         {activeTab == TabName.SUMMARY && (

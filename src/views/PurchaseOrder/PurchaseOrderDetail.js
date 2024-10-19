@@ -282,7 +282,7 @@ const Detail = (props) => {
                             control={control}
                             onChange={handleVendorChange}
                             data={params?.vendorId}
-                            placeholder="Select Vendor" 
+                            placeholder="Select Account" 
                             disable={disableEdit}
                             />
 

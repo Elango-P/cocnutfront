@@ -54,6 +54,24 @@ class Currency {
     return "";
   }
   }
+  static roundOff(number) {
+    if (number && number !== "undefined" && number !== undefined && number !=="" && number !=="null") {
+      let data =  Math.round(number);
+      const formatter = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0, // Set minimumFractionDigits to 0 to avoid showing decimal places
+      });
+      
+      let value =parseFloat(data)
+      let formattedValue = formatter.format(value);
+      formattedValue = formattedValue.replace(/\u00A0/g, '');
+      return formattedValue;
+      
+    } else {
+      return null;
+    }
+  }
 }
 
 

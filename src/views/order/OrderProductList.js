@@ -1047,8 +1047,8 @@ let body={type:type?.id}
         OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
           if (err) {
             setIsSubmit(false)
-            setEnableButton(false)
           }
+        setEnableButton(false)
         });
       } else {
         setIsSubmit(false)
@@ -1463,6 +1463,7 @@ let body={type:type?.id}
                 id: orderId ? orderId : id,
                 order_number: orderNumber ? orderNumber : params.orderNumber,
                 total_amount: params?.totalAmount,
+                date : params?.date
               },
             });
             setVisible(true);

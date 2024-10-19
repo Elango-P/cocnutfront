@@ -485,7 +485,7 @@ const BillForm = (props) => {
                         control={control}
                         onChange={handleVendorChange}
                         data={params?.account_id ? params?.account_id : accountName}
-                        placeholder="Select Vendor"
+                        placeholder="Select Account"
                         disable={!allowEdit}
 
                     />

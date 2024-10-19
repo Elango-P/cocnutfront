@@ -25,7 +25,7 @@ const PurchaseRecommendationReport = (props) => {
   const [selectedValues, setSelectedValues] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [brandList, setBrandList] = useState([]);
-  const [vendorList, setVendorList] = useState();
+  const [accountList, setAccountList] = useState();
 
 
   useEffect(() => {
@@ -120,7 +120,7 @@ const PurchaseRecommendationReport = (props) => {
 
         }
         const getAccountList = ()=>{
-                  accountService.GetVendorList((callback) => { setVendorList(callback) });
+                  accountService.GetList((callback) => { setAccountList(callback) });
       
               }
 
@@ -155,7 +155,7 @@ const PurchaseRecommendationReport = (props) => {
         setValues={setValues}
         onDateSelect={onDateSelect}
         selectedDate={selectedDate}
-        vendorList={vendorList}
+        accountList={accountList}
         brandList={brandList}
         showAccount
         showBrand

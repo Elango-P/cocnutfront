@@ -75,11 +75,11 @@ android {
 
     namespace "com.coconutmobile"
     defaultConfig {
-        applicationId "com.coconut"
+        applicationId "com.coconutmobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "2.0.55"
+        versionCode 26
+        versionName "1.0.1"
     }
     signingConfigs {
         debug {

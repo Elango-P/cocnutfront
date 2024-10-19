@@ -73,7 +73,7 @@ const FilterDrawer = (
         locationList,
         projectList,
         shiftList,
-        vendorList,
+        accountList,
         paymentAccountList,
         accountLabel,
         categoryList,
@@ -165,7 +165,7 @@ const FilterDrawer = (
                             options={locationList}
                             showBorder={true}
                             control={control}
-                            data={values && values?.toLocation}
+                            data={values && values?.fromLocation}
                             OnSelect={fromLocationOnSelect}
                             placeholder="Select Location"
                         />
@@ -286,12 +286,12 @@ const FilterDrawer = (
                         <Select
                             label="Account"
                             name="accountName"
-                            options={vendorList}
+                            options={accountList}
                             showBorder={true}
                             control={control}
                             data={values && values.account}
                             OnSelect={accountOnSelect}
-                            placeholder={accountLabel ? accountLabel : "Select Vendor"}
+                            placeholder={accountLabel ? accountLabel : "Select Account"}
                         />
                         <VerticalSpace10 />
                     </>

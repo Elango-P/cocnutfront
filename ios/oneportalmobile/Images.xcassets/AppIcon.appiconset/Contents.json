@@ -1,55 +1,55 @@
 {
   "images" : [
     {
-      "filename" : "zunostar_40.png",
+      "filename" : "zunomart_40.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "zunostar_60.png",
+      "filename" : "zunomart_60.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "zunostar_58.png",
+      "filename" : "zunomart_58.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "zunostar_87.png",
+      "filename" : "zunomart_87.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
-      "filename" : "zunostar_80.png",
+      "filename" : "zunomart_80.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "zunostar_120.png",
+      "filename" : "zunomart_120.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
-      "filename" : "zunostar_120_1.png",
+      "filename" : "zunomart_120_1.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "zunostar_180.png",
+      "filename" : "zunomart_180.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
     },
     {
-      "filename" : "zunostar_1024.png",
+      "filename" : "zunomart_1024.png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

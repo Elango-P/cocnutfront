@@ -84,10 +84,10 @@ const AttendanceReport = () => {
     closeDrawer();
   };
   const typeOnSelect = (value) => {
-    if (value) {
+    if (value) {     
       setValues((prevValues) => ({
         ...prevValues,
-        type: value?.label,
+        type: value?.id,
         typeId : value?.value,
       }));
     } else {
@@ -189,7 +189,7 @@ const AttendanceReport = () => {
                           </View>
                           <VerticalSpace10 />
                         </TouchableOpacity>
-                        {attendanceReport && attendanceReport.length > 0 && attendanceReport.map((data) =>{
+                        {attendanceReport && attendanceReport.length > 0 && attendanceReport.map((data) =>{                          
                                      const isMatched = data?.location_id == item?.locationId;
                           return isMatched ? (           
                           <><View key={index} style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -228,7 +228,7 @@ const AttendanceReport = () => {
                             )}
                           
                             {data?.attendanceTypeDetail?.is_additional_day &&
-                             <Text style={style.colorText}>{` ${data.type}`}</Text>}
+                             <Text style={style.colorText}>{` ${data.attendanceTypeDetail?.name}`}</Text>}
                              </View>
                             <VerticalSpace10 /></>
                         ) : ("")

@@ -36,6 +36,14 @@ import ObjectName from "../../helper/ObjectName";
 import { formatMobileNumber } from "../../lib/Format";
 import NetworkStatus from "../../lib/NetworkStatus";
 import String from "../../lib/String";
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import AppID from "../../lib/AppID";
+import apiClient from "../../apiClient";
+import { endpoints } from "../../helper/ApiEndPoint";
+import LoginService from "../../services/LoginService";
+
+const expoProjectId = Constants?.expoConfig?.extra?.eas?.projectId;
 
 
 const UserForm = (props) => {
@@ -110,6 +118,27 @@ const UserForm = (props) => {
                 navigation.navigate("Users")
             }
         })
+    }
+    const loginAs = async ()=>{
+        try{
+
+    const token = (await Notifications.getExpoPushTokenAsync({ projectId: expoProjectId })).data;
+
+        let bodyData = { userIds: [params?.id], reset_mobile_data: true , pushNotificationToken: token,isCustomerApp: AppID.isZunoMart() ? true : false, nameSpace: AppID.getAppId()};
+
+        apiClient.post(
+            `${endpoints().UserAPI}/loginByAdmin/${params?.id}`,
+            bodyData,
+            async (error, response) => {
+            if(response && response?.data){
+            await LoginService.getDeviceInfo(response?.data,navigation)           
+            }else {
+                console.error("Login failed: No data in response");
+              }
+ })
+        }catch(err){
+            console.log(err);
+        }
     }
 
     const getPermission = async () => {
@@ -215,6 +244,9 @@ const UserForm = (props) => {
         const editPermission = await PermissionService.hasPermission(
             Permission.USER_EDIT
         );
+        const allowLoginAs = await PermissionService.hasPermission(
+            Permission.ALLOW_IMPERSONATE_LOGIN
+        );
         if (editPermission && !allowEdit) {
             actionItems.push(
                 <MenuItem onPress={() => {setEdit(true),setVisible(true)}}>
@@ -226,6 +258,13 @@ const UserForm = (props) => {
             actionItems.push(
                 <MenuItem onPress={() => {updateResetMobileData(),setVisible(true)}}>
                     Reset Mobile Data
+                </MenuItem>
+            )
+        }
+        if(editPermission && allowLoginAs){
+            actionItems.push(
+                <MenuItem onPress={() => {loginAs(),setVisible(true)}}>
+                   Login As
                 </MenuItem>
             )
         }

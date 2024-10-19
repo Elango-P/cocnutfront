@@ -6,6 +6,7 @@ import VerticalSpace10 from "../../../components/VerticleSpace10";
 import { useForm } from "react-hook-form";
 import { Card } from "react-native-paper";
 import { Color } from "../../../helper/Color";
+import { ScrollView } from "react-native";
 
 const CustomerInfo = (props) => {
   const { accountList, param } = props;
@@ -25,20 +26,21 @@ const CustomerInfo = (props) => {
   } = useForm({});
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       {accountList &&
         accountList.length > 0 &&
         accountList.map((item, index) => (
           <Card key={index} style={styles.card}>
-            {param?.customerName && (
+            {item?.name && (
               <View style={styles.header}>
                 <Text style={styles.headerText}>Customer Information</Text>
               </View>
             )}
             <View style={styles.cardContent}>
-              {param?.customerName && (
+              {item?.name && (
                 <>
-                  <Text style={styles.text}>Name: {param?.customerName}</Text>
+                  <Text style={styles.text}>Name: {item?.name}</Text>
                   <VerticalSpace10 />
                 </>
               )}
@@ -75,6 +77,7 @@ const CustomerInfo = (props) => {
           </Card>
         ))}
     </View>
+    </ScrollView>
   );
 };
 

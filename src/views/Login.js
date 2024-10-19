@@ -23,8 +23,6 @@ import TextInput from "../components/Text";
 
 import Toast from "react-native-toast-message";
 
-import OnePortalDB from "../db/onePortalDB";
-
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -38,7 +36,6 @@ import UserDeviceInfoService from "../services/UserDeviceInfoService";
 
 import { version } from "../../package.json";
 
-import storeService from "../services/StoreService";
 
 import Validation from "../lib/Validation";
 
@@ -58,11 +55,9 @@ import * as Notifications from 'expo-notifications';
 import Label from "../components/Label";
 import UserDeviceInfo from "../helper/UserDeviceInfo";
 import AppID from "../lib/AppID";
-import AsyncStorageObject from "../lib/AsyncStorage";
-import userService from "../services/UserService";
 import Constants from 'expo-constants';
 import styles from "../helper/Styles";
-import userDeviceInfoService from "../services/UserDeviceInfoService";
+import LoginService from "../services/LoginService";
 const expoProjectId = Constants?.expoConfig?.extra?.eas?.projectId;
 
 
@@ -147,164 +142,7 @@ const Login = ({ }) => {
     setAppVersion(version);
   };
 
-  const LogInRedirection = async (response) => {
-    try {      
-      let role = response?.data?.user ? response.data.user.role.toString() : "";
-
-      let userId = response?.data?.user ? response.data.user.id.toString() : "";
-
-      let locationList = response?.data?.user
-        ? response?.data?.user.locationList
-        : [];
-
-      let permissionList = response?.data?.user
-        ? response?.data?.user.permissionList
-        : [];
-
-      let settingList = response?.data?.user
-        ? response?.data?.user.settingList
-        : [];
-
-      let token = response?.data?.user
-        ? response.data.user.token.toString()
-        : "";
-
-      let firstName = response?.data?.user?.firstName
-        ? response?.data?.user?.firstName
-        : "";
-
-      let lastName = response?.data?.user?.lastName
-        ? response?.data?.user?.lastName
-        : "";
-
-      let accountId = response?.data?.user?.accountId
-        ? response?.data?.user?.accountId
-        : "";
-
-        let featureList = response?.data?.user?.featureList
-        ? response?.data?.user?.featureList 
-        : [];
-
-      let name = `${firstName} ${lastName}`;
-       let app_id = response?.data?.user ? response.data.user.app_id && response.data.user.app_id.toString() : ""
-        
-      await asyncStorageService.setSessionToken(token);
-
-      await asyncStorageService.setUserName(name);
-
-      await asyncStorageService.setRoleId(role);
-
-      await asyncStorageService.setUserId(userId);
-
-      await asyncStorageService.setAppId(app_id)
-
-      if (accountId) {
-        await asyncStorageService.setAccountId(accountId.toString());
-      }
-
-      //validate permission list
-      if (permissionList && Array.isArray(permissionList)) {
-        //convert JSON into string
-        permissionList = JSON.stringify(permissionList);
-        //set in local storag
-        await asyncStorageService.setPermissions(permissionList);
-      }
-      if (settingList && Array.isArray(settingList)) {
-        settingList = JSON.stringify(settingList);
-        await asyncStorageService.setSettings(settingList);
-      }
-
-      if (featureList && Array.isArray(featureList)) {
-        //convert JSON into string
-        featureList = JSON.stringify(featureList);
-        //set in local storag
-        await asyncStorageService.setAppFeatures(featureList);
-      }
-
-      await OnePortalDB.create();
-
-      if (AppID.isZunoMartStore() || AppID.isThiDiff() || AppID.isZunoStar()) {
-
-        if (locationList && locationList.length == 1) {
-          asyncStorageService.setSelectedLocationName(locationList[0].name);
-
-          asyncStorageService.setSelectedLocationId(
-            locationList[0].id.toString()
-          );
-
-          await navigation.navigate("Dashboard", { login: true });
-
-          setPassword("");
-          setShowEmailPasswordFields(false);
-          setInputValue("");
-        } else {
-          storeService.GetLocationByIpAndGeoLocation(
-            { longitude: location?.longitude, latitude: location?.latitude },
-            async (err, response) => {
-              if (response && response.data && response.data.locationDetail) {
-                asyncStorageService.setSelectedLocationName(
-                  response.data.locationDetail.name
-                );
-
-                asyncStorageService.setSelectedLocationId(
-                  response.data.locationDetail.id.toString()
-                );
-
-                await navigation.navigate("Dashboard", { login: true });
-
-                setPassword("");
-                setShowEmailPasswordFields(false);
-                setInputValue("");
-              } else {
-                await settingService.get(
-                  Setting.SHOW_STORE_SELECTION_ON_LOGIN,
-                  async (error, response) => {
-                    if (
-                      response?.settings &&
-                      response.settings.length > 0 &&
-                      response.settings[0].value === "true"
-                    ) {
-                      await navigation.navigate("Settings/SelectStore", {
-                        isInitialSetup: true,
-                        locationByRole: true,
-                      });
-                      setPassword("");
-                      setInputValue("");
-                      setShowEmailPasswordFields(false);
-                    } else {
-                      navigation.navigate("Dashboard", { login: true });
-                      setPassword("");
-                      setInputValue("");
-                      setShowEmailPasswordFields(false);
-                    }
-                  }
-                );
-              }
-            }
-          );
-        }
-      } else if (AppID.isZunoMart()) {
-          setPassword("");
-          setShowEmailPasswordFields(false);
-          setInputValue("");
-        navigation.navigate("Home");
-      } else {
-        if (locationList && locationList.length == 1) {
-          asyncStorageService.setSelectedLocationName(locationList[0].name);
-          asyncStorageService.setSelectedLocationId(
-            locationList[0].id.toString()
-          );
-          await navigation.navigate("Dashboard", { login: true });
-          setPassword("");
-          setShowEmailPasswordFields(false);
-          setInputValue("");
-        }
-        navigation.navigate("Dashboard", { login: true });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
 
   const onUpdate = async () => {
     if (Platform.OS === "ios") {
@@ -313,21 +151,7 @@ const Login = ({ }) => {
       await Linking.openURL(`https://play.google.com/store/apps/details?id=${AppID.getAppId()}`);
     }
   }
-  const getDeviceInfo = async(responseData)=>{
-    const userId = await asyncStorageService.getUserId()
-       
-     let params = {deviceName : deviceName , user : userId}
-      await userDeviceInfoService.search(params,async (err,response)=>{
-        if(response.data?.data[0].reset_mobile_data === "true"){
-          AsyncStorageObject.clearAll({
-            isClearAll: true,
-          });
-          return await LogInRedirection(responseData);
-        }else{
-          return await LogInRedirection(responseData);
-        }
-    })
-  }
+
 
   const LoginByEmail = async () => {
     try {
@@ -367,7 +191,7 @@ const Login = ({ }) => {
             isMobileLogin: true,
             appVersion: version,
             isCustomerApp: AppID.isZunoMart() ? true : false,
-            nameSpace: "com.zunomartstore",
+            nameSpace:"com.zunostar",
             pushNotificationToken: pushNotificationToken
 
           };
@@ -381,14 +205,13 @@ const Login = ({ }) => {
                 let showUpdateOption = Platform.OS == "ios" && (AppID.isZunoMart() || AppID.isZunoMartStore() || AppID.isThiDiff()) && appId ? true : Platform.OS == "android" && appId ? true : false;
                 Alert.Error(response.data.message, showUpdateOption ? onUpdate : null, showUpdateOption ? "Update" : "Ok","Update Required");
                 setIsSubmit(false)
-              } else if (response && response.data && response.data.user) {
-                let token = response?.data?.user
-                  ? response.data.user.token.toString()
+              } else if (response && response.data && response.data) {
+                let token = response?.data
+                  ?response.data?.user?.token.toString()
                   : "";
                 setOtpValue("");
                 setOtpModalVisible(false);
                 setIsModalVisible(false);
-                setIsSubmit(false)
                 await asyncStorageService.setSessionToken(token);
 
 
@@ -401,7 +224,7 @@ const Login = ({ }) => {
                     network: network,
                     battery: battery,
                     unique_id: uniqueId,
-                    user: response.data.user.id,
+                    user:response.data?.user?.id,
                     versionNumber: appVersion,
                     app_id : AppID.getAppId(),
                   };
@@ -419,7 +242,7 @@ const Login = ({ }) => {
                             res.settings[0].value === "true"
                           ) {
                             if (!DeviceInfo || platform.isIOS()) {
-                              getDeviceInfo(response)
+                              await LoginService.getDeviceInfo(response.data?.user,navigation,setPassword,setInputValue,setIsSubmit)
                             }
                             if (
                               userInfoResponse &&
@@ -443,20 +266,21 @@ const Login = ({ }) => {
                                 await asyncStorageService.setDeviceInfoStatus(
                                   userDeviceInfoStatus
                                 );
-                                getDeviceInfo(response)
+                                await LoginService.getDeviceInfo(response.data?.user,navigation,setPassword,setInputValue,setIsSubmit)
                               }
                             }
                           } 
                            else {
-                            getDeviceInfo(response)
+                           await LoginService.getDeviceInfo(response.data?.user,navigation,setPassword,setInputValue,setIsSubmit)
                           }
                         }
                       );
                     }
                   );
                 } else {
-                  getDeviceInfo(response)
+                 await LoginService.getDeviceInfo(response.data?.user,navigation,setPassword,setInputValue,setIsSubmit)
                 }
+                  setShowEmailPasswordFields(false);
               } else if (error) {
                 let errorMessage;
                 const errorRequest = error?.response?.request;

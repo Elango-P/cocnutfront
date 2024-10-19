@@ -42,7 +42,7 @@ const InputText = (props) => {
                 editable={editable}
                 placeholderTextColor = {Color.PLACEHOLDER_TEXT}
                 placeholder={placeHolderShow?(placeholder || title):title}
-                style = {styles.textInputStyle}
+                style = {[styles.textInputStyle,{color: Color.BLACK}]}
                 secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
                 onChangeText={(e) => {

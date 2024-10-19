@@ -7,18 +7,21 @@ import dashboardService from "../../services/DashboardService";
 import FineCard from "../../views/fine/components/FineCard";
 
 
-const FineList = ({ focused }) => {
+const FineList = ({ focused,user }) => {
   const [fine, setFine] = useState([]);
   const navigator = useNavigation();
 
   useEffect(() => {
     getFine();
-  }, [focused])
+  }, [focused,user])
 
   const getFine = async () => {
     let params = {
-      isFineType: true
+      isFineType: true,
+       user : user
     }
+    
+    
     await dashboardService.getFine(callback => setFine(callback), params)
   }
 
@@ -28,7 +31,7 @@ const FineList = ({ focused }) => {
         {fine && (
           <Card
             title={"Fines"}
-            viewAllHander={() => navigator.navigate("Fine")}
+            viewAllHander={() => navigator.navigate("Fine",{user : user})}
             showViewAll
           >
 

@@ -21,9 +21,6 @@
   <style name="Theme.App.zunostar" parent="AppTheme">
     <item name="android:windowBackground">@drawable/zunostar</item>
  </style>
-  <style name="Theme.App.coconut" parent="AppTheme">
-    <item name="android:windowBackground">@drawable/coconut</item>
- </style>
 </resources>
 
 

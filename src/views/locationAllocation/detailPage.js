@@ -256,6 +256,12 @@ const LocationAllocationUserPage = (props) => {
     );
   };
 
+  const filteredUserList =
+  ArrayList.isArray(userList) &&
+  userList.filter(
+    (obj) => !detail?.map((data) => data?.user_id)?.includes(obj?.id)
+  );
+
   let modelBody = (
     <View style={{ marginBottom: 20, marginTop: 10 }}>
       <UserSelect
@@ -264,6 +270,7 @@ const LocationAllocationUserPage = (props) => {
         showBorder={true}
         control={control}
         placeholder="Select User"
+        customOption={filteredUserList}
       />
     </View>
   );
@@ -278,11 +285,7 @@ const LocationAllocationUserPage = (props) => {
     setModalVisible(!modalVisible);
   }
 
-  const filteredUserList =
-  ArrayList.isArray(userList) &&
-  userList.filter(
-    (obj) => !detail?.map((data) => data?.user_id)?.includes(obj?.id)
-  );
+
   return (
     <Layout title={`${data?.date}${Number.isNotNull(data?.statusName) ? `-${data?.statusName}` : ""}`} showBackIcon buttonLabel={"Share"} buttonOnPress={() => buttonOnPress()} >
       <ShareModal

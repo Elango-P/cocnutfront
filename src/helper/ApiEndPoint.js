@@ -146,6 +146,13 @@ export const endpoints = () => ({
 
   mobileDashboardApi : appApi("v1/mobileDashboard"),
 
+  accountAgreementAPI:appApi("v1/accountAgreement"),
+
+  accountProductAPI: appApi("v1/accountProduct"),
+
+  accountLoyalty: appApi("v1/accountLoyalty"),
+
+  ratingAPI:appApi("v1/rating"),
 
   // Custom Form API
   InspectionApi: appApi("v1/inspection"),

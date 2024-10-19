@@ -45,7 +45,7 @@ const Purchase = () => {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedEndDate, setSelectedEndDate] = useState("");
     const [statusList, setStatusList] = useState();
-    const [vendorList, setVendorList] = useState();
+    const [accountList, setAccountList] = useState();
     const [locationId, setLocationId] = useState();
 
 
@@ -113,8 +113,8 @@ const Purchase = () => {
     }
 
         const getAccountList = ()=>{
-            accountService.GetVendorList((callback) => { setVendorList(callback) });
-
+            accountService.GetList(null,(callback) => { setAccountList(callback) });
+            
         }
   
     const GetPurchaseList = async (values) => {
@@ -344,7 +344,7 @@ const Purchase = () => {
             selectedEndDate={selectedEndDate}
             selectedDate={selectedDate}
             statusList={statusList}
-            vendorList ={vendorList}
+            accountList ={accountList}
             showAccount
             showStatus
             showDate

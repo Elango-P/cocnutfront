@@ -31,9 +31,10 @@ import shiftService from "../../services/ShiftService";
 import storeService from "../../services/StoreService";
 import SyncService from "../../services/SyncService";
 import userService from "../../services/UserService";
-import DateFilter from "../../components/DateFilter";
-import { Filter } from "../../helper/Filter";
 import { useForm } from "react-hook-form";
+import Tab from "../../components/Tab";
+import TabName from "../../helper/Tab";
+import AttendanceMonthWiseList from "./components/AttendanceMonthWiseList";
 
 const AttendanceList = (props) => {
   const param = props?.route?.params;
@@ -54,11 +55,10 @@ const AttendanceList = (props) => {
   const [attendanceCheckinCheckPermission, setAttendanceCheckinCheckPermission] = useState("")
   const [dateSelected, setDateSelected] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
-  const [values, setValues] = useState({        
+  const [values, setValues] = useState({
     startDate: "",
     endDate:"",
-    selectedDate: Filter.TODAY_VALUE
-});
+  });
   const [openFilter, setOpenFilter] = useState(false);
   const [userList, setUserList] = useState();
   const [locationList, setLocationList] = useState();
@@ -67,6 +67,7 @@ const AttendanceList = (props) => {
   const [attendanceTypeList,setAttendanceTypeList] =  useState([]);
   const [devicePendingStatus, setDevicePendingStatus]=useState(false);
   const [isListFeatching, setIsListFeatching]=useState(false);
+  const [activeTab, setActiveTab] = useState(TabName.ALL);
 
 
 
@@ -77,48 +78,48 @@ const AttendanceList = (props) => {
   const stateRef = useRef();
 
   useEffect(() => {
-      let mount = true;
-      mount && getAttendanceList(values);
-      mount && getAsyncStorageItem();
-      mount && getDeletePermission();
-      mount && getPermission();
-      //cleanup function
-      return () => {
-        mount = false;
-      };
+    let mount = true;
+    mount && getAttendanceList(values);
+    mount && getAsyncStorageItem();
+    mount && getDeletePermission();
+    mount && getPermission();
+    //cleanup function
+    return () => {
+      mount = false;
+    };
   }, [isFocused]);
   useEffect(()=>{
     if(refreshing){
       getAttendanceList(values);
     }
   },[refreshing])
-   useEffect(() => {
-        getUserList();
-        getStoreList();
-        getShiftList();
-        getAttendanceType();
-    }, []);
+  useEffect(() => {
+    getUserList();
+    getStoreList();
+    getShiftList();
+    getAttendanceType();
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
 
-      const loginSync = async () => {
-        if (param?.login) {
-          await SyncService.Sync(() => { });
-  
-        }
-      };
-      loginSync()
-  
-    }, [param?.login])
+    const loginSync = async () => {
+      if (param?.login) {
+        await SyncService.Sync(() => { });
 
-    const {
-      control,
-      formState: { errors },
+      }
+    };
+    loginSync()
+
+  }, [param?.login])
+
+  const {
+    control,
+    formState: { errors },
   } = useForm();
 
 
   const onDateSelect = (value) => {
-    setSelectedDate(new Date(value)) 
+    setSelectedDate(new Date(value))
   }
   const getAsyncStorageItem = async () => {
     let storeId = await AsyncStorageService.getSelectedLocationId()
@@ -127,70 +128,76 @@ const AttendanceList = (props) => {
 
 
   const getUserList = ()=>{
-        userService.list(null, (callback) => { setUserList(callback) });
+    userService.list(null, (callback) => { setUserList(callback) });
 
-    }
-    const getStoreList = ()=>{
-        storeService.list({},(error, response) => {
-            const storeListOption = new Array();
-            let storeList = response?.data?.data;
-            if (storeList && storeList.length > 0) {
-                for (let i = 0; i < storeList.length; i++) {
-                    storeListOption.push({
-                        label: storeList[i].name,
-                        value: storeList[i].id,
-                    });
-                }
-
-                setLocationList(storeListOption);
-            }
-
-        });
-    }
-    const getShiftList = () =>{
-        let shiftListOption = new Array();
-
-        shiftService.getShiftList({ showAllowedShift: true }, (error, response) => {
-            let shiftList = response?.data?.data;
-            if (shiftList && shiftList.length > 0) {
-                for (let i = 0; i < shiftList.length; i++) {
-                    shiftListOption.push({
-                        label: shiftList[i].name,
-                        value: shiftList[i].id,
-                    });
-                }
-                setShiftList(shiftListOption);
-            }
-        })
-     }
-
-     const getAttendanceType =async ()=>{
-      await AttendanceTypeServie.list({},(response) => {
-        const optionList = new Array();
-        let list = response;
-        if (list && list.length > 0) {
-          for (let i = 0; i < list.length; i++) {
-            optionList.push({
-              label: list[i].name,
-              value: list[i].id,
-              id: list[i].id,
-            });
-          }
-  
-          setAttendanceTypeList(optionList);
+  }
+  const getStoreList = ()=>{
+    storeService.list({},(error, response) => {
+      const storeListOption = new Array();
+      let storeList = response?.data?.data;
+      if (storeList && storeList.length > 0) {
+        for (let i = 0; i < storeList.length; i++) {
+          storeListOption.push({
+            label: storeList[i].name,
+            value: storeList[i].id,
+          });
         }
-  
-       })
-    }
-        
+
+        setLocationList(storeListOption);
+      }
+
+    });
+  }
+  const getShiftList = () =>{
+    let shiftListOption = new Array();
+
+    shiftService.getShiftList({ showAllowedShift: true }, (error, response) => {
+      let shiftList = response?.data?.data;
+      if (shiftList && shiftList.length > 0) {
+        for (let i = 0; i < shiftList.length; i++) {
+          shiftListOption.push({
+            label: shiftList[i].name,
+            value: shiftList[i].id,
+          });
+        }
+        setShiftList(shiftListOption);
+      }
+    })
+  }
+
+  const getAttendanceType =async ()=>{
+    await AttendanceTypeServie.list({},(response) => {
+      const optionList = new Array();
+      let list = response;
+      if (list && list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+          optionList.push({
+            label: list[i].name,
+            value: list[i].id,
+            id: list[i].id,
+          });
+        }
+
+        setAttendanceTypeList(optionList);
+      }
+
+    })
+  }
+
 
   const getAttendanceList = (values) => {
     attendanceList && attendanceList.length == 0 && setIsLoading(true);
     let params = { page: 1, sort: "created_at", sortDir: "DESC" };
-    
-     
+
+
     if (values?.user) {
       params.user = values?.user;
+    }
+    if(param?.monthYear){
+      params.monthYear = param?.monthYear
+    }
+    if(param?.user){
+      params.user = param?.user;
     }
     if (values?.location) {
       params.location = values?.location;
@@ -204,7 +211,7 @@ const AttendanceList = (props) => {
     if(values?.selectedDate){
       params.selectedDate = values.selectedDate
 
-   }
+    }
     if (values?.startDate) {
       params.startDate = DateTime.formatDate(values?.startDate);
     }
@@ -238,11 +245,7 @@ const AttendanceList = (props) => {
       rowMap[rowKey].closeRow();
     }
   }
-  const applyLeave = async () => {
-    navigation.navigate("/Attendance/applyLeave", {
-      date: selectedDate,
-    });
-    };
+
 
   const clearRowDetail = () => {
     if (stateRef) {
@@ -290,6 +293,9 @@ const AttendanceList = (props) => {
       if (values?.location) {
         params.location = values?.location;
       }
+      if(param?.monthYear){
+        params.monthYear = param?.monthYear
+      }
       if (values?.shift) {
         params.shift = values?.shift;
       }
@@ -298,8 +304,8 @@ const AttendanceList = (props) => {
       }
       if(values?.selectedDate){
         params.selectedDate = values.selectedDate
-  
-     }
+
+      }
       if (values?.startDate) {
         params.startDate = DateTime.formatDate(values?.startDate);
       }
@@ -330,7 +336,7 @@ const AttendanceList = (props) => {
     const isExist = await PermissionService.hasPermission(Permission.ATTENDANCE_MANAGE_OTHERS);
     await Device.isStatusBlocked((devicePendingStatus)=>{
       setDevicePendingStatus(devicePendingStatus)
-  });
+    });
     setAttendanceManageOthersPermission(isExist)
   }
 
@@ -339,7 +345,7 @@ const AttendanceList = (props) => {
     setAttendanceDeletePermission(isExist)
     const attendanceCheckinCheckPermission = await PermissionService.hasPermission(Permission.USER_MOBILE_CHECKIN);
     setAttendanceCheckinCheckPermission(attendanceCheckinCheckPermission)
-   
+
   }
 
   const attendanceDelete = async () => {
@@ -354,13 +360,23 @@ const AttendanceList = (props) => {
   const today = DateTime.toISOStringDate(new Date());
 
   let appId = AppID.getAppId();
-  
+  let title = [
+    {
+      title: TabName.SUMMARY,
+      tabName: TabName.SUMMARY,
+    },
+    {
+      title: TabName.ALL,
+      tabName: TabName.ALL,
+    }
+  ]
+
 
   const renderItem = data => {
     let item = data?.item;
     let index = data?.index;
     const containerStyle = AlternativeColor.getBackgroundColor(index)
-        
+
     return (
       <View style={styles.container}>
         <View>
@@ -398,55 +414,42 @@ const AttendanceList = (props) => {
                   flex: 1,
                 }}
               >
-               {attendanceManageOthersPermission && (
-                <Text
-                  style={{ fontWeight: "700", textTransform: "capitalize" }}
-                >
-                  {item.userName} {item.lastName}
-                </Text>
-               )} 
-                <Text>{DateTime.formatDate(item?.date)}</Text>
-
-                {!item?.attendanceTypeDetail?.is_leave  ? (
-               <Text>
-               {item.locationName ? item.locationName : ""}{item.locationName && item.shiftName ? ", " : ""}
-               {item.shiftName ? item.shiftName : ""}
-               </Text>
-                 ) : item?.attendanceTypeDetail?.is_leave && (
-                  <Text>
-                  {item.shiftName ? item.shiftName : ""}
+                {attendanceManageOthersPermission && (
+                  <Text
+                    style={{ fontWeight: "700", textTransform: "capitalize" }}
+                  >
+                    {item.userName} {item.lastName}
                   </Text>
-                 )}
+                )}
+                <View style={styles.container1}>
+                  <Text>{DateTime.formatDate(item?.date)}</Text>
+                  <View style={{ ...styles.container1, marginLeft: 5 }}>
+                    {!item?.attendanceTypeDetail?.is_leave && (
+                      <>
+                        {item?.login && <Text style={styles.item}>In: {DateTime.LocalTime(item?.login)}
+                        </Text>
+                        }
+                        {item?.logout && <Text style={styles.item}>Out: {DateTime.LocalTime(item?.logout)}
+                        </Text>
+                        }
+                      </>
+                    )}
+                  </View>
+                </View>
+
+                {!item?.attendanceTypeDetail?.is_leave ? (
+                  <Text>
+                    {item.locationName ? item.locationName : ""}{item.locationName && item.shiftName ? ", " : ""}
+                    {item.shiftName ? item.shiftName : ""}
+                  </Text>
+                ) : item?.attendanceTypeDetail?.is_leave && (
+                  <Text>
+                    {item.shiftName ? item.shiftName : ""}
+                  </Text>
+                )}
                 {item?.type && (
                   <Text>{item?.typeName}</Text>
                 )}
-
-                <View style={styles.container1}>
-                  {!item?.attendanceTypeDetail?.is_leave && (
-                    <>
-                     {item?.login &&  <Text style={styles.item}>In: {DateTime.LocalTime(item?.login)}
-                      </Text>
-                      }
-
-                     {item?.logout && <Text style={styles.item}>Out: {DateTime.LocalTime(item?.logout)}
-                      </Text>
-                       }
-                    </>
-                  )}
-                </View>
-                <View style={styles.container1}>
-  <>
-              <Text style={styles.item}>
-                Late Hours: {item?.lateHours}
-              </Text>
-
-              <Text style={styles.item}>
-                 Over Time: {item?.additionalHours}
-              </Text>
-  </>
-</View>
-                <View >
-                </View>
               </View>
             </TouchableOpacity>
 
@@ -460,8 +463,8 @@ const AttendanceList = (props) => {
   };
 
   const handleSubmit = async () => {
-      setIsListFeatching(true) 
-      getAttendanceList(values);
+    setIsListFeatching(true)
+    getAttendanceList(values);
     closeDrawer();
   };
   const typeOnSelect = (value) => {
@@ -556,13 +559,16 @@ const AttendanceList = (props) => {
   }
   const actionItems = [
     <>
-     <MenuItem
+    {attendanceManageOthersPermission && (
+         <MenuItem
         onPress={() => {  setOpenFilter(!openFilter)
-          ,setIsVisible(true)}}
-      >
+       ,setIsVisible(true)}}
+        >
         Filter
       </MenuItem>
-      {attendanceManageOthersPermission && (
+    )}
+    
+      {activeTab == TabName.ALL && attendanceManageOthersPermission && (
      !devicePendingStatus && <MenuItem onPress={() => { setIsVisible(true), AddAttendance() }}>
       Add
      </MenuItem>
@@ -571,39 +577,42 @@ const AttendanceList = (props) => {
      
     </>
   ];
-  const handleDateFilterChange = (value) => {
-    setValues({
-        selectedDate: value
-    })
-      getAttendanceList({
-        startDate: values?.startDate,
-        endDate: values?.endDate,
-        selectedDate: value
-      })
-
-  }
+  const applyLeave = async () => {
+    navigation.navigate("/Attendance/applyLeave", {
+      date: selectedDate,
+    });
+    };
   
   return (
     <Layout
-      buttonOnPress={()=> { setIsVisible(true), applyLeave(true) } }
-      buttonLabel="Apply Leave"
       title={"Attendance"}
       isLoading={isLoading}
       refreshing={refreshing}
       onFilterPress={closeDrawer}
       actionItems={actionItems}
+      buttonOnPress={()=> {applyLeave(true) } }
+      buttonLabel={activeTab == TabName.ALL && "Apply Leave"}
       showActionMenu={attendanceCheckinCheckPermission}
       closeModal={visible}
-      showBackIcon={false}
       showActionButton={attendanceCheckinCheckPermission}
-      filter={
-        <DateFilter
-          handleDateFilterChange={handleDateFilterChange}
-          control={control}
-          data={values?.selectedDate}
-          showCloseIcon={false}
-        />}
+      params = {{navigator: navigation}}
+   
     >
+      {activeTab == TabName.SUMMARY ? 
+      
+      <FilterDrawer
+        values={values}
+        isOpen={openFilter}
+        closeDrawer={closeDrawer}
+        userOnSelect={userOnSelect}
+        handleSubmit={handleSubmit}
+        userList={userList}
+        showUser
+        clearFilter={() => {
+          setValues("");
+          closeDrawer();
+        }}
+      /> :
       <FilterDrawer
         values={values}
         isOpen={openFilter}
@@ -632,8 +641,22 @@ const AttendanceList = (props) => {
           closeDrawer();
         }}
       />
-       
-      <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
+    }
+
+       <View style={styles.tabBar}>
+          <>
+            <Tab
+              title={title}
+              setActiveTab={setActiveTab}
+              defaultTab={activeTab}
+            />
+          </>
+        </View>
+        <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
+
+        {activeTab == TabName.SUMMARY  && (
+           <AttendanceMonthWiseList isListFeatching = {isListFeatching} values = {values}/>
+       )} 
 
         <DeleteModal
           modalVisible={attendanceDeleteModal}
@@ -642,6 +665,8 @@ const AttendanceList = (props) => {
           date={selectedItem?.date}
           userName={selectedItem?.userName}
         />
+        {activeTab == TabName.ALL && (
+
         <View>
         {attendanceList &&
           attendanceList.length > 0 ?
@@ -665,7 +690,11 @@ const AttendanceList = (props) => {
 
         <ShowMore List={attendanceList} isFetching={isFetching} HasMore={HasMore} onPress={LoadMoreList} />
         </View>
+                )}
+
+      
       </Refresh>
+      
     </Layout>
   );
 };

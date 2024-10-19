@@ -49,17 +49,7 @@ const Report = () => {
         />
       </CollapsibleSection>
       <Divider />
-      <CollapsibleSection title="Attendance Report Month Wise">
-        <Divider />
-
-        <SideMenuCard
-       onPress={() => {
-        navigation.navigate("AttendanceMonthWiseReport")
-    }}
-          name={"Attendance Report (Month Wise)"}
-        />
-      </CollapsibleSection>
-      <Divider />
+     
       <CollapsibleSection title="Order Reports">
         <Divider />
         <SideMenuCard

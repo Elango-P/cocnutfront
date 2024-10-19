@@ -38,7 +38,7 @@ const OrderProductReport = (props) => {
   const [categoryList, setCatgoryList] = useState([]);
   const [brandList, setBrandList] = useState([]);
  const [locationList, setLocationList] = useState([]);
- const [vendorList, setVendorList] = useState([]);
+ const [accountList, setAccountList] = useState([]);
  const [totalAmount,setTotalAmount] = useState([]);
 
 
@@ -84,7 +84,7 @@ const OrderProductReport = (props) => {
 
   }
   const getAccountList = ()=>{
-    accountService.GetVendorList((callback) => { setVendorList(callback) });
+    accountService.GetList(null,(callback) => { setAccountList(callback) });
 
 }
 
@@ -342,7 +342,7 @@ const OrderProductReport = (props) => {
         locationList={locationList}
         categoryList={categoryList}
         brandList={brandList}
-        vendorList={vendorList}
+        accountList={accountList}
         showBrand
         showDate
         showLocation

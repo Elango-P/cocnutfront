@@ -8,9 +8,10 @@ import ArrayList from "../lib/ArrayList";
 import ListUI from "./ListUI";
 import ProjectService from "../services/ProjectService";
 import Layout from "./Layout";
+import ticketTypeService from "../services/TicketTypeService";
+import Status from "../helper/Status";
 
-const ProjectSelector = (props) => {
-  const {ticketTypeValue} = props && props.route && props.route.params && props.route.params  
+const ProjectSelector = () => {
 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
@@ -31,13 +32,35 @@ const ProjectSelector = (props) => {
 
     })
 }
-const onPress = (value) => {    
-  if(ticketTypeValue){
-    navigation.navigate("Ticket/Add",{projectId : value && value.value , ticketTypeValue : ticketTypeValue});
-  }else{
-    navigation.navigate("ticketTypeSelector",{projectId : value && value.value });
 
-  }
+const onPress = (value) => {    
+  
+  ticketTypeService.search({projectId :  value && value.value ,status : Status.ACTIVE}, (err, response) => {
+    let data = response && response?.data && response?.data?.data;    
+    let list = [];
+    if (data) {
+        for (let i = 0; i < data.length; i++) {
+            const { id, name, default_story_point, default_assignee,fields } = data[i];
+            list.push({
+                label: name,
+                value: id,
+                default_story_point: default_story_point,
+                default_assignee: default_assignee,
+                fields: fields
+            });
+        }
+    }
+    if(list && list.length == 1){
+      navigation.navigate("Ticket/Add",{projectId : value && value.value , ticketTypeValue : list[0], allow_for_assignee_change_permission: value?.allow_for_assignee_change_permission });
+    }else{
+       navigation.navigate("ticketTypeSelector",{projectId : value && value.value, allow_for_assignee_change_permission: value?.allow_for_assignee_change_permission });
+    
+    }
+
+});
+
+
+
 }
 
   const handleChange = async (search) => {
@@ -67,7 +90,7 @@ const onPress = (value) => {
 
   return (
     <>
-    <Layout title = {"Select Project"} >
+    <Layout title = {"Create Ticket - Select Project"} >
       <SearchBar
         searchPhrase={searchPhrase}
         setSearchPhrase={setSearchPhrase}

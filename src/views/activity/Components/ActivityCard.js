@@ -29,6 +29,7 @@ const ActivityCard = (props) => {
           onPress={onPress}
         >
           <View>
+          {manageOthers &&
             <View style={styles.listContainers}>
               {imageUrl ? (
                 <Image
@@ -39,6 +40,7 @@ const ActivityCard = (props) => {
                 <UserAvatar size={55} name={user} bgColor={Color.PRIMARY} />
               )}
             </View>
+}
           </View>
           <View
             style={{
@@ -55,7 +57,7 @@ const ActivityCard = (props) => {
             <View
               style={style.rowContainer}
             >
-              <IdText id={id} />
+             {id &&  <IdText id={id} />}
               <DateText date={date} />
             </View>
             <Text>{type}</Text>

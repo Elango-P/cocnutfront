@@ -59,7 +59,7 @@ const PurchaseOrderAdd = () => {
                         required={true}
                         control={control}
                         onChange={handleVendorChange}
-                        placeholder="Select Vendor"
+                        placeholder="Select Account"
 
                     />
 

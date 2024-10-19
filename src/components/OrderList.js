@@ -646,6 +646,7 @@ if (type && type?.isDeliveryOrder === OrderType.IS_DELIVERY_ORDER) {
             toggle={orderDeleteModalToggle}
             item={selectedItem}
             updateAction={OrderDelete}
+            id={selectedItem?.order_number}
           />
 
           <>

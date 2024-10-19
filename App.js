@@ -249,14 +249,14 @@ import { useEffect } from "react";
 import ApplyLeave from "./src/views/attendance/ApplyLeave";
 import invoiceProductList from "./src/views/Invoice/invoiceProductList";
 import LocationAdd from "./src/views/location/locationAdd";
-import AttendanceCardTab from "./src/views/attendance/components/AttendanceCardTab";
 import ContactList from "./src/views/contact";
 import ContactForm from "./src/views/contact/components/ContactForm";
 import ProjectSelector from "./src/components/ProjectSelector";
 import TicketTypeSelector from "./src/components/TicketTypeSelector";
 import EditProfile from "./src/views/userProfile";
 import AddressForm from "./src/views/userProfile/AddressForm";
-import AttendanceMonthWiseReport from "./src/views/Report/AttendanceMonthWiseReport";
+import AttendanceMonthWiseList from "./src/views/attendance/components/AttendanceMonthWiseList";
+import OTPScreen from "./src/components/OtpScreen";
 
 export default function App(props) {
 
@@ -288,6 +288,7 @@ export default function App(props) {
 					<Stack.Screen name="Home" component={Home} />
 
 					<Stack.Screen name="HomeProductList" component={HomeProductList} />
+					<Stack.Screen name="OtpScreen" component={OTPScreen} />
 
 					<Stack.Screen name="HomeProductCart" component={HomeProductCart} />
 
@@ -329,7 +330,6 @@ export default function App(props) {
 					<Stack.Screen name="/Attendance/Detail" component={AttendanceDetail} />
 
 					<Stack.Screen name="/Attendance/applyLeave" component={ApplyLeave} />
-					<Stack.Screen name="AttendanceCardTab" component={AttendanceCardTab} />
 
 
 					<Stack.Screen name="LocationConfirmation" component={LocationConfirmation} />
@@ -541,8 +541,6 @@ export default function App(props) {
 
 					<Stack.Screen name="AttendanceReport" component={AttendanceReport} />
                     
-					<Stack.Screen name="AttendanceMonthWiseReport" component={AttendanceMonthWiseReport}/>
-
 					<Stack.Screen name="OrderProductReport" component={OrderProductReport} />
 
 					<Stack.Screen name="OrderSummaryReport" component={OrderSummaryReport} />
@@ -552,6 +550,7 @@ export default function App(props) {
 					<Stack.Screen name="StockEntryReport" component={StockEntryReport} />
 					<Stack.Screen name="Invoice/invoiceProductList" component={invoiceProductList} />
 
+					<Stack.Screen name="AttendanceMonthWiseList" component={AttendanceMonthWiseList}/>
 
 					{/* Delivery */}
 

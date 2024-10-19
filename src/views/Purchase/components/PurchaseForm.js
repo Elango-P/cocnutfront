@@ -1084,7 +1084,7 @@ const PurchaseForm = (props) => {
               showBorder={false}
               divider
               getDetails={(value) => setVendorName(value)}
-              placeholder="Select Vendor"
+              placeholder="Select Account"
               disable={disableEdit}
             />
 

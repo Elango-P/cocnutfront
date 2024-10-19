@@ -29,6 +29,9 @@ import { Tag } from "../../helper/Tag";
 
 // Lib
 import DateTime from "../../lib/DateTime";
+import DateFilter from "../../components/DateFilter";
+import { useForm } from "react-hook-form";
+import { Filter } from "../../helper/Filter";
 
 const Bonus = () => {
     const [bonus, setBonus] = useState([]);
@@ -44,7 +47,7 @@ const Bonus = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedEndDate, setSelectedEndDate] = useState("");
-    const [values, setValues] = useState("");
+    const [values, setValues] = useState({selectedDate: Filter.TODAY_VALUE});
     const [HasMore, setHasMore] = useState(true);
     const [statusList, setStatusList] = useState();
     const [userList, setUserList] = useState();
@@ -97,6 +100,11 @@ const Bonus = () => {
         getUserList();
         getTagList();
     }, [])
+
+    const {
+        control,
+        formState: { errors },
+    } = useForm();
 
     const AddNew = () => {
         navigation.navigate("FineForm", { isBonusType: true })
@@ -251,6 +259,10 @@ const Bonus = () => {
         if (values?.endDate) {
             params.endDate = DateTime.formatDate(values?.endDate)
         }
+
+        if (values?.selectedDate) {
+            params.orderDate = values?.selectedDate
+        }
         await fineService.search(params,
             (err, response) => {
                 let bonus = response && response?.data && response?.data?.data;
@@ -280,6 +292,9 @@ const Bonus = () => {
             if (values?.endDate) {
                 params.endDate = DateTime.formatDate(values?.endDate)
             }
+            if(values?.selectedDate){
+                params.orderDate = values?.selectedDate
+               }
             fineService.search(params, (err, response) => {
 
                 let bonus = response && response?.data && response?.data?.data;
@@ -302,6 +317,18 @@ const Bonus = () => {
         if (rowMap[rowKey]) {
             rowMap[rowKey].closeRow();
         }
+    }
+
+    const handleDateFilterChange = (value) => {
+        setValues((preValue) => ({
+            ...preValue,
+            selectedDate: value
+        }))
+        getBonusList({
+            ...values,
+            selectedDate: value,
+        })
+
     }
 
     const clearRowDetail = () => {
@@ -355,6 +382,13 @@ const Bonus = () => {
             onFilterPress={closeDrawer}
             showBackIcon={false}
             totalAmountValue={totalAmount}
+            filter={
+                <DateFilter
+                    handleDateFilterChange={handleDateFilterChange}
+                    control={control}
+                    data={values?.selectedDate}
+                    showCloseIcon={false}
+                />}
             totalAmountLabel="Total Amount"
         >
             <FilterDrawer

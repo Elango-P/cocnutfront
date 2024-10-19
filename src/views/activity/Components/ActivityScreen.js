@@ -10,14 +10,10 @@ import ActivitySelector from "../../../components/ActivityTypeSelector";
 import AddButton from "../../../components/AddButton";
 import DatePicker from "../../../components/DatePicker";
 import Layout from "../../../components/Layout";
-import MediaCarousel from "../../../components/MediaCarousel";
 import DeleteConfirmationModal from "../../../components/Modal/DeleteConfirmationModal";
-import SaveButton from "../../../components/SaveButton";
 import Select from "../../../components/Select";
-import TextArea from "../../../components/TextArea";
 import UserSelect from "../../../components/UserSelect";
 import VerticalSpace10 from "../../../components/VerticleSpace10";
-import Tab from "../../../components/Tab";
 
 // Helpers
 import { Color } from "../../../helper/Color";
@@ -29,9 +25,9 @@ import TabName from "../../../helper/Tab";
 
 // Lib
 import Alert from "../../../lib/Alert";
-import MediaHelper from "../../../lib/Media";
 
 // Services
+import Attachment from "../../../components/Attachment";
 import activityService from "../../../services/ActivityService";
 import mediaService from "../../../services/MediaService";
 import PermissionService from "../../../services/PermissionService";
@@ -224,27 +220,7 @@ const ActivityTypeScreen = (props) => {
     }
   }
 
-  const handleAdd = async (isImage, id) => {
-    const media = isImage ? await Media.getImage() : await Media.getVideo();
-    if (media) {
-      const response = await fetch(media.assets[0].uri);
-      let blob = await response.blob();
 
-      await Media.uploadImage(
-        activityId ? activityId : id,
-        blob,
-        media.assets[0].uri,
-        ObjectName.ACTIVITY,
-        null,
-        null,
-        async (response) => {
-          if (response) {
-            getMediaList(activityId ? activityId : id);
-          }
-        }
-      );
-    }
-  };
 
   const handleComplete = async () => {
     setIsSubmit(true)
@@ -307,35 +283,10 @@ const ActivityTypeScreen = (props) => {
     });
   };
 
-  
-  const videoItems = [];
-  const imageItems = [];
-  
-  try {
-    MediaData &&
-      MediaData.length > 0 &&
-      MediaData.forEach((item) => {
-        if (MediaHelper.isVideo(item.name)) {
-          videoItems.push({ url: item.url, fileName: item.file_name, id: item?.id});
-        } else {
-          imageItems.push({ url: item.url,fileName: item.file_name, id: item?.id });
-        }
-      });
-  } catch (error) {
-    if (error instanceof TypeError) {
-      imageItems.push({ url: error.item ? error.item.url : 'unknown' });
-    } else {
-      console.error('Unhandled error:', error);
-    }
-  }
-
   const onCompletedAtChange = (value) => {
     setCompletedAt(new Date(value));
   };
 
-  const onNotesChange = (e) => {
-    setNotesValue(e);
-  };
 
   const onDateChange = (value) => {
     setDate(new Date(value));
@@ -351,10 +302,6 @@ const ActivityTypeScreen = (props) => {
 
   let isDetailPage = props?.route?.params?.isDetailPage == true ? true : false;
 
-  const { imageCount, videoCount } = MediaHelper.getImageAndVideoCount(
-    "name",
-    MediaData
-  );
 
   return (
     <Layout
@@ -479,53 +426,24 @@ const ActivityTypeScreen = (props) => {
               />
             )}
             <VerticalSpace10 />
-            <MediaCarousel
-              images={imageItems}
-              isLoading={isLoading}
-              imageTitle={`Photos (${imageCount})`}
-              getMediaList={getMediaList}
-              handleAdd={handleAdd}
-              showAddButton={
-                props?.route?.params?.isAddPage == true
-                  ? true
-                  :  allowEdit  
-              }
-              showDeleteButton={
-                props?.route?.params?.isAddPage == true
-                  ? true 
-                  : allowEdit
-              }
-              swipeContent={3}
-            />
-             <MediaCarousel
-              images={videoItems}
-              isLoading={isLoading}
-              getMediaList={getMediaList}
-              handleAdd={handleAdd}
-              showAddButton={
-                props?.route?.params?.isAddPage == true
-                  ? true
-                  : allowEdit
-              }
-              showDeleteButton={
-                props?.route?.params?.isAddPage == true
-                  ? true 
-                  : allowEdit
-              }
-              videoTitle={`Videos (${videoCount})`}
-            />
-             <TextArea
-          name="notes"
-          title="Notes"
-          control={control}
-          values={notesValue}
-          onInputChange={onNotesChange}
-          editable={
-            props?.route?.params?.isAddPage == true
-              ? true
-              : allowEdit
-          }
-        />
+                  <Attachment
+                    showPhoto
+                    showVideo
+                    showAudio
+                    objectId={activityId}
+                    objectName={ObjectName.ACTIVITY}
+                    showAddButton={
+                      props?.route?.params?.isAddPage == true
+                        ? true
+                        : allowEdit
+                    }
+                    showDeleteButton={
+                      props?.route?.params?.isAddPage == true
+                        ? true 
+                        : allowEdit
+                    }
+                />
+
           <VerticalSpace10 />
 
           </ScrollView>

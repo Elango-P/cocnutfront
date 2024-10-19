@@ -68,7 +68,7 @@ const InventoryTransfer = (props) => {
 
   const [scannedCode, setScannedCode] = useState("");
 
-  const [filter, SetFilter] = useState(params?.filter ? params?.filter : Filter.TODAY)
+  const [filter, SetFilter] = useState(params?.filter )
 
   const [visible, setVisible] = useState(false)
 
@@ -85,7 +85,7 @@ const InventoryTransfer = (props) => {
   const [values, setValues] = useState({
     startDate: "",
     endDate:"",
-    selectedDate: Filter.TODAY_VALUE
+    selectedDate: ""
   });
   const [statusList, setStatusList] = useState();
   const [locationList, setLocationList] = useState();
@@ -255,7 +255,7 @@ const InventoryTransfer = (props) => {
         params.startDate = dateTime.formatDate(values.startDate)
       }
       if(values?.endDate){
-        params.startDate = dateTime.formatDate(values.endDate)
+        params.endDate = dateTime.formatDate(values.endDate)
       }
       if(values?.selectedDate){
         params.selectedDate = values.selectedDate
@@ -428,7 +428,7 @@ const InventoryTransfer = (props) => {
           param.startDate = dateTime.formatDate(values.startDate)
         }
         if(values?.endDate){
-          param.startDate = dateTime.formatDate(values.endDate)
+          param.endDate = dateTime.formatDate(values.endDate)
         }
         if(values?.selectedDate){
           param.selectedDate = values.selectedDate
@@ -705,14 +705,7 @@ const InventoryTransfer = (props) => {
       showActionMenu
       actionItems={actionList}
       openScanner={toggle}
-      filter={
-        <DateFilter
-          handleDateFilterChange={handleDateFilterChange}
-          control={control}
-          data={values?.selectedDate}
-          showCloseIcon={false}
-
-        />}
+    
       onFilterPress={closeDrawer}
 
     >

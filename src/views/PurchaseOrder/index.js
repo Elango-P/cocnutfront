@@ -43,7 +43,7 @@ const PurchaseOrder = () => {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedEndDate, setSelectedEndDate] = useState("");
     const [statusList, setStatusList] = useState();
-    const [vendorList, setVendorList] = useState();
+    const [vendorList, setAccountList] = useState();
 
     const stateRef = useRef();
 
@@ -93,7 +93,7 @@ const PurchaseOrder = () => {
     }
 
     const getAccountList = () => {
-        accountService.GetVendorList((callback) => { setVendorList(callback) });
+        accountService.GetList((callback) => { setAccountList(callback) });
 
     }
 

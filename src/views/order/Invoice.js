@@ -125,7 +125,7 @@ const Invoice = (props) => {
         let Amount = item?.amount * item?.quantity;
         return Currency.IndianFormat(Amount)
     };
-
+    
     return (
         <Layout title={"Order Invoice"} showBackIcon
             showActionMenu
@@ -162,7 +162,7 @@ const Invoice = (props) => {
                 <View style={styles.container2}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={styles.label}>Invoice: #{params?.order_number}</Text>
-                        <Text style={styles.label}>Date: {DateTime.formatDate(params?.date)} </Text>
+                        <Text style={styles.label}>Date: {params?.date} </Text>
                     </View>
                     <VerticalSpace10 paddingTop={20} />
                     <Divider />

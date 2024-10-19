@@ -21,7 +21,7 @@ const Setting = {
   REQUIRE_VERIFICATION_ON_LOCATION_CHANGE:"require_verification_on_location_change",
   UNMUTE_PHONE_SOUND :"unmute_phone_sound",
   USER_ROLE_ALLOW_MULTIPLE_CHECKIN : "user_role_allow_multiple_checkin",
-
+  OTP_REQUIRED_FOR_SALARY:"otp_required_for_salary",
  
 
 

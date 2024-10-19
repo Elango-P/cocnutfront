@@ -29,6 +29,8 @@ import Permission from "../../helper/Permission";
 import HistoryList from "../../components/HistoryList";
 import ObjectName from "../../helper/ObjectName";
 import { StyleSheet } from "react-native";
+import ArrayList from "../../lib/ArrayList";
+import SalaryAttendanceTable from "./SalaryAttendanceTable";
 
 const SalaryDetailPage = (props) => {
   const params = props?.route?.params?.item;
@@ -42,7 +44,7 @@ const SalaryDetailPage = (props) => {
   const [HasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [fine, setFine] = useState([]);
-  const [salaryHistoryView, setSalaryHistoryView] = useState("")
+  const [salaryHistoryView, setSalaryHistoryView] = useState("");
 
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -71,7 +73,7 @@ const SalaryDetailPage = (props) => {
   }, [activeTab]);
   useEffect(() => {
     getSalaryPermission();
-}, [isFocused])
+  }, [isFocused]);
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -79,11 +81,12 @@ const SalaryDetailPage = (props) => {
     }
   };
 
-  const getSalaryPermission = async ()=>{
-     const salaryHistoryView = await PermissionService.hasPermission(Permission.SALARY_HISTORY_VIEW)
-     setSalaryHistoryView(salaryHistoryView)
-}
-
+  const getSalaryPermission = async () => {
+    const salaryHistoryView = await PermissionService.hasPermission(
+      Permission.SALARY_HISTORY_VIEW
+    );
+    setSalaryHistoryView(salaryHistoryView);
+  };
 
   const renderItem = (data) => {
     let item = data?.item;
@@ -104,9 +107,7 @@ const SalaryDetailPage = (props) => {
               }
             >
               <View style={style.avatarContainer}>
-                <View
-                  style={style.avatarWrapper}
-                >
+                <View style={style.avatarWrapper}>
                   {item?.check_in_media_id ? (
                     <Image
                       source={{
@@ -125,12 +126,8 @@ const SalaryDetailPage = (props) => {
                   )}
                 </View>
               </View>
-              <View
-                style={style.cardContent}
-              >
-                <Text
-                  style={style.userName}
-                >
+              <View style={style.cardContent}>
+                <Text style={style.userName}>
                   {item.userName} {item.lastName}
                 </Text>
                 {!item?.attendanceTypeDetail?.is_leave && item.locationName && (
@@ -139,7 +136,8 @@ const SalaryDetailPage = (props) => {
                   </Text>
                 )}
                 <Text>Date: {DateTime.formatDate(item?.date)}</Text>
-                {item?.type && <Text>Type: {item?.type}</Text>}
+                {item?.type && <Text>Type: {item?.typeName
+                  }</Text>}
 
                 <View style={styles.container1}>
                   {!item?.attendanceTypeDetail?.is_leave && (
@@ -305,32 +303,30 @@ const SalaryDetailPage = (props) => {
       setIsLoading(false);
     }
   };
- let title = [
-  {
-    title: TabName.SUMMARY,
-    tabName: TabName.SUMMARY,
-  },
-  {
-    title: TabName.ATTENDANCE,
-    tabName: TabName.ATTENDANCE,
-  },
-  {
-    title: TabName.FINE,
-    tabName: TabName.FINE,
-  },
-  {
-    title: TabName.BONUS,
-    tabName: TabName.BONUS,
-  },
-]
-if(salaryHistoryView){
-  title.push(
+  let title = [
     {
+      title: TabName.SUMMARY,
+      tabName: TabName.SUMMARY,
+    },
+    {
+      title: TabName.ATTENDANCE,
+      tabName: TabName.ATTENDANCE,
+    },
+    {
+      title: TabName.FINE,
+      tabName: TabName.FINE,
+    },
+    {
+      title: TabName.BONUS,
+      tabName: TabName.BONUS,
+    },
+  ];
+  if (salaryHistoryView) {
+    title.push({
       title: TabName.HISTORY,
       tabName: TabName.HISTORY,
-    },
-  )
-}
+    });
+  }
   return (
     <Layout title={`Salary - ${params?.month} ${params?.year}`} showBackIcon>
       <ScrollView>
@@ -385,13 +381,25 @@ if(salaryHistoryView){
                 </Card.Content>
               </Card>
 
+              {/* Net Salary Information Card */}
+              <Card style={{ marginBottom: 10 }}>
+                <Card.Title title="Net Salary Information" />
+                <Card.Content>
+                  <Currency
+                    showPlaceHolder={false}
+                    title="Net Salary"
+                    name="net_salary"
+                    control={control}
+                    noEditable
+                    values={params ? params?.net_salary?.toString() : ""}
+                  />
+                </Card.Content>
+              </Card>
               {/* Salary Information Card */}
               <Card style={{ marginBottom: 10 }}>
                 <Card.Title title="Salary Information" />
                 <Card.Content>
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -420,9 +428,7 @@ if(salaryHistoryView){
                   </View>
 
                   <VerticalSpace10 paddingTop={5} />
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -465,9 +471,7 @@ if(salaryHistoryView){
                     values={params ? params?.special_allowance?.toString() : ""}
                   />
                   <VerticalSpace10 paddingTop={5} />
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -481,16 +485,6 @@ if(salaryHistoryView){
                       />
                     </View>
                     <VerticalSpace10 paddingTop={5} />
-                    <View style={style.infoHalf}>
-                      <Currency
-                        showPlaceHolder={false}
-                        title="Bonus"
-                        name="bonus"
-                        control={control}
-                        noEditable
-                        values={params ? params?.bonus?.toString() : ""}
-                      />
-                    </View>
                   </View>
                 </Card.Content>
               </Card>
@@ -509,130 +503,77 @@ if(salaryHistoryView){
                   />
                   <VerticalSpace10 paddingTop={5} />
 
+                  {params && params?.enableAddtionalDayCalculation && (
+                    <View style={style.inOutContainer}>
+                      <View style={style.infoHalf}>
+                        <TextBox
+                          showPlaceHolder={false}
+                          control={control}
+                          name="additional_hours"
+                          title={"Additional Hours"}
+                          values={
+                            params ? params?.additional_hours?.toString() : "0"
+                          }
+                          editable={false}
+                        />
+                      </View>
+
+                      <View style={style.infoHalf}>
+                        <Currency
+                          showPlaceHolder={false}
+                          title="Additional Salary"
+                          name="additionalHourAmount"
+                          control={control}
+                          noEditable
+                          values={
+                            params
+                              ? params?.additionalHourAmount?.toString()
+                              : "858"
+                          }
+                        />
+                      </View>
+                    </View>
+                  )}
+                  <VerticalSpace10 paddingTop={10} />
+
+                  {ArrayList.isArray(params?.attendanceCount) && (
+                    <SalaryAttendanceTable data={params?.attendanceCount} />
+                  )}
+                  <VerticalSpace10 paddingTop={5} />
+                </Card.Content>
+              </Card>
+              {/* Net Salary Information Card */}
+              <Card style={{ marginBottom: 10 }}>
+                <Card.Title title="Fine/Bonus" />
+                <Card.Content>
                   <View
-                    style={style.inOutContainer}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
                   >
                     <View style={style.infoHalf}>
-                      <TextBox
+                      <Currency
                         showPlaceHolder={false}
+                        title="Bonus"
+                        name="bonus"
                         control={control}
-                        name="worked_days"
-                        title={"Worked Days"}
-                        values={params ? params?.worked_days?.toString() : ""}
-                        editable={false}
+                        noEditable
+                        values={params ? params?.bonus?.toString() : ""}
                       />
                     </View>
 
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
-                        title="Worked Days Salary"
-                        name="worked_days_salary"
-                        placeholder="Worked Days"
+                        title="Fine"
+                        name="fine"
                         control={control}
                         noEditable
-                        values={
-                          params
-                            ? params?.worked_days_salary?.toString()
-                            : "858"
-                        }
+                        values={params ? params?.fine?.toString() : ""}
                       />
                     </View>
                   </View>
-                  <VerticalSpace10 paddingTop={5} />
-
-                  <View
-                    style={style.inOutContainer}
-                  >
-                    <View style={style.infoHalf}>
-                      <TextBox
-                        showPlaceHolder={false}
-                        control={control}
-                        name="additional_days"
-                        title={"Additional Days"}
-                        values={
-                          params ? params?.additional_days?.toString() : ""
-                        }
-                        editable={false}
-                      />
-                    </View>
-                    <View style={style.infoHalf}>
-                      <Currency
-                        showPlaceHolder={false}
-                        title="Additional Day Salary"
-                        name="additional_day_allowance"
-                        placeholder="Worked Days"
-                        control={control}
-                        noEditable
-                        values={
-                          params
-                            ? params?.additional_day_allowance?.toString()
-                            : ""
-                        }
-                      />
-                    </View>
-                  </View>
-                  <VerticalSpace10 paddingTop={5} />
-
-                  <View
-                    style={style.inOutContainer}
-                  >
-                    <View style={style.infoHalf}>
-                      <TextBox
-                        showPlaceHolder={false}
-                        control={control}
-                        name="additional_hours"
-                        title={"Additional Hours"}
-                        values={
-                          params ? params?.additional_hours?.toString() : "0"
-                        }
-                        editable={false}
-                      />
-                    </View>
-
-                    <View style={style.infoHalf}>
-                      <Currency
-                        showPlaceHolder={false}
-                        title="Additional Hour Salary"
-                        name="additionalHourAmount"
-                        control={control}
-                        noEditable
-                        values={
-                          params
-                            ? params?.additionalHourAmount?.toString()
-                            : "858"
-                        }
-                      />
-                    </View>
-                  </View>
-                  <VerticalSpace10 paddingTop={5} />
-
-                  <View
-                    style={style.inOutContainer}
-                  >
-                    <View style={style.infoHalf}>
-                      <TextBox
-                        showPlaceHolder={false}
-                        control={control}
-                        name="leave"
-                        title={"Leave Days"}
-                        values={params ? params?.leave?.toString() : ""}
-                        editable={false}
-                      />
-                    </View>
-
-                    <View style={style.infoHalf}>
-                      <Currency
-                        showPlaceHolder={false}
-                        title="Leave Day Salary"
-                        name="leave_salary"
-                        control={control}
-                        noEditable
-                        values={params ? params?.leave_salary?.toString() : ""}
-                      />
-                    </View>
-                  </View>
-                  <VerticalSpace10 paddingTop={5} />
                 </Card.Content>
               </Card>
 
@@ -640,9 +581,7 @@ if(salaryHistoryView){
               <Card style={{ marginBottom: 10 }}>
                 <Card.Title title="Deductions Information" />
                 <Card.Content>
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -669,9 +608,7 @@ if(salaryHistoryView){
                   </View>
                   <VerticalSpace10 paddingTop={5} />
 
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -697,9 +634,7 @@ if(salaryHistoryView){
                   </View>
                   <VerticalSpace10 paddingTop={5} />
 
-                  <View
-                    style={style.inOutContainer}
-                  >
+                  <View style={style.inOutContainer}>
                     <View style={style.infoHalf}>
                       <Currency
                         showPlaceHolder={false}
@@ -726,30 +661,6 @@ if(salaryHistoryView){
                     </View>
                   </View>
                   <VerticalSpace10 paddingTop={5} />
-
-                  <Currency
-                    showPlaceHolder={false}
-                    title="Fine"
-                    name="fine"
-                    control={control}
-                    noEditable
-                    values={params ? params?.fine?.toString() : ""}
-                  />
-                </Card.Content>
-              </Card>
-
-              {/* Net Salary Information Card */}
-              <Card style={{ marginBottom: 10 }}>
-                <Card.Title title="Net Salary Information" />
-                <Card.Content>
-                  <Currency
-                    showPlaceHolder={false}
-                    title="Net Salary"
-                    name="net_salary"
-                    control={control}
-                    noEditable
-                    values={params ? params?.net_salary?.toString() : ""}
-                  />
                 </Card.Content>
               </Card>
             </View>
@@ -797,10 +708,7 @@ if(salaryHistoryView){
                   keyExtractor={(item) => String(item.id)}
                 />
               ) : (
-                <NoRecordFound
-                  iconName={"receipt"}
-                  styles={style.noRecord}
-                />
+                <NoRecordFound iconName={"receipt"} styles={style.noRecord} />
               )}
               <ShowMore
                 List={fine}
@@ -825,10 +733,7 @@ if(salaryHistoryView){
                   keyExtractor={(item) => String(item.id)}
                 />
               ) : (
-                <NoRecordFound
-                  iconName={"receipt"}
-                  styles={style.noRecord}
-                />
+                <NoRecordFound iconName={"receipt"} styles={style.noRecord} />
               )}
               <ShowMore
                 List={fine}
@@ -839,17 +744,12 @@ if(salaryHistoryView){
             </View>
           )}
         </Refresh>
-       
       </ScrollView>
       {activeTab === TabName.HISTORY && (
-                <ScrollView>
-                    <HistoryList
-                        objectName={ObjectName.SALARY}
-                        objectId={params?.id}
-                    />
-
-                </ScrollView>
-            )}
+        <ScrollView>
+          <HistoryList objectName={ObjectName.SALARY} objectId={params?.id} />
+        </ScrollView>
+      )}
     </Layout>
   );
 };
@@ -886,13 +786,14 @@ const style = StyleSheet.create({
   },
 
   card: {
-    marginTop: 10, padding: 10 
+    marginTop: 10,
+    padding: 10,
   },
 
   noRecord: {
-    paddingVertical: 250, alignItems: "center" 
+    paddingVertical: 250,
+    alignItems: "center",
   },
-  
 });
 
 export default SalaryDetailPage;

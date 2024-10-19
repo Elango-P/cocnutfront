@@ -1,63 +1,55 @@
 import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView } from "react-native";
-import VoiceNoteRecorder from "../../components/VoiceNoteRecorder";
+import Attachment from "../../components/Attachment";
 import DatePicker from "../../components/DatePicker";
-import Label from "../../components/Label";
 import Layout from "../../components/Layout";
-import MediaCarousel from "../../components/MediaCarousel";
-import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
+import ProjectSelect from "../../components/ProjectSelect";
 import ProjectUserSelect from "../../components/ProjectUserSelect";
+import Select from "../../components/Select";
 import StoryPointSelect from "../../components/StoryPointSelect";
 import TextArea from "../../components/TextArea";
 import VerticalSpace10 from "../../components/VerticleSpace10";
-import ObjectName from "../../helper/ObjectName";
+import {
+    TICKET_FIELD_ASSIGNEE,
+    TICKET_FIELD_ATTACHMENT_IMAGE,
+    TICKET_FIELD_DESCRIPTION,
+    TICKET_FIELD_DUE_DATE,
+    TICKET_FIELD_PROJECT,
+    TICKET_FIELD_STORY_POINTS,
+    TICKET_FIELD_SUMMARY,
+    TICKET_FIELD_TYPE,
+    TICKET_FIELD_VOICE_NOTES
+} from "../../helper/ProjectTicketType";
 import TabName from '../../helper/Tab';
-import ArrayList from "../../lib/ArrayList";
+import DateTime from "../../lib/DateTime";
 import mediaService from "../../services/MediaService";
 import ticketService from "../../services/TicketServices";
 import ticketTypeService from "../../services/TicketTypeService";
-import NetworkStatus from "../../lib/NetworkStatus";
-import DateTime from "../../lib/DateTime";
-import Media from "../../helper/Media";
-
-
-
-
 
 const TicketForm = (props) => {
 
-    const { projectId, ticketTypeValue } = props && props.route && props.route.params && props.route.params
+    const { projectId, ticketTypeValue, allow_for_assignee_change_permission } = props && props.route && props.route.params && props.route.params;
 
-
-
-    const [selectedUser, setSelectedUser] = useState("");
+    const [selectedUser, setSelectedUser] = useState(null);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedProject, setSelectedProject] = useState("");
+    const [selectedProject, setSelectedProject] = useState(null);
     const [storyPoints, setStoryPoints] = useState(ticketTypeValue && ticketTypeValue.default_story_point)
     const [typeList, setTypeList] = useState([]);
-    const [ticketType, setTicketType] = useState("");
-    const [file, setFile] = useState(null);
-    const [image, setImage] = useState(null);
-    const [images, setImages] = useState([]);
     const [MediaData, setMediaData] = useState([]);
     const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
-    const [ticketId, setId] = useState("")
-    const [ids, setIds] = useState("")
-    const [files, setFiles] = useState([])
-    const [mediaDeleteModal, setMediaDeleModal] = useState(false)
-    const [selectedImage, setSelectImage] = useState("");
-    const [audioRecordings, setAudioRecordings] = useState([])
     const [isSubmit, setIsSubmit] = useState(false)
+    const navigation = useNavigation();
+    const [selectedFiles, setSelectedFiles]=useState([]);
 
-    const navigation = useNavigation()
     const preloadedValues = {
-        assignee: selectedUser,
-        storyPoints: storyPoints
-    }
+        assignee: (selectedUser || selectedUser == "") ? selectedUser : ticketTypeValue?.default_assignee,
+        storyPoints: storyPoints,
+        project: projectId ? projectId : "",
+        ticketType: ticketTypeValue && ticketTypeValue?.value
 
+    }
     const {
         control,
         handleSubmit,
@@ -77,44 +69,27 @@ const TicketForm = (props) => {
 
     const addTicket = async (values) => {
         setIsSubmit(true)
-        
+
         let createData = new FormData();
         createData.append("assignee_id", values?.assignee?.value ? values?.assignee?.value : selectedUser)
-        createData.append("due_date", selectedDate ? DateTime.formatDate(selectedDate) :"")
+        createData.append("due_date", selectedDate ? DateTime.formatDate(selectedDate) : "")
         createData.append("projectId", projectId && projectId)
         createData.append("ticketType", ticketTypeValue && ticketTypeValue?.value)
         createData.append("summary", values.summary)
         createData.append("description", values.description)
         createData.append("story_points", storyPoints ? storyPoints : values?.storyPoints?.value)
 
-        if (ArrayList.isArray(audioRecordings)) {
-            for (const recording of audioRecordings) {
-                const fileUri = recording.recording.getURI();
 
-                createData.append('files', {
-                    uri: fileUri,
-                    type: 'audio/m4a',
-                    name: recording.name,
-                });
-            }
-        }
-            
         await ticketService.create(createData, (err, response) => {
             if (response && response?.data) {
-                setId(response.data.ticketDetails.id)
-                if (files && files.length > 0) {
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        const image = images[i];
-                        uploadImage(file, image && image.uri, response.data.ticketDetails.id)
-
-
+                if (selectedFiles && selectedFiles.length > 0) {
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i];
+                        uploadImage(file, response.data.ticketDetails.id)
                     }
 
                 } else {
-                    uploadImage(file, image, response.data.ticketDetails.id)
                     navigation.navigate("Ticket")
-
                 }
 
             } else {
@@ -125,42 +100,18 @@ const TicketForm = (props) => {
 
     }
 
-    const handleDelete = (index) => {
-        mediaDeleteToggle()
-        setSelectImage(index)
-    };
-    const mediaDeleteToggle = () => {
-        setMediaDeleModal(!mediaDeleteModal);
-    }
-    const removeImage = () => {
-        try {
-            setImages((prevImages) => {
-                return prevImages.filter((_, i) => i !== selectedImage);
-            });
-        } catch (err) {
-            console.log(err);
-        }
-    };
-    const getMediaList = async (id) => {
-        await mediaService.search(ticketId ? ticketId : id, ObjectName.TICKET, (callback) => setMediaData(callback.data.data))
-    }
-    const uploadImage = (file, image, id) => {
+    const uploadImage = (file, id) => {
         if (file) {
             const data = new FormData();
-            let files = {
-                type: file?._data?.type,
-                size: file?._data.size,
-                uri: image,
-                name: file?._data.name,
-            };
-            data.append("media_file", files);
-            data.append("media_name", file?._data.name);
+          
+            data.append("media_file", file);
+            data.append("media_name", file?.name);
             data.append("object", "TICKET");
             data.append("object_id", id);
             data.append("media_visibility", 1);
 
             let mediaObj = [{
-                url: image
+                url: file?.uri
             }];
 
             if (MediaData && MediaData.length > 0) {
@@ -170,47 +121,23 @@ const TicketForm = (props) => {
                 setMediaData(mediaObj)
             }
 
-
             mediaService.uploadMedia(navigation, data, async (error, response) => {
 
                 if (response) {
-                    setIds(response?.id)
                     setIsSubmit(false)
                 }
             });
         }
     };
 
-
-    const addNewEntry = async (file, image) => {
-        await uploadImage(file, image)
-    }
-
-
-    const takePicture = async (e) => {
-        try{
-          const image = await Media.imageUpload();
-          if (image && image.assets && image.assets.length > 0) {
-            const response = await fetch(image.assets[0].uri);
-            if (response) {
-                const blob = await response.blob();
-                setFile(blob)
-                setFiles([...files, blob])
-            }
-            const imageUrl = image.assets[0];
-            setImages((prevImages) => [...prevImages, imageUrl]);
-          }
-        }catch (error) {
-          console.error('Error taking picture:', error);
-      }
-       
-      };
-
     const ticketTypeList = () => {
         let params = {}
 
         if (selectedProject) {
             params.projectId = selectedProject?.value
+        } else {
+            params.projectId = projectId
+
         }
         ticketTypeService.search(params, (err, response) => {
 
@@ -218,12 +145,12 @@ const TicketForm = (props) => {
             let list = [];
             if (data) {
                 for (let i = 0; i < data.length; i++) {
-                    const { id, name, default_story_point, userId } = data[i];
+                    const { id, name, default_story_point, default_assignee } = data[i];
                     list.push({
                         label: name,
                         value: id,
                         default_story_point: default_story_point,
-                        userId: userId
+                        default_assignee: default_assignee
 
                     });
                 }
@@ -233,107 +160,154 @@ const TicketForm = (props) => {
         });
     }
 
+
     const handleTypeChange = (value) => {
-        setTicketType(value.value)
         setStoryPoints(value?.default_story_point)
-        setSelectedUser(value?.userId)
+        setSelectedUser(value?.default_assignee ? value?.default_assignee : "")
     }
 
     return (
         <Layout
-            title="Add Ticket"
+            title="Ticket - Create"
             showBackIcon={true}
             isSubmit={isSubmit}
-            buttonLabel={activeTab === TabName.SUMMARY ? "Save" : activeTab === TabName.ATTACHMENTS && "Upload"}
+            buttonLabel={activeTab === TabName.SUMMARY ? "Save" : ""}
             buttonOnPress={
                 activeTab === TabName.SUMMARY
                     ? handleSubmit((values) => addTicket(values))
-                    : activeTab === TabName.ATTACHMENTS
-                        ? () => takePicture()
-                        : ""
+                    :  ""
             }
         >
-            <DeleteConfirmationModal
-                modalVisible={mediaDeleteModal}
-                toggle={mediaDeleteToggle}
-                updateAction={(value) => removeImage(value)}
-            />
+         
             <ScrollView>
-
-
                 <VerticalSpace10 />
                 {activeTab === TabName.SUMMARY && (
                     <>
-                        <ProjectUserSelect
-                            label="Assignee"
-                            getDetails={(values) => setSelectedUser(values)}
-                            name="assignee"
-                            control={control}
-                            required={selectedUser ? false : true}
-                            selectedUserId={selectedUser}
-                            placeholder="Select Assignee"
-                            projectId={projectId && projectId}
-                        />
-                        <VerticalSpace10 />
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_PROJECT.toString()) && (
+                                <>
+                                    <ProjectSelect
+                                        label="Project"
+                                        name="project"
+                                        onChange={(values) => setSelectedProject(values)}
+                                        control={control}
+                                        required
+                                        placeholder="Select Project"
+                                    />
 
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_TYPE.toString()) && (
+                                <>
+                                    <Select
+                                        label={"Ticket Type"}
+                                        name="ticketType"
+                                        control={control}
+                                        options={typeList}
+                                        required={true}
+                                        placeholder={"Select Ticket Type"}
+                                        getDetails={(value) => handleTypeChange(value)}
 
-                        <DatePicker
-                            title="Due Date"
-                             name="due_date"
-                            onDateSelect={onDateSelect}
-                            selectedDate={selectedDate}
-                        />
-                        <VerticalSpace10 />
-                        <StoryPointSelect
-                            onChange={(values) => setStoryPoints(values)}
-                            placeholder="Select Story Point"
-                            control={control}
-                            name="storyPoints"
-                            required={storyPoints ? false : true}
-                            data={storyPoints}
-                        />
-                        <VerticalSpace10 />
+                                    />
 
-                        <TextArea
-                            name="summary"
-                            title="Summary"
-                            control={control}
-                            required={true}
-                        />
-                        <VerticalSpace10 />
-                        <TextArea
-                            name="description"
-                            title="Description"
-                            control={control}
-                        />
-                        <VerticalSpace10 />
-                        <Label text={"Attachments"} bold size={13} />
-                        <MediaCarousel
-                            images={images}
-                            showAddButton={true}
-                            getMediaList={getMediaList}
-                            handleAdd={() => takePicture()}
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_ASSIGNEE.toString()) && (
+                                <>
+                                    <ProjectUserSelect
+                                        label="Assignee"
+                                        getDetails={(values) => setSelectedUser(values)}
+                                        name="assignee"
+                                        control={control}
+                                        required={selectedUser ? false : true}
+                                        selectedUserId={(selectedUser || selectedUser == "") ? selectedUser : ticketTypeValue?.default_assignee}
+                                        placeholder="Select Assignee"
+                                        projectId={projectId && projectId}
+                                        disable={(selectedProject || selectedProject == "") ? !selectedProject?.allow_for_assignee_change_permission : !allow_for_assignee_change_permission}
+                                    />
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_DUE_DATE.toString()) && (
+                                <>
+                                    <DatePicker
+                                        title="Due Date"
+                                        name="due_date"
+                                        onDateSelect={onDateSelect}
+                                        selectedDate={selectedDate}
+                                    />
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_STORY_POINTS.toString()) && (
+                                <>
+                                    <StoryPointSelect
+                                        onChange={(values) => setStoryPoints(values)}
+                                        placeholder="Select Story Point"
+                                        control={control}
+                                        name="storyPoints"
+                                        required={storyPoints ? false : true}
+                                        data={storyPoints}
+                                    />
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_SUMMARY.toString()) && (
+                                <>
+                                    <TextArea
+                                        name="summary"
+                                        title="Summary"
+                                        control={control}
+                                        required={true}
+                                    />
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        {ticketTypeValue
+                            && ticketTypeValue?.fields
+                            && ticketTypeValue?.fields?.includes(TICKET_FIELD_DESCRIPTION.toString()) && (
+                                <>
+                                    <TextArea
+                                        name="description"
+                                        title="Description"
+                                        control={control}
+                                    />
+                                    <VerticalSpace10 />
+                                </>
+                            )}
+
+                        <Attachment
                             showDeleteButton={true}
-                            deleteOnPress={handleDelete}
-                            swipeContent = {2}
+                            showPhoto
+                            showVideo
+                            showAudio
+                            handleSelectedFiles={setSelectedFiles}
+                            isAddPage
+                            selectedFiles={selectedFiles}
                         />
-                        <VerticalSpace10 />
-                        <VoiceNoteRecorder setAudioRecordings={setAudioRecordings} isAddPage={true} />
-                        <VerticalSpace10 />
-                        <VerticalSpace10 />
                     </>
                 )}
-
-
             </ScrollView>
-
-
-
-
-
         </Layout>
-
     )
-
 }
+
 export default TicketForm;

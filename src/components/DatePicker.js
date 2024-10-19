@@ -8,12 +8,11 @@ import styles from '../helper/Styles';
 import CustomDivider from './Divider';
 import Label from './Label';
 import { Color } from '../helper/Color';
-
-const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false, divider, format = "YYYY-MM-DD", displayFormat = "DD-MMM-YYYY", disabled = true, title, showTime, name, control, isForm, required }) => {
+const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false,disablePastDates = false, divider, format = "YYYY-MM-DD", displayFormat = "DD-MMM-YYYY", disabled = true, title, showTime, name, control, isForm, required }) => {
     const [datePickerVisible, setDatePickerVisible] = useState(visible ? visible :false);
     const [timePickerVisible, setTimePickerVisible] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState("");
-
+      
 
     const handleClear = () => {
         setSelectedDateTime("");
@@ -30,6 +29,19 @@ const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false, divide
     const showTimePicker = () => {
         setTimePickerVisible(!timePickerVisible);
     };
+    
+    const onDateChange = (value)=>{
+        try {            
+            setDatePickerVisible(false);
+            if (value) {
+                const formattedDate = moment(value).format(format);
+                setSelectedDateTime(moment(value).format(displayFormat));
+                onDateSelect(formattedDate);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const onDateSelected = (event, value) => {
         try {
@@ -65,7 +77,7 @@ const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false, divide
       {title && <Label color= {Color.LIGHT_GREY} size={15} text={date} />}
   </View>
         </View>) : (
-            <TouchableOpacity onPress={disabled === false ? () => setDatePickerVisible(false) : showDatePicker}>
+            <TouchableOpacity activeOpacity = {1.2} onPress={disabled === false ? () => setDatePickerVisible(false) : showDatePicker}>
                 <View style={styles.MainContainer}>
                     <View style={{ paddingBottom: 2 }}>
                         {title && <Label text={title} bold={true} />}
@@ -75,7 +87,7 @@ const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false, divide
                             <TextInput
                                 editable={true}
                                 showSoftInputOnFocus={false}
-                                onPressIn={() => showDatePicker()}
+                                onPressIn={showDatePicker}
                                 name="date"
                                 value={date != "Invalid date" ? date : ""}
                                 placeholder="Select Date"
@@ -123,14 +135,16 @@ const DatePicker = ({ onClear, selectedDate, onDateSelect, visible=false, divide
                                         />
                                     )}
                                 />
-                            ) : (
+                            ) : 
+                                
                                 <DateTimePicker
-                                    value={selectedDate ? new Date(selectedDate) : new Date()}
-                                    mode="date"
-                                    display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                                    onChange={onDateSelected}
-                                />
-                            )}
+                                 value={selectedDate ? new Date(selectedDate) : new Date()}
+                                 mode="date"
+                                 display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                 onChange={Platform.OS === 'ios' ? selectedDate && onDateSelected : onDateSelected}
+                                 onTouchStart={Platform.OS === 'ios' && !selectedDate && onDateChange}
+                                 minimumDate={disablePastDates ? new Date() : null}                                 />
+                            }
                         </>
                     )}
 

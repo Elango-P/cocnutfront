@@ -25,6 +25,7 @@ import { Filter } from "../../helper/Filter";
 
 
 const Activity = (props) => {
+    const param = props?.route?.params;
     const [activity, setActivity] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
@@ -38,10 +39,8 @@ const Activity = (props) => {
 
     const [values, setValues] = useState({
         status: null,
-        startDate: new Date(),
-        endDate: new Date(),
-        selectedDate: Filter.TODAY_VALUE
-
+        selectedDate: Filter.TODAY_VALUE,
+        user : param?.user
     });
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedEndDate, setSelectedEndDate] = useState(new Date());
@@ -167,12 +166,14 @@ const Activity = (props) => {
 
     }
     const handleDateFilterChange = (value) => {
-        setValues({
+        setValues((preValue) => ({
+            ...preValue,
             selectedDate: value
-        })
+        }))
         getActivityList({
             startDate: values?.startDate,
             endDate: values?.endDate,
+            user : values?.user,
             selectedDate: value
         })
 

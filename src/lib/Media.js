@@ -40,6 +40,13 @@ class Media {
         const extension = url?.split('.').pop().toLowerCase();
         return imageExtensions.includes(extension) ? true: false;
     };
+
+    static isAudio(url) {
+        const audioExtensions = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'];
+        const extension = url?.split('.').pop().toLowerCase();
+        return audioExtensions.includes(extension) ? true : false;
+    };
+    
     
 }
 

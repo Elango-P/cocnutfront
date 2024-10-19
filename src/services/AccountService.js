@@ -7,11 +7,11 @@ class AccountService {
     try {
       let apiUrl = await Url.get(`${endpoints().accountAPI}/list`, params);
       apiClient.get(apiUrl, (error, response) => {
-        let vendorList = new Array();
+        let accountList = new Array();
         let data = response?.data?.data;
         if (data && data.length > 0) {
           for (let i = 0; i < data.length; i++) {
-            vendorList.push({
+            accountList.push({
               label: data[i].name,
               value: data[i].id,
               cash_discount: data[i].cash_discount,
@@ -21,34 +21,13 @@ class AccountService {
           }
         }
         // Set response in state
-        callback && callback(vendorList);
+        callback && callback(accountList);
       });
     } catch (err) {
       console.log(err);
     }
   }
 
-  async GetVendorList(callback) {
-    try {
-      let apiUrl = await Url.get(`${endpoints().accountAPI}/vendorList`);
-      apiClient.get(apiUrl, (error, response) => {
-        let vendorList = new Array();
-        let data = response?.data?.data;
-        if (data && data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            vendorList.push({
-              label: data[i].name,
-              value: data[i].id,
-            });
-          }
-        }
-        // Set response in state
-        callback && callback(vendorList);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
   async search(params, callback) {
     try {

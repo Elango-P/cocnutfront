@@ -18,7 +18,7 @@ import { StyleSheet } from "react-native";
 
 const PurchaseAdd = (props) => {
   let locationId = props && props?.route && props?.route?.params && props?.route?.params?.locationId
-  const [vendorList, setVendorList] = useState();
+  const [accountList, setAccountList] = useState();
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
   const [search, setSearch] = useState(false);
@@ -31,7 +31,7 @@ const PurchaseAdd = (props) => {
 
     let mount = true;
 
-    mount && getVendorList()
+    mount && getAccountList()
 
     //cleanup function
     return () => {
@@ -40,8 +40,8 @@ const PurchaseAdd = (props) => {
 
   }, [isFocused])
 
-  const getVendorList = () => {
-    AccountService.GetVendorList((callback) => { setVendorList(callback) })
+  const getAccountList = () => {
+    AccountService.GetList({show_purchase:true},(callback) => { setAccountList(callback) })
   }
 
 
@@ -77,10 +77,10 @@ const PurchaseAdd = (props) => {
   const handleSearchChange = async (search) => {
     const params = {
       search: search,
-      accountCategory : Account.TYPE_VENDOR
+      show_purchase:true
     }
     AccountService.GetList(params, response => {
-      setVendorList(response);
+      setAccountList(response);
     });
 
   }
@@ -88,7 +88,7 @@ const PurchaseAdd = (props) => {
 
   return (
     <Layout
-      title={'Select Vendor'}
+      title={'Select Account'}
       showBackIcon>
 
       <ScrollView
@@ -101,13 +101,13 @@ const PurchaseAdd = (props) => {
           setClicked={setClicked}
           clicked={clicked}
           setSearch={setSearch}
-          onPress={getVendorList}
+          onPress={getAccountList}
           handleChange={handleSearchChange}
           noScanner
         />
         {(
-          vendorList && vendorList.length > 0 &&
-          vendorList.map((item, index) => {
+          accountList && accountList.length > 0 &&
+          accountList.map((item, index) => {
             const containerStyle = AlternativeColor.getBackgroundColor(index)
 
 

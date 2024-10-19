@@ -122,7 +122,7 @@ const Select = (props) => {
               disable={disable}
               style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
               placeholderStyle={[styles.placeholderStyle, { color: placeholderTextColor ? placeholderTextColor : Color.PLACEHOLDER_TEXT }]}
-              selectedTextStyle={[styles.selectedTextStyle, { color: disable ? Color.LIGHT_GREY : Color.BLACK }]}
+              selectedTextStyle={[styles.selectedTextStyle, { color: Color.BLACK }]}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
               data={dropdownItem}

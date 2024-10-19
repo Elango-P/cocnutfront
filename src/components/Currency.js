@@ -53,7 +53,7 @@ const Currency = (props) => {
                                 editable={noEditable ? false : edit ? true : false}
                                 placeholder={placeHolderShow ? (placeholder || title) : ""}
                                 placeholderTextColor={Color.PLACEHOLDER_TEXT}
-                                style={[styles.textInputStyle, percentage && { flex: 1 }]}
+                                style={[styles.textInputStyle,{color: Color.BLACK}, percentage && { flex: 1 }]}
                                 secureTextEntry={secureTextEntry}
                                 keyboardType={'numeric'}
                                 returnKeyType={"done"}

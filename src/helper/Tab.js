@@ -41,7 +41,14 @@ const tab = {
     ATTENDANCE: "Attendance",
     FINE: "Fine",
     BONUS: "Bonus",
-
+    CONTACTS: "Contacts",
+    ADDRESSES: "Addresses",
+    AGREEMENT: "Agreement",
+    PURCHASE_ORDER: "Purchase Order",
+    BILL: "Bill",
+    PAYMENT: "Payment",
+    LOYALTY: "Loyalty",
+    RATINGS: "Ratings"
 }
 
 export default tab;

@@ -2,19 +2,19 @@ buildscript {
     ext {
         buildToolsVersion = "34.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 34
-        targetSdkVersion = 34
+        compileSdkVersion = 34 // Updated
+        targetSdkVersion = 34 // Updated
         ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.8.0"
+        kotlinVersion = "1.8.0" // Consider downgrading if issues persist
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("com.android.tools.build:gradle:8.0.2")
+        classpath("com.facebook.react:react-native-gradle-plugin:0.73.6")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -22,7 +22,10 @@ apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
-	    maven { url "${project(":react-native-background-fetch").projectDir}/libs" }
+        google()
+        mavenCentral()
+        jcenter()
+        maven { url "${project(":react-native-background-fetch").projectDir}/libs" }
         maven { url "$rootDir/../node_modules/expo-camera/android/maven" }
     }
 }

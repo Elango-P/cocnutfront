@@ -5,7 +5,7 @@ import { Color } from '../helper/Color';
 import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import styles from '../helper/Styles';
 
-const DropDownMenu = ({ MenuItems, onPress, icon, label, color, menuStyle }) => {
+const DropDownMenu = ({ MenuItems, onPress, icon, label, color, menuStyle, iconSize }) => {
   const [visible, setVisible] = useState(false);
 
   const hideMenu = () => setVisible(false);
@@ -36,7 +36,7 @@ const DropDownMenu = ({ MenuItems, onPress, icon, label, color, menuStyle }) => 
           <TouchableOpacity onPress={showMenu}>
             <Ionicons
               name={icon ? icon : "ellipsis-vertical"}
-              size={24}
+              size={iconSize ? iconSize : 24}
               color={color ? color :Color.DROPDOWN_TEXT}
               style={{paddingTop: 3 }}
             />

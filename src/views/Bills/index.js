@@ -43,7 +43,7 @@ const Bills = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
   const [statusList, setStatusList] = useState();
-  const [vendorList, setVendorList] = useState();
+  const [accountList, setAccountList] = useState();
 
 
 
@@ -100,7 +100,7 @@ const Bills = () => {
         setStatusList(status);
     }
     const getAccountList = ()=>{
-              accountService.GetVendorList((callback) => { setVendorList(callback) });
+              accountService.GetList((callback) => { setAccountList(callback) });
   
           }
 
@@ -331,7 +331,7 @@ const Bills = () => {
         selectedEndDate={selectedEndDate}
         selectedDate={selectedDate}
         statusList= {statusList}
-        vendorList= {vendorList}
+        accountList= {accountList}
 
         showAccount
         showStatus

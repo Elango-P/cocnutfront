@@ -45,6 +45,7 @@ const Menu = (props) => {
   const [devicePendingStatus, setDevicePendingStatus]=useState(false)
   const [permission, setPermission]=useState({})
   const isFocused = useIsFocused();
+  const [otpNotification, setOtpNotification]=useState(false)
 
   const Logout = async (setSideMenuOpen) => {
     await AsyncStorage.clearAll();
@@ -61,6 +62,9 @@ const Menu = (props) => {
           })
           await settingService.getByName(Setting.PORTAL_HEADER_TEXT_COLOR,(err,response)=>{
             setTextColor(response)
+          })
+          await settingService.getByName(Setting.OTP_REQUIRED_FOR_SALARY,(err,response)=>{
+            setOtpNotification(response)
           })
         
         
@@ -415,7 +419,13 @@ const Menu = (props) => {
     return (
       <SideMenuCard
         onPress={() => {
-          navigator.navigate("Salary")
+          const path = 'Salary'; // Define the path you want to pass
+         
+          if (otpNotification) {
+            navigator.navigate("OtpScreen", { path }); // Navigate to OTP screen if any notification is allowed
+          } else {
+            navigator.navigate("Salary")
+          }
           setSideMenuOpen && setSideMenuOpen(false)
         }}
         name={"Salary"}

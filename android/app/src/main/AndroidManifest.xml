@@ -4,14 +4,12 @@
     <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    
-
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <!-- These require runtime permissions on M -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- <uses-feature android:name="android.hardware.type.watch" /> -->
 
@@ -37,12 +35,12 @@
   </queries>
 
 <!-- Use For App Icon Config -->
-  <application android:name=".MainApplication" android:label="CocoTrack" android:icon="@mipmap/coconut" android:roundIcon="@mipmap/coconut" android:allowBackup="false" android:theme="@style/AppTheme" android:usesCleartextTraffic="true">
+  <application android:name=".MainApplication" android:label="@string/zunomart" android:icon="@mipmap/zunomart" android:roundIcon="@mipmap/zunomart" android:allowBackup="false" android:theme="@style/AppTheme" android:usesCleartextTraffic="true">
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="YOUR-APP-URL-HERE"/>
     <meta-data android:name="expo.modules.updates.EXPO_SDK_VERSION" android:value="YOUR-APP-SDK-VERSION-HERE"/>
     <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA1H1n1NdraQQR9QJtxSWAesg6TM7j0BRQ"/> 
 
-    <activity android:name=".MainActivity" android:label="@string/coconut" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="stateVisible|adjustPan" android:theme="@style/Theme.App.coconut" android:exported="true">
+    <activity android:name=".MainActivity" android:label="@string/zunomart" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="stateVisible|adjustPan" android:theme="@style/Theme.App.zunomart" android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>

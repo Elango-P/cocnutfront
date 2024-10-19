@@ -17,6 +17,7 @@ class ProjectService {
               projectList.push({
                 label : list.name,
                 value :  list.id,
+                allow_for_assignee_change_permission: list?.allow_for_assignee_change_permission
               })
             })
             callback && callback(projectList)

@@ -333,6 +333,7 @@ class Permission {
   static USER_DELETE = "user_delete";
   static USER_HISTORY_VIEW = "user_history_view"
   static USER_MANAGE_OTHERS = "user_manage_others";
+  static ALLOW_IMPERSONATE_LOGIN = "allow_impersonate_login";
 
   // Supplier Permissions
   static VENDOR_VIEW = "vendor_view";

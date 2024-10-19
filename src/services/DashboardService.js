@@ -4,6 +4,7 @@ import { endpoints } from "../helper/ApiEndPoint";
 import Status from "../helper/Status";
 import DateTime from "../lib/DateTime";
 import Url from "../lib/Url";
+import activityService from "./ActivityService";
 import AttendanceService from "./AttendanceService";
 import fineService from "./FineService";
 import orderTotalAmountService from "./OrderTotalAmountService";
@@ -40,6 +41,16 @@ class DashboardService {
             callback(fines)
         });
     }
+    async getActivity(callback,param={}) {
+        let params = { sort: "id", sortDir: "DESC", group: Status.GROUP_PENDING, pageSize: 3,...param };
+        activityService.search(params, (err, response) => {
+
+            let activites = response && response?.data && response?.data?.data;
+
+            callback(activites)
+        });
+    }
+
 
 
     async getTicket(callback) {

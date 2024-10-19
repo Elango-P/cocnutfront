@@ -26,7 +26,8 @@ import { useForm } from "react-hook-form";
 import { Filter } from "../../helper/Filter";
 
 
-const Fine = () => {
+const Fine = (props) => {    
+    const param = props?.route?.params;
     const [fine, setFine] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
@@ -41,7 +42,8 @@ const Fine = () => {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedEndDate, setSelectedEndDate] = useState("");
     const [values,setValues] = useState({
-        selectedDate: Filter.TODAY_VALUE
+        selectedDate: Filter.TODAY_VALUE,
+        user : param?.user
     });
 
     const [HasMore, setHasMore] = useState(true);

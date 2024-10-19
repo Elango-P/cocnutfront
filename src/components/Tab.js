@@ -61,7 +61,7 @@ const Tab = (props) => {
             style={{
               width:
                 title.length > 1
-                  ? initialLayout.width / title.length
+                  ? "100%"
                   : initialLayout.width / tabWidthMultiplier,
               alignItems: "center",
               justifyContent: "center",

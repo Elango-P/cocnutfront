@@ -125,6 +125,20 @@ class Device {
     }
     
   }
+  async getLocation() {
+    
+    return new Promise((resolve, reject) => {
+      this.getDeviceLocation((location) => {
+  
+        if (location) {
+          resolve(location); 
+        } else {
+          resolve(null) 
+        }
+      });
+    });
+  }
+  
 
    isSamsungDevice () {
     if (Platform.OS === 'android') {

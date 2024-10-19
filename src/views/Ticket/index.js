@@ -342,27 +342,7 @@ const getProjectList = () => {
 
   })
 }
-const getTicketTypeList = () => {
-  ticketTypeService.search({projectId : projectList && projectList.length == 1 ? projectList[0].value : "",status : Status.ACTIVE}, (err, response) => {
 
-      let data = response && response?.data && response?.data?.data;
-      let list = [];
-      if (data) {
-          for (let i = 0; i < data.length; i++) {
-              const { id, name, default_story_point, userId } = data[i];
-              list.push({
-                  label: name,
-                  value: id,
-                  default_story_point: default_story_point,
-                  userId: userId
-
-              });
-          }
-      }
-
-      setTicketTypeList(list);
-  });
-}
 
   const LoadMoreList = async () => {
     try {
@@ -419,6 +399,28 @@ const getTicketTypeList = () => {
       setIsLoading(false);
     }
   };
+  const getTicketTypeList = () => {
+    ticketTypeService.search({projectId : projectList && projectList.length == 1 ? projectList[0].value : "",status : Status.ACTIVE}, (err, response) => {
+  
+        let data = response && response?.data && response?.data?.data;
+        let list = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                const { id, name, default_story_point, userId,fields} = data[i];
+                list.push({
+                    label: name,
+                    value: id,
+                    default_story_point: default_story_point,
+                    userId: userId,
+                    fields : fields
+  
+                });
+            }
+        }
+  
+        setTicketTypeList(list);
+    });
+  }
 
   const getAsyncStorageItem = async () => {
 
@@ -434,7 +436,7 @@ const getTicketTypeList = () => {
     }else if(projectList && projectList.length == 1){
       navigation.navigate("ticketTypeSelector",{projectId : projectList[0].value})
     }else(
-      navigation.navigate("projectSelector",{ticketTypeValue : ticketTypeList && ticketTypeList.length == 1 && ticketTypeList[0]})
+      navigation.navigate("projectSelector")
     )
   }
 

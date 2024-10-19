@@ -47,6 +47,7 @@ import ProductListModal from "../../components/Modal/ProductListModal";
 import User from "../../helper/User";
 import OrderTypeService from "../../services/orderTypeService";
 import Response from "../../lib/NetworkStatus";
+import ActivityList from "./ActivityList";
 
 const { RNDeviceInfo } = NativeModules
 let DeviceInfo;
@@ -74,9 +75,6 @@ const Dashboard = (props) => {
   const focused = useIsFocused();
   const [transferTypeList, setTransferTypeList] = useState([]);
   const navigation = useNavigation();
-  const [workingDay, setWorkingDay] = useState([]);
-  const [leave, setLeave] = useState([]);
-  const [additionalDay, setAdditionalDay] = useState([]);
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [ticketViewPermission, setTicketViewPermission] = useState()
   const [fineViewPermission, setFineViewPermission] = useState()
@@ -93,6 +91,8 @@ const Dashboard = (props) => {
   const [modalVisible, setScanModalVisible] = useState(false);
   const [productModalOpen, setProductSelectModalOpen] = useState(false);
   const [scannedProductList, setScannedProductList] = useState([]);
+  const [activityViewPermission, setActivityViewPermission] = useState()
+
   const [isSubmit,setIsSubmit] = useState(false)
   useEffect(() => {
     getAsyncStorageItem();
@@ -238,6 +238,8 @@ const handleBackPress =()=>{
     setMessageViewPermission(messageViewPermission)
     const geofencingViewPermission = await PermissionService.hasPermission(Permission.MOBILEAPP_DASHBOARD_MENU_GEOFENCING);
     setGeofencingViewPermission(geofencingViewPermission)
+    const activityViewPermission = await PermissionService.hasPermission(Permission.ACTIVITY_VIEW);
+    setActivityViewPermission(activityViewPermission)
 
     
   }
@@ -518,9 +520,6 @@ const getCustomerNumber = async ()=>{
   const getAttendanceDetail = async () => {
     await dashboardService.get(async (err, response) => {
       if (response && response.data) {
-        setAdditionalDay(response.data.additionalDay);
-        setWorkingDay(response.data.workedDay);
-        setLeave(response.data.Leave);
         setTodayAttendance(response.data.todayAttendance);
 
         if (response.data?.forceSync) {
@@ -646,15 +645,22 @@ const closeModal = () => {
 
           {/* Attendance Section */}
           {attendanceCheckinCheckPermission && (
-            <AttendanceCard checkOut={checkOutValidation} isSubmit = {isSubmit} refreshing={refreshing} CheckIn={CheckIn} locationId = {locationId} workingDay={workingDay} leave={leave} additionalDay={additionalDay} checkIn={todayAttendance} navigation={navigation} setIsLoading={setIsLoading} />)}
-
+            <AttendanceCard checkOut={checkOutValidation} isSubmit = {isSubmit} refreshing={refreshing} CheckIn={CheckIn} locationId = {locationId}  checkIn={todayAttendance} navigation={navigation} setIsLoading={setIsLoading} />)}
+          {/* Activity Section */}
+          {activityViewPermission && (
+            <>
+              <VerticalSpace10 />
+              <ActivityList focused={focused} user = {selectedUser}/>
+            </>
+          )}
+        
     
           {/* Fine Section */}
           {fineViewPermission && (
             <>
               <VerticalSpace10 />
 
-              <FineList focused={focused} />
+              <FineList focused={focused} user = {selectedUser}/>
             </>
           )}
 

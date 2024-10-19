@@ -118,6 +118,28 @@ class SettingService {
             return callback(err, []);
         }
     }
+    async update(updateData,callback) {
+        try {
+            apiClient.put(`${endpoints().SettingAPI}/company`, updateData,(error, res)=> {
+               
+                return callback(null, res)
+          
+              })
+        }
+      catch (err) {
+            console.log(err);
+        }
+    }
+
+    async getSetings  (params,callback)  {
+        const data = await Url.get(`${endpoints().settingAPI}`, params)  
+
+        await apiClient.get(data, (error, response) => {
+            if(response){
+                return callback(response);
+            }
+        })
+      };
 }
 const settingService = new SettingService;
 

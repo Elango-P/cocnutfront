@@ -179,7 +179,7 @@ const LeadForm = (props) => {
                 notes: values?.notes ? values?.notes : notes ? notes : null,
                 designation: values.designation,
                 owner_id: values?.owner_id ? values?.owner_id : selectedUser,
-                status: values?.status ? values?.status?.value : values?.status?.value,
+                status: values?.status ? values?.status :  values?.status?.value,
             }
             await leadService.update(id, updateData, async (err, response) => {
                 if (response) {
