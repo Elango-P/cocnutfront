@@ -67,7 +67,7 @@ const AttendanceForm = (props) => {
 
   const [attendanceDetail, setAttendanceDetail] = useState("");
 
-  const [allowEdit, setEdit] = useState(!params ? true : false);
+  const [allowEdit, setEdit] = useState(true);
 
   const [actionList, setActionList] = useState([]);
 

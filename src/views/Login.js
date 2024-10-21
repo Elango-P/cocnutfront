@@ -409,17 +409,7 @@ const Login = ({ }) => {
   const PasswordFieldOnChange = (value) => {
     setPassword(value);
   };
-  const toggleInputType = () => {
-    setInputType(inputType === "email" ? "mobile" : "email");
-    setLabel(
-      inputType === "email"
-        ? "Enter Mobile Number (10-digit)"
-        : "Enter Email Address"
-    );
-    setShowEmailPasswordFields(false);
-
-    setInputValue(""); // Clear input value when switching input type
-  };
+ 
   const handleInputChange = (text) => {
     setInputValue(text);
   };

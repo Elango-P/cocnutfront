@@ -39,7 +39,7 @@ const CandidateForm = (props) => {
     const [file, setFile] = useState(null);
     const [jobOptions, setJobOptions] = useState([])
     const [actionList, setActionList] = useState([])
-    const [allowEdit, setEdit] = useState(!params ? true : false);
+    const [allowEdit, setEdit] = useState(true);
     const [visible, setVisible] = useState(false)
     const [candidateDeleteModalOpen, setCandidateDeleteModalOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState(params?.candidateId || "");

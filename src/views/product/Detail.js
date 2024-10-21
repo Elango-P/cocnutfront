@@ -125,7 +125,7 @@ const ProductDetails = (props) => {
     ActionMenu.SHORTAGE_QUANTITY
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [allowEdit, setEdit] = useState(!details ? true : false);
+  const [allowEdit, setEdit] = useState(true);
   const [permission, setPermission] = useState("");
   const [priceList, setPriceList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);

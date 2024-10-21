@@ -176,7 +176,7 @@ const ProductList = (props) => {
 
     const [permission, setPermission] = useState("")
 
-    const [allowEdit, setEdit] = useState(false);
+    const [allowEdit, setEdit] = useState(true);
     const [replenishProducts, setReplenishProducts] = useState([]);
 
     const [replenishProductCount, setReplenishProductsCount] = useState(0);

@@ -44,7 +44,7 @@ const LeadForm = (props) => {
     const [phoneNumber, setPhoneNumber] = useState(details?.mobile_number || "")
     const [selectedUser, setSelectedUser] = useState("");
     const [status, setStatus] = useState("");
-    const [allowEdit, setEdit] = useState(!details ? true : false);
+    const [allowEdit, setEdit] = useState(true);
     const [visible, setVisible] = useState(false)
     const [actionList, setActionList] = useState([])
     const [leadDeleteModalOpen, setLeadDeleteModalOpen] = useState(false);

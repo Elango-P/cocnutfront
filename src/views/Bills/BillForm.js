@@ -60,7 +60,7 @@ const BillForm = (props) => {
     const [selecteUser, setSelectedUser] = useState("");
     const [notes, setNotes] = useState(params?.notes || "");
     const [status,setStatus] = useState("");
-    const [allowEdit, setEdit] = useState(!params ? true : false);
+    const [allowEdit, setEdit] = useState(true);
     const [actionList, setActionList] = useState([])
     const [visible, setVisible] = useState(false)
     const [paymentAmount, setPaymentAmount] = useState("");

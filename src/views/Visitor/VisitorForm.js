@@ -49,7 +49,7 @@ const VisitorForm = (props) => {
   const [editPermission, setEditPermission] = useState();
   const [selectedType, setSelectedType] = useState("");
   const [selecteUser, setSelectedUser] = useState("");
-  const [allowEdit, setEdit] = useState(!params ? true : false);
+  const [allowEdit, setEdit] = useState(true);
   const [actionList, setActionList] = useState([]);
   const [visible, setVisible] = useState(false);
   const [visitorTitle, setVisitorTitle] = useState("");

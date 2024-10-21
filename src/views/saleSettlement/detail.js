@@ -62,7 +62,7 @@ const SaleSettlementDetail = (props) => {
     const [MediaData, setMediaData] = useState([]);
     const [status, setStatus] = useState()
     const [actionList, setActionList] = useState([])
-    const [allowEdit, setEdit] = useState(false);
+    const [allowEdit, setEdit] = useState(true);
     const [tab, setTab] = useState(TabName.VIDEO);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState(details?.id || "");

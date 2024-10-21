@@ -168,7 +168,7 @@ const Billing = (props) => {
   );
   const [actionList, setActionList] = useState([]);
   const [list, setList] = useState([]);
-  const [allowEdit, setEdit] = useState(false);
+  const [allowEdit, setEdit] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState(
     PaymentType.VALIDATION
   );

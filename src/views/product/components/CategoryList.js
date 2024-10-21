@@ -22,7 +22,6 @@ const CategoryList = (props) => {
   const isFocused = useIsFocused();
 
   const navigation = useNavigation();
-     console.log("searchPhrase>>>>>>>>>>>>>>>>>.",searchPhrase);
      
   useEffect(() => {
     getCategoryList({search : searchPhrase});

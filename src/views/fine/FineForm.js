@@ -58,7 +58,7 @@ const FineForm = (props) => {
   const [totalMedia, setTotalMedia] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState("")
   const [actionList, setActionList] = useState([])
-  const [allowEdit, setEdit] = useState(!details ? true : false);
+  const [allowEdit, setEdit] = useState(true);
   const [visible, setVisible] = useState(false)
   const [selectedItem, setSelectedItem] = useState(details?.id || "");
   const [fineDeleteModalOpen, setFineDeleteModalOpen] = useState("")

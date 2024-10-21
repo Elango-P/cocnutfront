@@ -26,7 +26,7 @@ const GatePassMedia = (props) => {
     const [gatePassDeleteModalOpen, setGatePassDeleteModalOpen] = useState(false)
     const [actionList, setActionList] = useState([])
     const [selectedItem, setSelectedItem] = useState(params?.id || "");
-    const [allowEdit,setEdit] = useState(!params ? true : false)
+    const [allowEdit,setEdit] = useState(true)
     const [visible, setVisible] = useState(false)
     const [isSubmit,setIsSubmit] = useState(false)
 

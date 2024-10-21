@@ -99,7 +99,7 @@ const Detail = (props) => {
   );
 
   const [permission, setPermission] = useState("");
-  const [allowEdit, setEdit] = useState(false);
+  const [allowEdit, setEdit] = useState(true);
   const [editPermission, setEditPermission] = useState(false);
   const [locationDeleteModalOpen, setLocationDeleteModalOpen] = useState(false);
   const [isSubmit,setIsSubmit] = useState(false)

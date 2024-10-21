@@ -48,7 +48,7 @@ const RecurringTaskForm = (props) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [actionList, setActionList] = useState([])
     const [visible, setVisible] = useState(false)
-    const [allowEdit, setEdit] = useState(params ? false : true)
+    const [allowEdit, setEdit] = useState(true)
     const [recurringTaskHistoryViewPermission, setRecurringTaskHistoryViewPermission] = useState("")
     const [isSubmit,setIsSubmit] = useState(false)
 

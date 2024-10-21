@@ -1,12 +1,11 @@
 // Import React and Component
-import { CommonActions, useNavigation, useNavigationState } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
 import {
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    View
-} from "react-native";
+  CommonActions,
+  useNavigation,
+  useNavigationState,
+} from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { Color } from "../../helper/Color";
 import Permission from "../../helper/Permission";
 import IconValue from "../../helper/navBarItems";
@@ -18,371 +17,328 @@ import settingService from "../../services/SettingService";
 import Setting from "../../lib/Setting";
 import { Platform } from "react-native";
 
-
 const BottomToolBar = (props) => {
-    let { updateMenuState, setSideMenuOpen, menuOpen }=props
-    const navigation = useNavigation();
-    const [ticketViewPermission, setTicketViewPermission] = useState()
-    const [orderViewPermission, setOrderViewPermission] = useState()
-    const [replenishViewPermission, setReplenishViewPermission] = useState()
-    const [productViewPermission, setProductViewPermission] = useState()
-    const [transferViewPermission, setTransferViewPermission] = useState()
-    const [reportViewPermission, setReportViewPermission] = useState()
-    const [deliveryViewPermission, setDeliveryPermission] = useState()
-    const [distributionViewPermission, setDistributionViewPermission] = useState()
-    const [activitiesViewPermission, setActivitiesViewPermission] =useState()
-    const [devicePendingStatus, setDevicePendingStatus]=useState(false)
-    const [bottomToolbarBackgroundColor,setBottomToolbarBackgroundColor] = useState(Color.TOOL_BAR_BACKGROUND)
-    const [bottomToolBarIconColor,setBottomToolBarIconColor] = useState(Color.TOOL_BAR)
-    const screenWidth = Dimensions.get('window').width;
+  let { updateMenuState, setSideMenuOpen, menuOpen } = props;
+  const navigation = useNavigation();
+  const [ticketViewPermission, setTicketViewPermission] = useState();
+  const [orderViewPermission, setOrderViewPermission] = useState();
+  const [replenishViewPermission, setReplenishViewPermission] = useState();
+  const [productViewPermission, setProductViewPermission] = useState();
+  const [transferViewPermission, setTransferViewPermission] = useState();
+  const [reportViewPermission, setReportViewPermission] = useState();
+  const [deliveryViewPermission, setDeliveryPermission] = useState();
+  const [distributionViewPermission, setDistributionViewPermission] =
+    useState();
+  const [activitiesViewPermission, setActivitiesViewPermission] = useState();
+  const [devicePendingStatus, setDevicePendingStatus] = useState(false);
+  const [bottomToolbarBackgroundColor, setBottomToolbarBackgroundColor] =
+    useState(Color.TOOL_BAR_BACKGROUND);
+  const [bottomToolBarIconColor, setBottomToolBarIconColor] = useState(
+    Color.TOOL_BAR
+  );
+  const screenWidth = Dimensions.get("window").width;
 
-    const routeIndex = useNavigationState((state) => state?.index);
-    const currentRoute = useNavigationState((state) => state?.routes[routeIndex]?.name);
-    const menuItemValue = menuOpen ? IconValue.MENU : currentRoute ? currentRoute : "Dashboard";
-    useEffect(() => {
-        getPermission();
-    }, [props,currentRoute]);
-    useEffect(()=>{
-        getThemeColor()
+  const routeIndex = useNavigationState((state) => state?.index);
+  const currentRoute = useNavigationState(
+    (state) => state?.routes[routeIndex]?.name
+  );
+  const menuItemValue = menuOpen
+    ? IconValue.MENU
+    : currentRoute
+    ? currentRoute
+    : "Dashboard";
+  useEffect(() => {
+    getPermission();
+  }, [props, currentRoute]);
+  useEffect(() => {
+    getThemeColor();
+  }, [currentRoute]);
 
-    },[currentRoute])
-    
-  
-    const getThemeColor = async () => {
-        try {
-              await settingService.getByName(Setting.SETTINGS_PORTAL_FOOTER_COLOR,(err,response)=>{                
-                setBottomToolbarBackgroundColor(response)
-              })
-              await settingService.getByName(Setting.SETTINGS_PORTAL_FOOTER_HEADING_COLOR,(err,response)=>{
-                setBottomToolBarIconColor(response)
-
-              })
-            
-            
-        } catch (error) {
-            console.error("Error retrieving settings:", error);
-            return null;
+  const getThemeColor = async () => {
+    try {
+      await settingService.getByName(
+        Setting.SETTINGS_PORTAL_FOOTER_COLOR,
+        (err, response) => {
+          setBottomToolbarBackgroundColor(response);
         }
-    };
-    
-    
-
-    const getPermission = async () => {
-        const transferView = await PermissionService.getFeaturePermission(Feature.ENABLE_TRANSFER,Permission.MOBILEAPP_DASHBOARD_MENU_TRANSFER);
-        setTransferViewPermission(transferView)
-        const productView = await PermissionService.getFeaturePermission(Feature.ENABLE_PRODUCT,Permission.MOBILEAPP_DASHBOARD_MENU_PRODUCT);
-        setProductViewPermission(productView)
-        const ticketView = await PermissionService.getFeaturePermission(Feature.ENABLE_TICKET,Permission.MOBILEAPP_DASHBOARD_MENU_TICKET);
-        setTicketViewPermission(ticketView)
-        const activitiesView = await PermissionService.getFeaturePermission(Feature.ENABLE_ACTIVITY,Permission.MOBILEAPP_DASHBOARD_MENU_ACTIVITIES);
-        setActivitiesViewPermission(activitiesView)
-        let replenishView =  await PermissionService.getFeaturePermission(Feature.ENABLE_REPLENISHMENT,Permission.MOBILEAPP_DASHBOARD_MENU_REPLENISH);
-        setReplenishViewPermission(replenishView)
-        let orderView =  await PermissionService.getFeaturePermission(Feature.ENABLE_ORDER,Permission.MOBILEAPP_DASHBOARD_MENU_ORDER);
-        setOrderViewPermission(orderView)
-        const deliveryView = await PermissionService.getFeaturePermission(Feature.ENABLE_DELIVERY_ORDER,Permission.MOBILEAPP_DASHBOARD_MENU_DELIVERY);
-        setDeliveryPermission(deliveryView)
-        const reportView = await PermissionService.getFeaturePermission(Feature.ENABLE_REPORT,Permission.MOBILEAPP_DASHBOARD_MENU_REPORTS);
-        setReportViewPermission(reportView)
-        const distributionView = await PermissionService.getFeaturePermission(Feature.ENABLE_DISTRIBUTION,Permission.MOBILEAPP_DASHBOARD_MENU_DISTRIBUTION);
-        setDistributionViewPermission(distributionView)
-       
-       await device.isStatusBlocked((devicePendingStatus)=>{
-            setDevicePendingStatus(devicePendingStatus)
-        });
+      );
+      await settingService.getByName(
+        Setting.SETTINGS_PORTAL_FOOTER_HEADING_COLOR,
+        (err, response) => {
+          setBottomToolBarIconColor(response);
+        }
+      );
+    } catch (error) {
+      console.error("Error retrieving settings:", error);
+      return null;
     }
-    
-    const getHideToolBarDetail=()=>{
-        let showToolBarByRoute = ["Dashboard","Order","RecurringTask","Ticket","ProductReplenish","Report","Menu","Delivery","Sync","Location","OrderSalesSettlementDiscrepancyReport","StockEntry","Fine","Bonus","Lead","GatePass","Accounts","Inspection","Users","Visitor","Candidate","OrderProduct","Salary","Attendance","inventoryTransfer","distributionTransfer","BrandAndCategoryList","StoreReplenish","ReplenishmentProduct","WishListProducts","SalesSettlement","Bills","Purchase","PurchaseOrder","Payments","ActivityList","Customers","Settings","Reports","CustomerSelector","LocationAllocation","ContactList"]
-       return showToolBarByRoute.includes(currentRoute ? currentRoute : "Dashboard" )
-    }
+  };
 
-        let showToolBar = getHideToolBarDetail()
+  const getPermission = async () => {
+    const transferView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_TRANSFER,
+      Permission.MOBILEAPP_DASHBOARD_MENU_TRANSFER
+    );
+    setTransferViewPermission(transferView);
+    const productView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_PRODUCT,
+      Permission.MOBILEAPP_DASHBOARD_MENU_PRODUCT
+    );
+    setProductViewPermission(productView);
+    const ticketView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_TICKET,
+      Permission.MOBILEAPP_DASHBOARD_MENU_TICKET
+    );
+    setTicketViewPermission(ticketView);
+    const activitiesView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_ACTIVITY,
+      Permission.MOBILEAPP_DASHBOARD_MENU_ACTIVITIES
+    );
+    setActivitiesViewPermission(activitiesView);
+    let replenishView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_REPLENISHMENT,
+      Permission.MOBILEAPP_DASHBOARD_MENU_REPLENISH
+    );
+    setReplenishViewPermission(replenishView);
+    let orderView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_ORDER,
+      Permission.MOBILEAPP_DASHBOARD_MENU_ORDER
+    );
+    setOrderViewPermission(orderView);
+    const deliveryView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_DELIVERY_ORDER,
+      Permission.MOBILEAPP_DASHBOARD_MENU_DELIVERY
+    );
+    setDeliveryPermission(deliveryView);
+    const reportView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_REPORT,
+      Permission.MOBILEAPP_DASHBOARD_MENU_REPORTS
+    );
+    setReportViewPermission(reportView);
+    const distributionView = await PermissionService.getFeaturePermission(
+      Feature.ENABLE_DISTRIBUTION,
+      Permission.MOBILEAPP_DASHBOARD_MENU_DISTRIBUTION
+    );
+    setDistributionViewPermission(distributionView);
 
+    await device.isStatusBlocked((devicePendingStatus) => {
+      setDevicePendingStatus(devicePendingStatus);
+    });
+  };
 
-    const handleHomePress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Dashboard" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
+  const getHideToolBarDetail = () => {
+    let showToolBarByRoute = [
+      "Dashboard",
+      "Order",
+      "RecurringTask",
+      "Ticket",
+      "ProductReplenish",
+      "Report",
+      "Menu",
+      "Delivery",
+      "Sync",
+      "Location",
+      "OrderSalesSettlementDiscrepancyReport",
+      "StockEntry",
+      "Fine",
+      "Bonus",
+      "Lead",
+      "GatePass",
+      "Accounts",
+      "Inspection",
+      "Users",
+      "Visitor",
+      "Candidate",
+      "OrderProduct",
+      "Salary",
+      "Attendance",
+      "inventoryTransfer",
+      "distributionTransfer",
+      "BrandAndCategoryList",
+      "StoreReplenish",
+      "ReplenishmentProduct",
+      "WishListProducts",
+      "SalesSettlement",
+      "Bills",
+      "Purchase",
+      "PurchaseOrder",
+      "Payments",
+      "ActivityList",
+      "Customers",
+      "Settings",
+      "Reports",
+      "CustomerSelector",
+      "LocationAllocation",
+      "ContactList",
+    ];
+    return showToolBarByRoute.includes(
+      currentRoute ? currentRoute : "Dashboard"
+    );
+  };
 
-    const handleOrderPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Order" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
+  let showToolBar = getHideToolBarDetail();
 
-    const handleTransferPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "inventoryTransfer" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
-    const handleDistributionPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "distributionTransfer" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
-    const handleProductPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "BrandAndCategoryList" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
-    const handleTicketPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Ticket" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
+  const handleHomePress = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Dashboard" }],
+      })
+    );
+    setSideMenuOpen && setSideMenuOpen(false);
+  };
 
-    const handleActivitiesPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "ActivityList" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    };
+  const handleProductPress = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "BrandAndCategoryList" }],
+      })
+    );
+    setSideMenuOpen && setSideMenuOpen(false);
+  };
 
-    const handleReplenishPress = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "ProductReplenish" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    }
-    const handleReports = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: "Report" }],
-            })
-          )
-        setSideMenuOpen && setSideMenuOpen(false);
-    }
-    const handleMenuPress = () => {
-        navigation.navigate("Menu",{navigator: navigation});
-    };
+  const handleMenuPress = () => {
+    navigation.navigate("Menu", { navigator: navigation });
+  };
 
-    const handleDelivery = () => {
-        navigation.navigate("Delivery");
-        setSideMenuOpen && setSideMenuOpen(false);
-    }
+  const renderToolBarItems = () => {
+    const toolBarItems = [
+      {
+        icon: "home",
+        label: "Home",
+        onPress: handleHomePress,
+        selected: menuItemValue === IconValue.DASHBOARD,
+        margin: 40,
+      },
 
-    const renderToolBarItems = () => {
-        const toolBarItems = [
-            {
-                icon: "home",
-                label: "Home",
-                onPress: handleHomePress,
-                selected: menuItemValue === IconValue.DASHBOARD,
-                margin : 40
-            },
-            {
-                icon: "receipt",
-                label: "Orders",
-                onPress: handleOrderPress,
-                selected: menuItemValue === IconValue.ORDER,
-                margin : 40,
-            },
-            {
-                icon: "shipping-fast",
-                label: "Replenish",
-                onPress: handleReplenishPress,
-                selected: menuItemValue === IconValue.REPLENISH,
-                margin : 40,
-            },
-            {
-                icon: "truck-moving",
-                label: "Transfers",
-                onPress: handleTransferPress,
-                selected: menuItemValue === IconValue.TRANSFER,
-                margin : 40,
-            },
-            {
-                icon: "dolly",
-                label: "Distribution",
-                onPress: handleDistributionPress,
-                selected: menuItemValue === IconValue.DISTRIBUTION,
-                margin : 40,
-            },
-            {
-                icon: "box-open",
-                label: "Products",
-                onPress: handleProductPress,
-                selected: menuItemValue === IconValue.PRODUCT,
-                margin : 40,
-            },
-            {
-                icon : "shipping-fast",
-                label : "Delivery",
-                onPress : handleDelivery,
-                selected : menuItemValue === IconValue.DELIVERY,
-                margin : 40,
-            },
-            {
-                icon : "ticket-alt",
-                label : "Tickets",
-                onPress : handleTicketPress,
-                selected : menuItemValue === IconValue.TICKET,
-                margin : 40,
+      {
+        icon: "box-open",
+        label: "Products",
+        onPress: handleProductPress,
+        selected: menuItemValue === IconValue.PRODUCT,
+        margin: 40,
+      },
 
-            },
-            {
-                icon : "chart-line",
-                label : "Activities",
-                onPress : handleActivitiesPress,
-                selected : menuItemValue === IconValue.ACTIVITY_LIST,
-                margin : 40,
-            },
-            {
-                icon : "file-alt",
-                label : "Reports",
-                onPress : handleReports,
-                margin : 40,
-                selected : menuItemValue === IconValue.REPORTS ||
-                    menuItemValue === IconValue.ORDER_PRODUCT_REPORT ||
-                    menuItemValue === IconValue.ORDER_SUMMARY_REPORT ||
-                    menuItemValue === IconValue.ATTENDANCE_REPORT ||
-                    menuItemValue === IconValue.ORDER_REPORT ||
-                    menuItemValue === IconValue.ORDER_SALES_SETTLEMENT_REPORT ||
-                    menuItemValue === IconValue.PURCHASE_RECOMMENDATION_REPORT || menuItemValue === IconValue.TRANSFER_PRODUCT_REPORT_USERWISE || menuItemValue === IconValue.STOCK_ENTRY_REPORT
-            },
-            {
-                icon: "bars",
-                label: "Menu",
-                onPress: handleMenuPress,
-                selected: menuItemValue === IconValue.MENU,
-                margin : 0,
-            },
-        ];
+      {
+        icon: "bars",
+        label: "Menu",
+        onPress: handleMenuPress,
+        selected: menuItemValue === IconValue.MENU,
+        margin: 0,
+      },
+    ];
 
-const filteredItems = toolBarItems.filter(item => {
-    switch (item.label) {
+    const filteredItems = toolBarItems.filter((item) => {
+      switch (item.label) {
         case "Orders":
-            return orderViewPermission && !devicePendingStatus;
+          return orderViewPermission && !devicePendingStatus;
         case "Replenish":
-            return replenishViewPermission;
-            case "Transfers":
-                return transferViewPermission && !devicePendingStatus;
-                case "Distribution":
-                    return distributionViewPermission;
-                    case "Products":
-                        return productViewPermission && !devicePendingStatus;
-                        case "Delivery":
-                            return deliveryViewPermission;
-                            case "Tickets":
-                                return ticketViewPermission;
-                                case "Activities":
-                                    return activitiesViewPermission;
-                                    case "Reports":
-                                        return reportViewPermission;
+          return replenishViewPermission;
+        case "Transfers":
+          return transferViewPermission && !devicePendingStatus;
+        case "Distribution":
+          return distributionViewPermission;
+        case "Products":
+          return productViewPermission && !devicePendingStatus;
+        case "Delivery":
+          return deliveryViewPermission;
+        case "Tickets":
+          return ticketViewPermission;
+        case "Activities":
+          return activitiesViewPermission;
+        case "Reports":
+          return reportViewPermission;
         default:
-            return true;
-    }
-});
-if (filteredItems.length == 2) {
-    return (
+          return true;
+      }
+    });
+    if (filteredItems.length == 2) {
+      return (
         <View style={style.centeredIcon}>
-            <ToolBarItem
-                icon="home"
-                label="Home"
-                onPress={handleHomePress}
-                selected={menuItemValue === IconValue.DASHBOARD}
-                toolBarIconColor = {bottomToolBarIconColor}
-            />
-            <ToolBarItem
-                icon="bars"
-                label="Menu"
-                onPress={handleMenuPress}
-                selected={menuItemValue === IconValue.MENU}
-                toolBarIconColor = {bottomToolBarIconColor}
-            />
+          <ToolBarItem
+            icon="home"
+            label="Home"
+            onPress={handleHomePress}
+            selected={menuItemValue === IconValue.DASHBOARD}
+            toolBarIconColor={bottomToolBarIconColor}
+          />
+          <ToolBarItem
+            icon="bars"
+            label="Menu"
+            onPress={handleMenuPress}
+            selected={menuItemValue === IconValue.MENU}
+            toolBarIconColor={bottomToolBarIconColor}
+          />
         </View>
-    );
-}else if
- (filteredItems.length <= 5) {
-    return filteredItems.map((item, index) => (
+      );
+    } else if (filteredItems.length <= 5) {
+      return filteredItems.map((item, index) => (
         <ToolBarItem
-            key={index}
-            icon={item.icon}
-            label={item.label}
-            onPress={item.onPress}
-            selected={item.selected}
-            toolBarIconColor = {bottomToolBarIconColor}
-            margin = {item.margin}
+          key={index}
+          icon={item.icon}
+          label={item.label}
+          onPress={item.onPress}
+          selected={item.selected}
+          toolBarIconColor={bottomToolBarIconColor}
+          margin={item.margin}
         />
-    ));
-}
- else {
-    return (
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  contentContainerStyle={{ width: filteredItems.length <= 5 ? screenWidth + 70 : "" }}>
-            {filteredItems.map((item, index) => (
-                <ToolBarItem
-                    key={index}
-                    icon={item.icon}
-                    label={item.label}
-                    onPress={item.onPress}
-                    selected={item.selected}
-                    toolBarIconColor = {bottomToolBarIconColor}
-                    margin = {item.margin}
-
-                />
-            ))}
+      ));
+    } else {
+      return (
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            width: filteredItems.length <= 5 ? screenWidth + 70 : "",
+          }}
+        >
+          {filteredItems.map((item, index) => (
+            <ToolBarItem
+              key={index}
+              icon={item.icon}
+              label={item.label}
+              onPress={item.onPress}
+              selected={item.selected}
+              toolBarIconColor={bottomToolBarIconColor}
+              margin={item.margin}
+            />
+          ))}
         </ScrollView>
-    );
-}
-};
-return (
-    showToolBar && <View style={[style.bottomToolBar,{backgroundColor:bottomToolbarBackgroundColor}]}>
-    {renderToolBarItems()}
-</View>
-);
+      );
+    }
+  };
+  return (
+    showToolBar && (
+      <View
+        style={[
+          style.bottomToolBar,
+          { backgroundColor: bottomToolbarBackgroundColor },
+        ]}
+      >
+        {renderToolBarItems()}
+      </View>
+    )
+  );
 };
 
 export default BottomToolBar;
 
 const style = StyleSheet.create({
-    bottomToolBar: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        height: "10%",
-        elevation: 2,
-        paddingTop : Platform.OS === 'ios' ? "1%" : 0,
-        paddingHorizontal : Platform.OS === 'ios' ? 15 : 10
-        },
-    centeredIcon: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        paddingHorizontal: "20%",
-        paddingBottom : Platform.OS === 'ios' ? "7%" : 0,
-    },
-
+  bottomToolBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: "10%",
+    elevation: 2,
+    paddingTop: Platform.OS === "ios" ? "1%" : 0,
+    paddingHorizontal: Platform.OS === "ios" ? 15 : 10,
+  },
+  centeredIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: "20%",
+    paddingBottom: Platform.OS === "ios" ? "7%" : 0,
+  },
 });

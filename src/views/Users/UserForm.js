@@ -53,7 +53,7 @@ const UserForm = (props) => {
     const [phoneNumber, setPhoneNumber] = useState(params?.mobileNumber || "")
     const [role, setRole] = useState(params?.role_id || "")
     const [type, setType] = useState(params?.type || "");
-    const [allowEdit, setEdit] = useState(!params ? true : false);
+    const [allowEdit, setEdit] = useState(true);
     const [userDeleteModalOpen, setUserDeleteModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(params?.id || "");
     const [actionList, setActionList] = useState([])

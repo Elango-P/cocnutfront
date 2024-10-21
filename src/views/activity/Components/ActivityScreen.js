@@ -52,7 +52,7 @@ const ActivityTypeScreen = (props) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [manageOthers, setManageOthers] = useState("");
   const [isSubmit,setIsSubmit] = useState(false)
-  const [allowEdit,setAllowEdit] = useState(params ? false : true)
+  const [allowEdit,setAllowEdit] = useState(true)
   const navigation = useNavigation();
 
   const isFocused = useIsFocused();
