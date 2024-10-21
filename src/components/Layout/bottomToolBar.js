@@ -209,7 +209,7 @@ const BottomToolBar = (props) => {
         label: "Home",
         onPress: handleHomePress,
         selected: menuItemValue === IconValue.DASHBOARD,
-        margin: 40,
+        margin: 0,
       },
 
       {
@@ -217,8 +217,9 @@ const BottomToolBar = (props) => {
         label: "Products",
         onPress: handleProductPress,
         selected: menuItemValue === IconValue.PRODUCT,
-        margin: 40,
+        margin: 0,
       },
+      
 
       {
         icon: "bars",
@@ -261,14 +262,14 @@ const BottomToolBar = (props) => {
             label="Home"
             onPress={handleHomePress}
             selected={menuItemValue === IconValue.DASHBOARD}
-            toolBarIconColor={bottomToolBarIconColor}
+            // toolBarIconColor={bottomToolBarIconColor}
           />
           <ToolBarItem
             icon="bars"
             label="Menu"
             onPress={handleMenuPress}
             selected={menuItemValue === IconValue.MENU}
-            toolBarIconColor={bottomToolBarIconColor}
+            // toolBarIconColor={bottomToolBarIconColor}
           />
         </View>
       );
@@ -280,7 +281,7 @@ const BottomToolBar = (props) => {
           label={item.label}
           onPress={item.onPress}
           selected={item.selected}
-          toolBarIconColor={bottomToolBarIconColor}
+          // toolBarIconColor={bottomToolBarIconColor}
           margin={item.margin}
         />
       ));
@@ -300,7 +301,7 @@ const BottomToolBar = (props) => {
               label={item.label}
               onPress={item.onPress}
               selected={item.selected}
-              toolBarIconColor={bottomToolBarIconColor}
+              // toolBarIconColor={bottomToolBarIconColor}
               margin={item.margin}
             />
           ))}

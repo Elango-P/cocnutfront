@@ -12,9 +12,9 @@ const ToolBarItem =(props)=>{
                     <View style={styles.marginAlign}>
                         <FontAwesome5
                             name={icon}
-                             size={28}
+                             size={35}
                              style={{paddingVertical:8} }
-                            color={selected ? Color.BLUE : toolBarIconColor}
+                            color={selected ? Color.RED :  Color.GREEN}
                         />
                         <Text style={styles.iconName}>{label}</Text>
                     </View>

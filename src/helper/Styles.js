@@ -781,7 +781,9 @@ viewInvoiceButton: {
     marginRight: 20,
   },
   marginAlign: {
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: Color.TOOL_BAR_BACKGROUND
+
   },
   bottomToolBar: {
     paddingHorizontal: 5,

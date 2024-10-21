@@ -409,7 +409,6 @@ const Menu = (props) => {
           {permission?.enableAccounts && _renderAccounts()}
           {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
 
-          {permission?.enableBills && _renderBills && _renderBills()}
           {permission?.enableOrders &&
             !devicePendingStatus &&
             _renderBillEntry &&

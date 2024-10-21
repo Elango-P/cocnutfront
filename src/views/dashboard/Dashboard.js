@@ -347,7 +347,6 @@ const Dashboard = (props) => {
   const featureNavigationMap = {
     Vendors: "Accounts", // Replace with your actual screen name
     Purchase: "Purchase", // Replace with your actual screen name
-    Bills: "Bills", // Replace with your actual screen name
     Payments: "Payments", // Replace with your actual screen name
     Product: "Products", // Replace with your actual screen name
     Sales: "Order", // Replace with your actual screen name
