@@ -188,7 +188,7 @@ const Products = (props) => {
   return (
     <>
       <OrderList
-        title={"Orders"}
+        title={"Sales"}
         type={{ isStoreOrder: OrderType.IS_STORE_ORDER }}
         AddNew={AddNew}
         onPress={onPress}

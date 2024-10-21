@@ -37,7 +37,7 @@ const DropDownMenu = ({ MenuItems, onPress, icon, label, color, menuStyle, iconS
             <Ionicons
               name={icon ? icon : "ellipsis-vertical"}
               size={iconSize ? iconSize : 24}
-              color={color ? color :Color.DROPDOWN_TEXT}
+              color={color ? color :Color.WHITE}
               style={{paddingTop: 3 }}
             />
             {label && (

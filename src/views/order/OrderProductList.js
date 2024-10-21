@@ -5,7 +5,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 import Layout from "../../components/Layout";
@@ -25,8 +25,6 @@ import ProductCard from "../../components/ProductCard";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 import ProductEditModal from "../../components/Modal/ProductEditModal";
-
-import BarcodeScanner from "../../components/BarcodeScanner";
 
 import OrderService from "../../services/OrderService";
 
@@ -66,7 +64,6 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 import { Color } from "../../helper/Color";
 
-
 import CurrencyFormat from "../../lib/Currency";
 
 import ProductSearch from "../../components/ProductSearch";
@@ -103,18 +100,17 @@ import accountService from "../../services/AccountService";
 import { Account } from "../../helper/Account";
 import Alert from "../../lib/Alert";
 import CustomAlertModal from "../../components/CustomAlertModal";
-import {Label } from "../../helper/Label";
+import { Label } from "../../helper/Label";
 import asyncStorageService from "../../services/AsyncStorageService";
-
 
 const Billing = (props) => {
   const id = props?.route?.params?.id;
   const params = props?.route?.params;
 
-  let type = params?.type
+  let type = params?.type;
 
-  let isDeliveryOrder = params?.type && params?.type?.allow_delivery == true ? true:false
-
+  let isDeliveryOrder =
+    params?.type && params?.type?.allow_delivery == true ? true : false;
 
   const [scannedCode, setScannedCode] = useState("");
   const [modalVisible, setScanModalVisible] = useState(false);
@@ -134,11 +130,7 @@ const Billing = (props) => {
   const [orderProducts, setOrderProducts] = useState([]);
   const [productSelectModalOpen, setProductSelectModalOpen] = useState(false);
   const [scannedProductList, setScannedProductList] = useState([]);
-  const [activeTab, setActiveTab] = useState(
-    params?.group == Status.GROUP_DRAFT || params?.isNewOrder
-      ? TabName.PRODUCTS
-      : TabName.SUMMARY
-  );
+  const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
   const [manageOther, setManageOther] = useState(false);
   const [cancelStatus, setCancelStatus] = useState("");
   const [orderId, setOrderId] = useState(id ? id : params?.orderId);
@@ -160,9 +152,7 @@ const Billing = (props) => {
   const [selectedStore, setSelectedStore] = useState(
     params?.storeId ? parseInt(params?.storeId) : ""
   );
-  const [selectedUser, setSelectedUser] = useState(
-   params?.owner || ""
-  );
+  const [selectedUser, setSelectedUser] = useState(params?.owner || "");
   const [status, setStatus] = useState(
     params?.status_id ? parseInt(params?.status_id) : ""
   );
@@ -190,14 +180,15 @@ const Billing = (props) => {
   const [enableManualPrice, setEnableManualPrice] = useState(false);
   const [moreToggle, setMoreToggle] = useState(true);
   const [reason, setReason] = useState("");
-  const [orderHistoryViewPermission, setOrderHistoryViewPermission] = useState("");
-  const [accountId,setAccountId] = useState("")
-  const [qrCodeScanModalVisible,setQrCodeScanModalVisible] = useState(false)
-  const [customerMobileNumber,setCustomerMobileNumber] = useState()
-  const [customModalVisible,setCustomModalVisible] = useState(false)
-  const [enableButton,setEnableButton] = useState(false)
-  const [isSubmit,setIsSubmit] = useState(false)
-  const [deliveryStatus,setDeliveryStatus] = useState([])  
+  const [orderHistoryViewPermission, setOrderHistoryViewPermission] =
+    useState("");
+  const [accountId, setAccountId] = useState("");
+  const [qrCodeScanModalVisible, setQrCodeScanModalVisible] = useState(false);
+  const [customerMobileNumber, setCustomerMobileNumber] = useState();
+  const [customModalVisible, setCustomModalVisible] = useState(false);
+  const [enableButton, setEnableButton] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [deliveryStatus, setDeliveryStatus] = useState([]);
 
   const searchQuery = "...";
   // Remove special characters from the search query using a regular expression
@@ -237,8 +228,7 @@ const Billing = (props) => {
     getTotalAmount();
     getOrderProductTotalAmount();
     getDetails();
-    getDeliveryStatusList()
-    
+    getDeliveryStatusList();
   }, [IsFocused, props]);
   useEffect(() => {
     getAccountList();
@@ -249,7 +239,7 @@ const Billing = (props) => {
   }, [IsFocused, props, params?.isNewOrder]);
   useEffect(() => {
     getActionItems();
-  }, [IsFocused,deliveryStatus]);
+  }, [IsFocused, deliveryStatus]);
 
   useEffect(() => {
     let mount = true;
@@ -259,13 +249,13 @@ const Billing = (props) => {
       mount = false;
     };
   }, []);
- 
+
   useEffect(() => {
     if (activeTab == TabName.ATTACHMENTS) {
       getMediaList();
     }
-  }, [activeTab == TabName.ATTACHMENTS])
-  
+  }, [activeTab == TabName.ATTACHMENTS]);
+
   const {
     control,
     reset,
@@ -273,26 +263,17 @@ const Billing = (props) => {
     formState: { errors },
   } = useForm({});
 
-
-  useEffect(() => {
-    if (params?.isNewOrder ) {
-      if(params?.collectCustomerInfo == true){
-      qrScanToggle();
-    }else{
-      toggle()
-    }
-  }
-  }, [navigation]);
-
-  
-
   function getOrderTotalAmount(orderProductList) {
     let totalAmount = 0;
     for (let i = 0; i < orderProductList.length; i++) {
       if (orderProductList[i].cancelledAt == null) {
         totalAmount +=
-        Number.GetFloat(orderProductList[i].manual_price?orderProductList[i].manual_price:orderProductList[i].sale_price, 0) *
-        Number.Get(orderProductList[i].quantity, 0);
+          Number.GetFloat(
+            orderProductList[i].manual_price
+              ? orderProductList[i].manual_price
+              : orderProductList[i].sale_price,
+            0
+          ) * Number.Get(orderProductList[i].quantity, 0);
       }
     }
     return totalAmount;
@@ -307,35 +288,39 @@ const Billing = (props) => {
       Permission.ORDER_HISTORY_VIEW
     );
     setOrderHistoryViewPermission(orderHistoryViewPermission);
-  }  
+  };
 
-  const getDeliveryStatusList = async ()=>{
+  const getDeliveryStatusList = async () => {
     let deliveryStatus = [];
     const roleId = await asyncStorageService.getRoleId();
 
-    let response = await StatusService.getNextStatus(params?.status_id, null, (currentStatus) => {
-      deliveryStatus.push({
+    let response = await StatusService.getNextStatus(
+      params?.status_id,
+      null,
+      (currentStatus) => {
+        deliveryStatus.push({
           label: currentStatus[0].name,
           value: currentStatus[0].status_id,
-          id: currentStatus[0].status_id
-      });
-  });
-
-  response && response.forEach((statusList) => {
-      if (statusList.allowed_role_id && statusList.allowed_role_id.split(",").includes(roleId)) {
-        deliveryStatus.push({
-              label: statusList.name,
-              value: statusList.status_id,
-              id: statusList.status_id
-          });
+          id: currentStatus[0].status_id,
+        });
       }
-  });  
-  setDeliveryStatus(deliveryStatus)
+    );
 
-
-  
-  }
-  
+    response &&
+      response.forEach((statusList) => {
+        if (
+          statusList.allowed_role_id &&
+          statusList.allowed_role_id.split(",").includes(roleId)
+        ) {
+          deliveryStatus.push({
+            label: statusList.name,
+            value: statusList.status_id,
+            id: statusList.status_id,
+          });
+        }
+      });
+    setDeliveryStatus(deliveryStatus);
+  };
 
   const getStatusId = async () => {
     let cancelledStatusId = await StatusService.getStatusIdByName(
@@ -360,20 +345,20 @@ const Billing = (props) => {
   };
 
   const clearStackNavigate = () => {
-    setProductCompleteModalOpen(false)
-    setOrderProducts("")
-    setOrderId("")
-    setCancelStatus("")
-    setOrderDraftStatusId("")
-    setOrderProductCancelStatusId("")
-    setMediaData("")
-    setSelectedPayment("")
-    setImages("")
-    setCashAmount("")
-    setUpiAmount("")
-    setTotalAmount("")
+    setProductCompleteModalOpen(false);
+    setOrderProducts("");
+    setOrderId("");
+    setCancelStatus("");
+    setOrderDraftStatusId("");
+    setOrderProductCancelStatusId("");
+    setMediaData("");
+    setSelectedPayment("");
+    setImages("");
+    setCashAmount("");
+    setUpiAmount("");
+    setTotalAmount("");
     {
-     isDeliveryOrder
+      isDeliveryOrder
         ? navigation.navigate("Delivery")
         : navigation.navigate("Order");
     }
@@ -388,8 +373,6 @@ const Billing = (props) => {
     );
   };
 
-
-
   const getDetails = () => {
     if (id) {
       OrderService.searchOrder({ orderId: id }, (error, response) => {
@@ -399,38 +382,37 @@ const Billing = (props) => {
     }
   };
 
- const handlePaymentChange = (value) => {
-    if(value === PaymentType.UPI_VALUE){
-      setImages([])
-      takePicture()
+  const handlePaymentChange = (value) => {
+    if (value === PaymentType.UPI_VALUE) {
+      setImages([]);
+      takePicture();
       setSelectedPayment(value);
-
-    }else if(value === PaymentType.MIXED_VALUE){
-      setImages([])
-      takePicture()
+    } else if (value === PaymentType.MIXED_VALUE) {
+      setImages([]);
+      takePicture();
       setSelectedPayment(value);
-    }else{
+    } else {
       setSelectedPayment(value);
-
     }
   };
 
   const handleSearchOnChange = async (e) => {
     const products = await productService.SearchFromLocalDB(e);
+    console.debug("products--------------->>>", products)
     setStoreProductList(products);
   };
 
   const OnCancel = () => {
     let data = {
       status: cancelStatus,
-      customer_account : accountId
+      customer_account: accountId,
     };
     if (!orderId || !id) {
       clearStackNavigate();
     }
     OrderService.updateOrder(orderId ? orderId : id, data, () => {
       clearStackNavigate();
-      setOrderCancelModal(false) 
+      setOrderCancelModal(false);
     });
   };
 
@@ -442,7 +424,6 @@ const Billing = (props) => {
         setCashAmount(response.data.data[0].cash_amount);
         setUpiAmount(response.data.data[0].upi_amount);
         setTotalAmount(response.data.data[0].total_amount);
-
       });
     }
   };
@@ -486,7 +467,7 @@ const Billing = (props) => {
     };
     await OrderProductService.getTotalAmount(params, (res) => {
       const totalAmount = res && res?.data && res?.data?.totalAmount;
-        setTotalAmount(totalAmount > 0 ? Number.GetFloat(totalAmount) : 0);
+      setTotalAmount(totalAmount > 0 ? Number.GetFloat(totalAmount) : 0);
     });
   };
 
@@ -495,32 +476,32 @@ const Billing = (props) => {
     setScanModalVisible(true);
   };
 
-  const onReasonInput=(value) => {
-   try{
- setReason(value)
-   }catch(err){
-  console.log(err); 
-  }
-  }
+  const onReasonInput = (value) => {
+    try {
+      setReason(value);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   //delete order product
   const cancelOrderProduct = async () => {
-    if (selectedItem && reason.trim() !== "" ) {
+    if (selectedItem && reason.trim() !== "") {
       OrderService.cancel(
         selectedItem.orderProductId,
-        {reason:reason},
+        { reason: reason },
         async (error, response) => {
-          setReason("")
-          reset({})
+          setReason("");
+          reset({});
           //close product select modal
           setProductDeleteModalOpen(false);
           //get store products
           getOrderProducts();
         }
       );
-    }else{
-      setProductDeleteModalOpen(true)
-    return AlertModal("Reason Is Required");
+    } else {
+      setProductDeleteModalOpen(true);
+      return AlertModal("Reason Is Required");
     }
   };
 
@@ -553,7 +534,7 @@ const Billing = (props) => {
       setIsProductAdding(false);
     }
   };
-  
+
   const addOrderProduct = async (quantity, scannedProduct, callback) => {
     try {
       await OrderService.addOrderProduct(
@@ -657,10 +638,8 @@ const Billing = (props) => {
   };
 
   const createOrderAddOrderProduct = async (quantity, scannedProduct) => {
-
     try {
       if (orderId) {
-
         addOrderProduct(quantity, scannedProduct, () => {
           setIsProductAdding(false);
         });
@@ -671,7 +650,6 @@ const Billing = (props) => {
   };
 
   const validateProductInOrderProduct = async (selectedProduct) => {
-
     //validate already added product list
     if (orderProducts && orderProducts.length > 0) {
       //find if a product with the same product_id already exists
@@ -720,7 +698,7 @@ const Billing = (props) => {
 
   //Product search click product handler
   const productOnClick = async (selectedProduct) => {
-    try {      
+    try {
       if (!isProductAdding) {
         setIsProductAdding(true);
 
@@ -768,144 +746,35 @@ const Billing = (props) => {
       productNotFoundToggle();
     }
   };
-  const handleScan = async (data) => {
 
-    try{
-
-      let account_id = data?.data
-
-      if(account_id){
-        setQrCodeScanModalVisible(false);
-      accountService.get(account_id, (err, response) => {
-let body={type:type?.id}
-        if (response && response?.data && response?.data?.data?.vendorId) {          
-          setAccountId(response?.data?.data?.vendorId)
-          orderService.createOrder(body, (error, response)=> {
-            if(response.data && response?.data){
-              setOrderId(response?.data?.orderId)
-              setOrderNumber(response?.data?.orderDetail?.order_number)
-              
-            }
-          })
-        }
-      }
-    )
-  }
-    }catch (err) {
-      console.log(err);
-    }
-       
-  }
-  const createOrder = async()=>{
-    
-    let body={type:Number.Get(type?.id)}
-    await orderService.createOrder(body, async (err, response) => {    
-      if (response && response?.data) {        
-        setOrderId(response?.data?.orderId)
-        setOrderNumber(response?.data?.orderDetail?.order_number)
-        setCustomModalVisible(false) 
-        setQrCodeScanModalVisible(false);
-        setCustomerMobileNumber("")       
-      }
-  })
-  }
-  const handleMobileNumberUpdate = async()=>{
-    const createDate = {
-      acount_name: customerMobileNumber,
-      status: Status.ACTIVE,
-      accountType : Account.TYPE_CUSTOMER,
-      mobile : customerMobileNumber
-  }
-
-  await orderService.createOrder(createDate, async (err, response) => {    
-      if (response && response?.data && response?.data?.isCreateAccount) {        
-        setCustomModalVisible(true)        
-      }else if(response && response?.data && response?.data){        
-        setAccountId(response?.data && response?.data?.account_id)
-        setOrderId(response?.data?.orderId)
-        setOrderNumber(response?.data?.orderDetail?.order_number)
-        setCustomModalVisible(false) 
-        setQrCodeScanModalVisible(false);
-        setCustomerMobileNumber("")
-      }
-     
-  })
-  }
   const handleContinue = async () => {
-    try{
+    try {
       const createDate = {
         acount_name: customerMobileNumber,
         status: Status.ACTIVE,
-        type : Account.TYPE_CUSTOMER,
-        mobile : customerMobileNumber,
-        isCreateNewAccount : true
-    }
-    await orderService.createOrder(createDate, async (err, response) => {    
-
-       if(response && response?.data && response?.data){      
-          setAccountId(response?.data && response?.data?.account_id)
-          setOrderId(response?.data?.orderId)
-          setOrderNumber(response?.data?.orderDetail?.order_number)  
-          setCustomModalVisible(false) 
+        type: Account.TYPE_CUSTOMER,
+        mobile: customerMobileNumber,
+        isCreateNewAccount: true,
+      };
+      await orderService.createOrder(createDate, async (err, response) => {
+        if (response && response?.data && response?.data) {
+          setAccountId(response?.data && response?.data?.account_id);
+          setOrderId(response?.data?.orderId);
+          setOrderNumber(response?.data?.orderDetail?.order_number);
+          setCustomModalVisible(false);
           setQrCodeScanModalVisible(false);
-          setCustomerMobileNumber("")
+          setCustomerMobileNumber("");
         }
-       
-       
-
-    })
-     
-    }catch(err){
+      });
+    } catch (err) {
       console.log(err);
     }
   };
-  const handleAlertClose = async ()=>{
-     try{
-           setCustomModalVisible(false) 
-           setQrCodeScanModalVisible(false);
-           setCustomerMobileNumber("")
-  }
-  catch(err){
-      console.log(err);
-    }
-  }
-
-  const handleMobileNumberChange = (value) => {    
-    setCustomerMobileNumber(value)
-  }
-  //scan product handler
-  const handleScannedData = async (data) => {
-
+  const handleAlertClose = async () => {
     try {
-      setScanModalVisible(false);
-
-      //get bar code
-      let barCode = data?.data;
-
-      //validate bar code exist and loading
-      if (barCode) {
-        //set scanned code
-        setScannedCode(barCode);
-
-        const updatedPriceProductList =
-          await ProductService.getProductUpdatedPrice(barCode);
-
-        if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-          validateProductInOrderProduct(updatedPriceProductList[0]);
-        } else if (
-          updatedPriceProductList &&
-          updatedPriceProductList.length > 1
-        ) {
-          //set store product list
-          setScannedProductList(updatedPriceProductList);
-
-          setProductSelectModalOpen(true);
-        } else {
-          SyncService.SyncProduct(barCode, null, (response) => {
-            getProducts(barCode);
-          });
-        }
-      }
+      setCustomModalVisible(false);
+      setQrCodeScanModalVisible(false);
+      setCustomerMobileNumber("");
     } catch (err) {
       console.log(err);
     }
@@ -923,7 +792,7 @@ let body={type:type?.id}
       const selectedRowMap = stateRef.selecredRowMap;
       if (selectedItem && selectedRowMap) {
         closeRow(selectedRowMap, selectedItem.inventoryTransferProductId);
-        if(!productDeleteModalOpen){
+        if (!productDeleteModalOpen) {
           setSelectedItem("");
         }
         stateRef.selectedItem = "";
@@ -988,13 +857,10 @@ let body={type:type?.id}
       setProductCompleteModalOpen(!productCompleteModalOpen);
     } else {
       setProductCompleteModalOpen(!productCompleteModalOpen);
-      setIsSubmit(false)
-      setEnableButton(false)  
+      setIsSubmit(false);
+      setEnableButton(false);
       setSelectedPayment(PaymentType.VALIDATION);
     }
-  };
-  const orderCancelModalToggle = () => {
-    setOrderCancelModal(!orderCancelModal);
   };
 
   const productDeleteModalToggle = () => {
@@ -1016,17 +882,8 @@ let body={type:type?.id}
     setIsProductAdding(false);
   };
 
-  const toggle = () => {
-    //close the scan modal
-    setScanModalVisible(!modalVisible);
-  };
-  const qrScanToggle = ()=>{
-    setQrCodeScanModalVisible(!qrCodeScanModalVisible)
-  }
-
-
   const cashPaid = (value) => {
-    setIsSubmit(true)
+    setIsSubmit(true);
     let data = {
       payment_type: selectedPayment,
       customer_account: params?.customerId ? params?.customerId : accountId,
@@ -1041,30 +898,30 @@ let body={type:type?.id}
 
     if (selectedPayment === PaymentType.UPI_VALUE) {
       if (images && images.length > 0) {
-        setEnableButton(true)
-        setIsSubmit(false)
+        setEnableButton(true);
+        setIsSubmit(false);
         uploadImages();
         OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
           if (err) {
-            setIsSubmit(false)
+            setIsSubmit(false);
           }
-        setEnableButton(false)
+          setEnableButton(false);
         });
       } else {
-        setIsSubmit(false)
+        setIsSubmit(false);
 
         return alert("UPI Payment Attachment is Missing");
       }
     }
     if (selectedPayment === PaymentType.CASH_VALUE) {
-      setEnableButton(true)
-      setIsSubmit(false)
+      setEnableButton(true);
+      setIsSubmit(false);
       OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
         if (res) {
-          setIsSubmit(false)
+          setIsSubmit(false);
           clearStackNavigate();
-        }else{
-          setEnableButton(false)
+        } else {
+          setEnableButton(false);
         }
       });
     }
@@ -1080,14 +937,14 @@ let body={type:type?.id}
       }
 
       (data.cash = value?.cash), (data.upi = value?.upi);
-        setEnableButton(true)
+      setEnableButton(true);
 
       if (images && images.length > 0) {
         uploadImages();
         OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
           if (err) {
-            setEnableButton(false)
-          } 
+            setEnableButton(false);
+          }
         });
       } else {
         return alert("UPI Payment Attachment is Missing");
@@ -1313,7 +1170,7 @@ let body={type:type?.id}
   };
 
   const updateValue = async () => {
-    setIsSubmit(true)
+    setIsSubmit(true);
 
     let updateData = new Object();
     if (selectedUser) {
@@ -1330,13 +1187,11 @@ let body={type:type?.id}
     }
     await orderService.updateOrder(id, updateData, (err, response) => {
       if (response) {
-          getDetails()
-          setEdit(false)
-          setIsSubmit(false)
-
+        getDetails();
+        setEdit(false);
+        setIsSubmit(false);
       }
-      setIsSubmit(false)
-
+      setIsSubmit(false);
     });
   };
 
@@ -1370,28 +1225,26 @@ let body={type:type?.id}
       </View>
     );
   };
-  const updateCustomerAccount = async()=>{
+  const updateCustomerAccount = async () => {
     let data = {
-      customer_account : accountId
+      customer_account: accountId,
     };
     if (!orderId || !id) {
       clearStackNavigate();
     }
-    OrderService.updateOrder(orderId ? orderId : id, data, () => {
-    });
-  }
+    OrderService.updateOrder(orderId ? orderId : id, data, () => {});
+  };
 
-  const updateDeliveryStatus = async(status)=>{    
-    let data ={
-      status : status
-    }
-    OrderService.updateStatus(orderId ? orderId : id,data,(err,response)=>{
-      if(response){
+  const updateDeliveryStatus = async (status) => {
+    let data = {
+      status: status,
+    };
+    OrderService.updateStatus(orderId ? orderId : id, data, (err, response) => {
+      if (response) {
         clearStackNavigate();
-
       }
-    })
-  }
+    });
+  };
 
   const createRefundRequest = async (id) => {
     setVisible(false);
@@ -1408,16 +1261,25 @@ let body={type:type?.id}
 
     const cancelPermission = await PermissionService.hasPermission(
       Permission.ORDER_CANCEL
-    );    
+    );
 
-   if(isDeliveryOrder){
-    deliveryStatus && deliveryStatus.forEach(statusItem => {      
-      if (statusItem.id !== params?.status_id) {
-        actionItems.push(
-          <MenuItem key={statusItem.id} onPress={()=>{updateDeliveryStatus(statusItem.id),setVisible(true)}}>{statusItem.label}</MenuItem>
-      );      }
-  });
-   } 
+    if (isDeliveryOrder) {
+      deliveryStatus &&
+        deliveryStatus.forEach((statusItem) => {
+          if (statusItem.id !== params?.status_id) {
+            actionItems.push(
+              <MenuItem
+                key={statusItem.id}
+                onPress={() => {
+                  updateDeliveryStatus(statusItem.id), setVisible(true);
+                }}
+              >
+                {statusItem.label}
+              </MenuItem>
+            );
+          }
+        });
+    }
 
     if (
       cancelPermission &&
@@ -1439,11 +1301,11 @@ let body={type:type?.id}
         <MenuItem
           onPress={() => {
             if (images && images.length > 0) {
-              updateCustomerAccount()
+              updateCustomerAccount();
               uploadImages();
             } else {
-               updateCustomerAccount()
-                clearStackNavigate();
+              updateCustomerAccount();
+              clearStackNavigate();
             }
           }}
         >
@@ -1463,7 +1325,7 @@ let body={type:type?.id}
                 id: orderId ? orderId : id,
                 order_number: orderNumber ? orderNumber : params.orderNumber,
                 total_amount: params?.totalAmount,
-                date : params?.date
+                date: params?.date,
               },
             });
             setVisible(true);
@@ -1512,17 +1374,16 @@ let body={type:type?.id}
     setList(actionItems);
   };
 
-   const takePicture = async (e) => {
-    try{
+  const takePicture = async (e) => {
+    try {
       const image = await Media.getImage();
       if (image && image.assets && image.assets.length > 0) {
         const imageUrl = image.assets[0];
         setImages((prevImages) => [...prevImages, imageUrl]);
       }
-    }catch (error) {
-      console.error('Error taking picture:', error);
-  }
-   
+    } catch (error) {
+      console.error("Error taking picture:", error);
+    }
   };
 
   const handleUploadMedia = async (e) => {
@@ -1574,7 +1435,6 @@ let body={type:type?.id}
     }
   };
 
-
   let title = [
     {
       title: TabName.SUMMARY,
@@ -1588,19 +1448,17 @@ let body={type:type?.id}
     },
   ];
 
-  if (isDeliveryOrder) {
     title.push({
       title: TabName.CUSTOMER,
       tabName: TabName.CUSTOMER,
     });
-  }
   if (params?.paymentType !== PaymentType.CASH_VALUE) {
     title.push({
       title: TabName.ATTACHMENTS,
       tabName: TabName.ATTACHMENTS,
     });
   }
-  if(orderHistoryViewPermission && !params?.isNewOrder){
+  if (orderHistoryViewPermission && !params?.isNewOrder) {
     title.push({
       title: TabName.HISTORY,
       tabName: TabName.HISTORY,
@@ -1609,164 +1467,197 @@ let body={type:type?.id}
 
   return (
     <>
-    <Layout
-      title={
-        isDeliveryOrder
-          ? orderNumber || params.orderNumber
-            ? `Delivery# ${orderNumber ? orderNumber : params.orderNumber}`
-            : "Delivery"
-          : orderNumber || params.orderNumber
-          ? `Order# ${orderNumber ? orderNumber : params.orderNumber}`
-          : "Order"
-      }
-      closeModal={visible}
-      showActionMenu={
-        activeTab === TabName.PRODUCTS
-          ? actionList && actionList.length > 0
-          : (activeTab === TabName.SUMMARY) || (activeTab === TabName.ATTACHMENTS)
-          ? !allowEdit && list && list.length > 0
+      <Layout
+        title={
+          orderNumber || params.orderNumber
+            ? `Sale# ${orderNumber ? orderNumber : params.orderNumber}`
+            : "Sale"
+        }
+        closeModal={visible}
+        showActionMenu={true}
+        isSubmit={isSubmit}
+        buttonLabel={
+          activeTab === TabName.SUMMARY 
+          
+            ? "Save"
+            : activeTab === TabName.ATTACHMENTS && allowEdit
+            ? "Upload"
+            : ""
+        }
+        buttonOnPress={
+          activeTab === TabName.ATTACHMENTS
+            ? (e) => handleUploadMedia(e)
+            : handleSubmit((values) => {
+                updateValue(values);
+              })
+        }
+        actionItems={activeTab === TabName.PRODUCTS ? actionList : list}
+        showBackIcon={true}
+        defaultFooter={
+          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
             ? true
             : false
-          : ""
-      }
-      isSubmit={isSubmit}
-      buttonLabel={
-        activeTab === TabName.SUMMARY &&
-        allowEdit &&
-        params?.allow_edit === Status.ALLOW_EDIT_ENABLED
-          ? "Save"
-          : activeTab === TabName.ATTACHMENTS && allowEdit
-          ? "Upload"
-          : ""
-      }
-      buttonOnPress={
-        activeTab === TabName.ATTACHMENTS
-          ? (e) => handleUploadMedia(e)
-          : handleSubmit((values) => {
-              updateValue(values);
-            })
-      }
-      actionItems={activeTab === TabName.PRODUCTS ? actionList : list}
-      showBackIcon={
-        params?.isNewOrder ? false : true
-      }
-      defaultFooter={
-        params?.group == Status.GROUP_DRAFT || params?.isNewOrder ? true : false
-      }
-      emptyMenu={
-        params?.group == Status.GROUP_DRAFT || params?.isNewOrder ? true : false
-      }
-      backButtonNavigationUrl= {`${isDeliveryOrder?"Delivery":"Order"}`}
-      HideSideMenu={
-        params?.group == Status.GROUP_DRAFT || params?.isNewOrder ? true : false
-      }
-      FooterContent={
-        activeTab === TabName.SUMMARY
-          ? ""
-          : searchPhrase &&
-            storeProductList &&
-            storeProductsList.length > 0 && (
-              <CustomButton
-                title={"CANCEL"}
-                backgroundColor={Color.CANCEL_BUTTON}
-                show={permission ? true : false}
-                onPress={() => setSearchPhrase("")}
-              />
-            )
-      }
-    >
-      {orderCancelModal && (
-         <CustomAlertModal 
-         visible={orderCancelModal}
-         title="Cancel Order"
-         message = {
-                  orderProducts.length > 0
-                   ? `Are you sure, you want to cancel this order?`
-                    : `No Products Added. Are you sure, you want to cancel this order?`}
-          buttonOptions={[
-             { label: Label.TEXT_YES, onPress: () => OnCancel() },
-             { label: Label.TEXT_NO, onPress: () => setOrderCancelModal(false) }
-             ]}
-         />
-      
-       )}
-     
-
-      {params?.isNewOrder ? (
-        <View>
-          <ScrollView>
-            <View style={{ width: searchPhrase ? "100%" : "85%" }}>
-              <SearchBar
-                searchPhrase={searchPhrase}
-                setSearchPhrase={setSearchPhrase}
-                setClicked={setClicked}
-                clicked={clicked}
-                handleChange={handleSearchOnChange}
-                noScanner
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                position: "relative",
-              }}
-            >
-              {!searchPhrase && (
-                <>
-                  <MaterialCommunityIcons
-                    name={`cart-outline`}
-                    size={26}
-                    color="#000"
-                    style={{
-                      position: "absolute",
-                      right: 10,
-                      top: "80%",
-                      transform: [{ translateY: -45 }],
-                    }}
-                  />
-
-                  <View style={{ position: "absolute", right: 0 }}>
-                    <View
-                      style={{
-                        backgroundColor: "#ff0000",
-                        borderRadius: 10,
-                        position: "absolute",
-                        right: 10,
-                        top: "80%",
-                        transform: [{ translateY: -56 }],
-                        width: 18,
-                        height: 18,
-                        borderRadius: 14,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "#fff",
-                          fontSize: 12,
-                          textAlign: "center",
-                          lineHeight: 18,
-                        }}
-                      >
-                        {filteredList.length || 0}
-                      </Text>
-                    </View>
-                  </View>
-                </>
-              )}
-            </View>
-
-            <CustomAlertModal
-             visible={customModalVisible}
-             title={"Create Account"}
-             message="Do you want to Create Account?"
-             buttonOptions={[
-               { label: Label.TEXT_YES, onPress: () => handleContinue() },
-               { label: Label.TEXT_NO, onPress: () => handleAlertClose() }
+        }
+        emptyMenu={
+          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
+            ? true
+            : false
+        }
+        backButtonNavigationUrl={`${isDeliveryOrder ? "Delivery" : "Order"}`}
+        HideSideMenu={
+          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
+            ? true
+            : false
+        }
+        FooterContent={
+          activeTab === TabName.SUMMARY
+            ? ""
+            : searchPhrase &&
+              storeProductList &&
+              storeProductsList.lengthr > 0 && (
+                <CustomButton
+                  title={"CANCEL"}
+                  backgroundColor={Color.CANCEL_BUTTON}
+                  show={permission ? true : false}
+                  onPress={() => setSearchPhrase("")}
+                />
+              )
+        }
+      >
+        {orderCancelModal && (
+          <CustomAlertModal
+            visible={orderCancelModal}
+            title="Cancel Order"
+            message={
+              orderProducts.length > 0
+                ? `Are you sure, you want to cancel this order?`
+                : `No Products Added. Are you sure, you want to cancel this order?`
+            }
+            buttonOptions={[
+              { label: Label.TEXT_YES, onPress: () => OnCancel() },
+              {
+                label: Label.TEXT_NO,
+                onPress: () => setOrderCancelModal(false),
+              },
             ]}
-            />
+          />
+        )}
 
-            {searchPhrase &&
+        
+          <View style={styles.tabBar}>
+            <>
+              <Tab
+                title={title}
+                setActiveTab={setActiveTab}
+                defaultTab={activeTab}
+              />
+            </>
+          </View>
+        {activeTab === TabName.CUSTOMER && (
+
+          <CustomerInfo
+            accountList={accountList}
+            param={items ? items : params}
+          />
+        )}
+        {activeTab === TabName.ATTACHMENTS && (
+          <MediaList mediaData={MediaData} getMediaList={getMediaList} />
+        )}
+        {activeTab === TabName.SUMMARY && (
+          <General
+            permission={permission}
+            param={params}
+            setSelectedDate={setSelectedDate}
+            setSelectedShift={setSelectedShift}
+            setSelectedStore={setSelectedStore}
+            setSelectedUser={setSelectedUser}
+            selectedUser={selectedUser ? selectedUser : params && params?.owner}
+            selectedDate={selectedDate}
+            setStatus={setStatus}
+            status={status}
+            allowEdit={allowEdit}
+            onPress={() => setProductCompleteModalOpen(true)}
+          />
+        )}
+        {productCompleteModalOpen && (
+          <ProductModal
+            modalVisible={productCompleteModalOpen}
+            button1Press={(value) =>
+              selectedPayment === PaymentType.VALIDATION ||
+              selectedPayment === PaymentType.INITIAL
+                ? setSelectedPayment(PaymentType.INITIAL)
+                : cashPaid(value)
+            }
+            content={`Total Amount  `}
+            content2={`${CurrencyFormat.IndianFormat(
+              Number.GetFloat(totalAmount)
+            )}`}
+            toggle={productCompleteModalToggle}
+            button1Label="PAID"
+            title={isDeliveryOrder ? "Complete Delivery" : "Complete Order"}
+            handlePaymentChange={handlePaymentChange}
+            selectedPayment={selectedPayment}
+            MediaData={images ? images : MediaData}
+            takePicture={() => takePicture()}
+            handleDelete={handleDelete}
+            enableButton={enableButton}
+            isSubmit={isSubmit}
+          />
+        )}
+
+        {productDeleteModalOpen && (
+          <OrderProductCancelModel
+            modalVisible={productDeleteModalOpen}
+            toggle={productDeleteModalToggle}
+            item={selectedItem}
+            updateAction={cancelOrderProduct}
+            heading={AlertMessage.CANCEL_MODAL_TITLE}
+            description={AlertMessage.CANCEL_MODAL_DESCRIPTION}
+            control={control}
+            onReasonInput={onReasonInput}
+            showReasonField
+            reason={reason}
+          />
+        )}
+
+        {productModalOpen && (
+          <ProductEditModal
+            modalVisible={productModalOpen}
+            toggle={productModalToggle}
+            item={selectedItem}
+            updateAction={updateQuantity}
+            control={control}
+          />
+        )}
+        {priceModalOpen && (
+          <PriceUpdateModal
+            modalVisible={priceModalOpen}
+            toggle={priceModalToggle}
+            item={selectedItem}
+            handleUpdate={handleUpdate}
+            control={control}
+            price={manualPrice}
+          />
+        )}
+
+        {activeTab === TabName.PRODUCTS && (
+          <View style={{ flex: 1 }}>
+            { (
+              <View style={{ width: searchPhrase ? "100%" : "85%" }}>
+                <SearchBar
+                  searchPhrase={searchPhrase}
+                  setSearchPhrase={setSearchPhrase}
+                  setClicked={setClicked}
+                  clicked={clicked}
+                  handleChange={handleSearchOnChange}
+                  noScanner
+                />
+              </View>
+            )}
+           
+
+            {
+              searchPhrase &&
               storeProductList &&
               storeProductsList.length > 0 && (
                 <View>
@@ -1776,369 +1667,185 @@ let body={type:type?.id}
                   />
                 </View>
               )}
-          </ScrollView>
-        </View>
-      ) : (
-        <View style={styles.tabBar}>
-          <>
-            <Tab
-              title={title}
-              setActiveTab={setActiveTab}
-              defaultTab={activeTab}
-            />
-          </>
-        </View>
-      )}
-      {activeTab === TabName.CUSTOMER && (
-        <CustomerInfo
-          accountList={accountList}
-          param={items ? items : params}
-        />
-      )}
-      {activeTab === TabName.ATTACHMENTS && (
-        <MediaList mediaData={MediaData} getMediaList={getMediaList} />
-      )}
-      {activeTab === TabName.SUMMARY && (
-        <General
-          permission={permission}
-          param={params}
-          setSelectedDate={setSelectedDate}
-          setSelectedShift={setSelectedShift}
-          setSelectedStore={setSelectedStore}
-          setSelectedUser={setSelectedUser}
-          selectedUser={selectedUser?selectedUser:(params && params?.owner)}
-          selectedDate={selectedDate}
-          setStatus={setStatus}
-          status={status}
-          allowEdit={allowEdit}
-         
-          onPress={() => setProductCompleteModalOpen(true)}
-        />
-      )}
-  {productCompleteModalOpen && (
-            <ProductModal
-              modalVisible={productCompleteModalOpen}
-              button1Press={(value) =>
-                selectedPayment === PaymentType.VALIDATION ||
-                selectedPayment === PaymentType.INITIAL
-                  ? setSelectedPayment(PaymentType.INITIAL)
-                  : cashPaid(value)
+            <View
+              style={
+                orderProducts && orderProducts.length > 0
+                  ? { flex: 0.8 }
+                  : {
+                      flex: 0.8,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }
               }
-              content={`Total Amount  `}
-              content2={`${CurrencyFormat.IndianFormat(
-                Number.GetFloat(totalAmount)
-              )}`}
-              toggle={productCompleteModalToggle}
-              button1Label="PAID"
-              title={isDeliveryOrder?"Complete Delivery" :"Complete Order"}
-              handlePaymentChange={handlePaymentChange}
-              selectedPayment={selectedPayment}
-              MediaData={images ? images : MediaData}
-              takePicture={() => takePicture()}
-              handleDelete={handleDelete}
-              enableButton={enableButton}
-              isSubmit = {isSubmit}
-            />
-          )}
-          {modalVisible && (
-            <BarcodeScanner
-              toggle={toggle}
-              modalVisible={modalVisible}
-              id={orderId ? orderId : id}
-              handleScannedData={handleScannedData}
-            />
-          )}
-           {qrCodeScanModalVisible && (
-            <BarcodeScanner
-              title="Scan QR Code"
-              toggle={qrScanToggle}
-              modalVisible={qrCodeScanModalVisible}
-              id={orderId ? orderId : id}
-              handleScannedData={handleScan}
-              showCustomerMobileNumberOption 
-              control = {control}
-              handleMobileNumberChange = {handleMobileNumberChange}
-              handleMobileNumberUpdate = {handleMobileNumberUpdate}
-              onPressSkip = {createOrder}
-            />
-          )}
-          
-
-          {productDeleteModalOpen && (
-            <OrderProductCancelModel
-              modalVisible={productDeleteModalOpen}
-              toggle={productDeleteModalToggle}
-              item={selectedItem}
-              updateAction={cancelOrderProduct}
-              heading={AlertMessage.CANCEL_MODAL_TITLE}
-              description={AlertMessage.CANCEL_MODAL_DESCRIPTION}
-              control={control}
-              onReasonInput={onReasonInput}
-              showReasonField
-              reason={reason}
-            />
-          )}
-
-          {productModalOpen && (
-            <ProductEditModal
-              modalVisible={productModalOpen}
-              toggle={productModalToggle}
-              item={selectedItem}
-              updateAction={updateQuantity}
-              control={control}
-            />
-          )}
-          {priceModalOpen && (
-            <PriceUpdateModal
-              modalVisible={priceModalOpen}
-              toggle={priceModalToggle}
-              item={selectedItem}
-              handleUpdate={handleUpdate}
-              control={control}
-              price={manualPrice}
-            />
-          )}
-
-      {activeTab === TabName.PRODUCTS && (
-        <View style={{ flex: 1 }}>
-          {!params.isNewOrder && (
-            <View style={{ width: searchPhrase ? "100%" : "85%" }}>
-              <SearchBar
-                searchPhrase={searchPhrase}
-                setSearchPhrase={setSearchPhrase}
-                setClicked={setClicked}
-                clicked={clicked}
-                handleChange={handleSearchOnChange}
-                noScanner
-              />
-            </View>
-          )}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              position: "relative",
-            }}
-          >
-            {!searchPhrase && (
-              <>
-                <MaterialCommunityIcons
-                  name={`cart-outline`}
-                  size={26}
-                  color="#000"
-                  style={{
-                    position: "absolute",
-                    right: 10,
-                    top: "80%",
-                    transform: [{ translateY: -45 }],
-                  }}
-                />
-
-                <View style={{ position: "absolute", right: 0 }}>
-                  <View
-                    style={{
-                      backgroundColor: "#ff0000",
-                      borderRadius: 10,
-                      position: "absolute",
-                      right: 10,
-                      top: "80%",
-                      transform: [{ translateY: -56 }],
-                      width: 18,
-                      height: 18,
-                      borderRadius: 14,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#fff",
-                        fontSize: 12,
-                        textAlign: "center",
-                        lineHeight: 18,
-                      }}
-                    >
-                      {filteredList.length || 0}
-                    </Text>
-                  </View>
-                </View>
-              </>
-            )}
-          </View>
-
-          {!params.isNewOrder && searchPhrase && storeProductList && storeProductsList.length > 0 && (
-            <View>
-              <ProductSearch
-                searchResult={storeProductList}
-                productOnClick={productOnClick}
-              />
-            </View>
-          )}
-          <View
-            style={
-              orderProducts && orderProducts.length > 0
-                ? { flex: 0.8 }
-                : { flex: 0.8, justifyContent: "center", alignItems: "center" }
-            }
-          >
-            {!searchPhrase && orderProducts && orderProducts.length > 0 ? (
-              <>
-                <ScrollView>
-                  <SwipeListView
-                    data={orderProducts}
-                    renderItem={renderItem}
-                    renderHiddenItem={renderHiddenItem}
-                    rightOpenValue={
-                      params?.group == Status.GROUP_DRAFT || params?.isNewOrder
-                        ? -150
-                        : allowCancel || allowProductEdit
-                        ? -150
-                        : -80
-                    }
-                    previewOpenValue={-40}
-                    previewOpenDelay={3000}
-                    closeOnRowOpen={true}
-                    keyExtractor={(item) => String(item.orderProductId)}
-                    disableLeftSwipe={
-                      allowCancel || allowProductEdit ? false : true
-                    }
-                    disableRightSwipe={true}
+            >
+              {!searchPhrase && orderProducts && orderProducts.length > 0 ? (
+                <>
+                  <ScrollView>
+                    <SwipeListView
+                      data={orderProducts}
+                      renderItem={renderItem}
+                      renderHiddenItem={renderHiddenItem}
+                      rightOpenValue={
+                        params?.group == Status.GROUP_DRAFT ||
+                        params?.isNewOrder
+                          ? -150
+                          : allowCancel || allowProductEdit
+                          ? -150
+                          : -80
+                      }
+                      previewOpenValue={-40}
+                      previewOpenDelay={3000}
+                      closeOnRowOpen={true}
+                      keyExtractor={(item) => String(item.orderProductId)}
+                      disableLeftSwipe={
+                        allowCancel || allowProductEdit ? false : true
+                      }
+                      disableRightSwipe={true}
+                    />
+                  </ScrollView>
+                </>
+              ) : storeProductsList.length == 0 &&
+                orderProducts &&
+                orderProducts.length == 0 ? (
+                <View style={{ alignItems: "center" }}>
+                  <FontAwesome5
+                    name="box-open"
+                    size={20}
+                    color={Color.PRIMARY}
                   />
-                </ScrollView>
-              </>
-            ) : storeProductsList.length == 0 &&
-              orderProducts &&
-              orderProducts.length == 0 ? (
-              <View style={{ alignItems: "center" }}>
-                <FontAwesome5 name="box-open" size={20} color={Color.PRIMARY} />
-                <LabelText text="No Products Added Yet" bold={true} />
-              </View>
-            ) : (
-              <Spinner />
-            )}
-          </View>
+                  <LabelText text="No Products Added Yet" bold={true} />
+                </View>
+              ) : (
+                <Spinner />
+              )}
+            </View>
 
-
-       
-          <View style={{ flex: 0.2 }}>
-            {!params?.isNewOrder && (
-              <View style={styles.cashAmount}>
-                {cashAmount > 0 && (
+            <View style={{ flex: 0.2 }}>
+              {!params?.isNewOrder && (
+                <View style={styles.cashAmount}>
+                  {cashAmount > 0 && (
+                    <View style={styles.align}>
+                      <Text style={styles.letter}>
+                        Cash:&nbsp;&nbsp;
+                        <Text style={styles.letterColor}>
+                          {CurrencyFormat.IndianFormat(
+                            cashAmount ? cashAmount : ""
+                          )}
+                        </Text>
+                      </Text>
+                    </View>
+                  )}
+                  {upiAmount > 0 && (
+                    <View style={styles.align}>
+                      <Text style={styles.letterText}>
+                        Upi:&nbsp;&nbsp;
+                        <Text style={styles.letterColor}>
+                          {CurrencyFormat.IndianFormat(
+                            upiAmount ? upiAmount : ""
+                          )}
+                        </Text>
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              )}
+              {!clicked && (
+                <View style={styles.totalAmount}>
                   <View style={styles.align}>
                     <Text style={styles.letter}>
-                      Cash:&nbsp;&nbsp;
+                      Total Amount:&nbsp;&nbsp;
                       <Text style={styles.letterColor}>
-                        {CurrencyFormat.IndianFormat(
-                          cashAmount ? cashAmount : ""
-                        )}
+                        {!params?.isNewOrder
+                          ? CurrencyFormat.IndianFormat(
+                              Number.GetFloat(totalAmount)
+                            )
+                          : CurrencyFormat.IndianFormat(
+                              Number.GetFloat(totalAmount)
+                            )}
                       </Text>
                     </Text>
                   </View>
-                )}
-                {upiAmount > 0 && (
-                  <View style={styles.align}>
-                    <Text style={styles.letterText}>
-                      Upi:&nbsp;&nbsp;
-                      <Text style={styles.letterColor}>
-                        {CurrencyFormat.IndianFormat(
-                          upiAmount ? upiAmount : ""
-                        )}
-                      </Text>
-                    </Text>
-                  </View>
-                )}
-              </View>
-            )}
-            {!clicked && (
-              <View style={styles.totalAmount}>
-                <View style={styles.align}>
-                  <Text style={styles.letter}>
-                    Total Amount:&nbsp;&nbsp;
-                    <Text style={styles.letterColor}>
-                      {!params?.isNewOrder
-                        ? CurrencyFormat.IndianFormat(
-                            Number.GetFloat(totalAmount)
-                          )
-                        : CurrencyFormat.IndianFormat(
-                            Number.GetFloat(totalAmount)
-                          )}
-                    </Text>
-                  </Text>
                 </View>
-              </View>
-            )}
-            {!clicked &&
-              ((!productExistModalOpen &&
-                !productNotFoundModalOpen &&
-                params?.group == Status.GROUP_DRAFT) || (params?.group == Status.GROUP_NEW)||
-                params?.isNewOrder) && (
-                <FooterContent
-                  id={orderId ? orderId : id}
-                  storeId={params.storeId}
-                  locationName={params?.locationName}
-                  shift={params?.shift}
-                  date={params?.date ? params?.date : orderDate}
-                  addNew={addNew}
-                  onPress={() =>
-                    orderProducts.length > 0
-                        ? setProductCompleteModalOpen(true)
-                      : setOrderCancelModal(true)
-                  }
-                  orderProducts={orderProducts}
-                  totalAmount={Number.GetFloat(totalAmount)}
-                  cashPaid={cashPaid}
-                  delivery={isDeliveryOrder}
-                />
               )}
-          </View>
+              {!clicked &&
+                ((!productExistModalOpen &&
+                  !productNotFoundModalOpen &&
+                  params?.group == Status.GROUP_DRAFT) ||
+                  params?.group == Status.GROUP_NEW ||
+                  params?.isNewOrder) && (
+                  <FooterContent
+                    id={orderId ? orderId : id}
+                    storeId={params.storeId}
+                    locationName={params?.locationName}
+                    shift={params?.shift}
+                    date={params?.date ? params?.date : orderDate}
+                    addNew={addNew}
+                    onPress={() =>
+                      orderProducts.length > 0
+                        ? setProductCompleteModalOpen(true)
+                        : setOrderCancelModal(true)
+                    }
+                    orderProducts={orderProducts}
+                    totalAmount={Number.GetFloat(totalAmount)}
+                    cashPaid={cashPaid}
+                    delivery={isDeliveryOrder}
+                  />
+                )}
+            </View>
 
-          {productNotFoundModalOpen && (
-            <ConfirmationModal
-              toggle={productNotFoundToggle}
-              modalVisible={productNotFoundModalOpen}
-              title={AlertMessage.PRODUCT_NOT_FOUND}
-              description={`BarCode ID ${scannedCode} not found please scan different code or add the product`}
-              confirmLabel={"Ok"}
-              ConfirmationAction={productNotFoundToggle}
-            />
-          )}
-
-          {productExistModalOpen && (
-            <ConfirmationModal
-              toggle={productExistModalToggle}
-              scanProduct={scanProduct}
-              modalVisible={productExistModalOpen}
-              title={AlertMessage.PRODUCT_ALREADY_EXIST}
-              description={AlertMessage.QUANTITY_INCREASE_MESSSAGE}
-              confirmLabel={"Yes"}
-              cancelLabel={"No"}
-              ConfirmationAction={productExistOnclick}
-              CancelAction={() => productExistModalToggle()}
-            />
-          )}
-
-          {productSelectModalOpen && (
-            <ProductSelectModal
-              modalVisible={productSelectModalOpen}
-              toggle={productSelectModalToggle}
-              items={scannedProductList}
-              updateAction={validateProductInOrderProduct}
-            />
-          )}
-        </View>
-      )}
-       {activeTab === TabName.HISTORY && (
-                <ScrollView>
-                    <HistoryList
-                        objectName={ObjectName.ORDER}
-                        objectId={id ? id : params?.orderId}
-                    />
-
-                </ScrollView>
+            {productNotFoundModalOpen && (
+              <ConfirmationModal
+                toggle={productNotFoundToggle}
+                modalVisible={productNotFoundModalOpen}
+                title={AlertMessage.PRODUCT_PRICE_NOT_FOUND}
+                description={`BarCode ID ${scannedCode} not found please scan different code or add the product`}
+                confirmLabel={"Ok"}
+                ConfirmationAction={productNotFoundToggle}
+              />
             )}
 
-      {activeTab === TabName.SUMMARY && !params?.isNewOrder && ( 
-            <OrderAmountCard padding = { Platform.OS === 'ios' ? 20 : 0} totalCash = {cashAmount > 0 && cashAmount ? cashAmount : ""} totalUpi = {upiAmount > 0 ? upiAmount && upiAmount : "" } totalAmount={totalAmount ? totalAmount : ""}/>
-      )}
-    </Layout>
+            {productExistModalOpen && (
+              <ConfirmationModal
+                toggle={productExistModalToggle}
+                scanProduct={scanProduct}
+                modalVisible={productExistModalOpen}
+                title={AlertMessage.PRODUCT_ALREADY_EXIST}
+                description={AlertMessage.QUANTITY_INCREASE_MESSSAGE}
+                confirmLabel={"Yes"}
+                cancelLabel={"No"}
+                ConfirmationAction={productExistOnclick}
+                CancelAction={() => productExistModalToggle()}
+              />
+            )}
+
+            {productSelectModalOpen && (
+              <ProductSelectModal
+                modalVisible={productSelectModalOpen}
+                toggle={productSelectModalToggle}
+                items={scannedProductList}
+                updateAction={validateProductInOrderProduct}
+              />
+            )}
+          </View>
+        )}
+        {activeTab === TabName.HISTORY && (
+          <ScrollView>
+            <HistoryList
+              objectName={ObjectName.ORDER}
+              objectId={id ? id : params?.orderId}
+            />
+          </ScrollView>
+        )}
+
+        {activeTab === TabName.SUMMARY && !params?.isNewOrder && (
+          <OrderAmountCard
+            padding={Platform.OS === "ios" ? 20 : 0}
+            totalCash={cashAmount > 0 && cashAmount ? cashAmount : ""}
+            totalUpi={upiAmount > 0 ? upiAmount && upiAmount : ""}
+            totalAmount={totalAmount ? totalAmount : ""}
+          />
+        )}
+      </Layout>
     </>
   );
 };

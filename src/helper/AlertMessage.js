@@ -11,6 +11,7 @@ const AlertMessage = {
     PRODUCT_NOT_FOUND : "Product Not Found",
     CANCEL_MODAL_DESCRIPTION :  "Are you sure want to cancel this?",
     CANCEL_MODAL_TITLE: "Confirm Cancel",
+    PRODUCT_PRICE_NOT_FOUND : "Product Price Not Found",
 
     NETWORK_UNAUTHORIZED_ERROR: "Network Error",
 

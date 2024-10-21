@@ -212,7 +212,7 @@ const ActionBar = ({
           {addButton && (
             <View style={[styles.layoutButton]} >
               <TouchableOpacity onPress={(e) => onPress(e)}  disabled={isAddButtonDisabled} activeOpacity={isAddButtonDisabled ? 1 : 0.7}>
-              <MaterialIcons name="add" size={30}  color={isAddButtonDisabled ? 'gray' : 'black'} />
+              <MaterialIcons name="add" size={30}  color={isAddButtonDisabled ? 'white' : 'white'} />
               </TouchableOpacity>
             </View>
           )}

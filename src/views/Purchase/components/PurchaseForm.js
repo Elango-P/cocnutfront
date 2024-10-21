@@ -57,7 +57,7 @@ import Number from "../../../lib/Number";
 
 const PurchaseForm = (props) => {
   const params = props?.route?.params?.item;
-  const param = props?.route?.params
+  const param = props?.route?.params;
   const [vendorList, setVendorList] = useState();
   const [storeId, setStoreId] = useState();
   const [vendorName, setVendorName] = useState();
@@ -75,21 +75,22 @@ const PurchaseForm = (props) => {
   const [scannedProductList, setScannedProductList] = useState("");
   const [productExistModalOpen, setProductExistModalOpen] = useState(false);
   const [quantityUpdateObject, setQuantityUpdateObject] = useState({});
-  const [productNotFoundModalOpen, setProductNotFoundModalOpen] = useState(false);
+  const [productNotFoundModalOpen, setProductNotFoundModalOpen] =
+    useState(false);
   const [productSelectModalOpen, setProductSelectModalOpen] = useState(false);
   const [clicked, setClicked] = useState("");
-  const [mrp, setMrp] = useState("")
+  const [mrp, setMrp] = useState("");
   const [newPurchase, setNewPurchase] = useState(param?.isNewPurchase);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [MediaData, setMediaData] = useState([]);
   const [totalMedia, setTotalMedia] = useState([]);
-  const [totalCount, setTotalCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0);
   const [storeList, setStoreList] = useState([]);
   const [image, setImage] = useState(null);
   const [file, setFile] = useState(null);
-  const [statusId, setStatusId] = useState("")
+  const [statusId, setStatusId] = useState("");
   const [disableEdit, setDisableEdit] = useState(!param?.isNewPurchase && true);
-  const [editPermission, setEditPermission] = useState(false)
+  const [editPermission, setEditPermission] = useState(false);
   const [visible, setIsVisible] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(
     params?.vendorInvoiceDate || ""
@@ -102,22 +103,25 @@ const PurchaseForm = (props) => {
   );
   const [reviewer, setSelectedReviewer] = useState(params?.reviewer_id);
   const [purchaseHistoryViewPermission, setPurchaseHistoryViewPermission] =
-    useState()
-  const [isSubmit,setIsSubmit] = useState(false);
+    useState();
+  const [isSubmit, setIsSubmit] = useState(false);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const stateRef = useRef(null);
   const purchaseRef = useRef({
-    netAmount:params?.net_amount || "",
-    returnAmount:params?.returned_items_amount || "",
-    invoiceAmount:params?.invoice_amount | "",
+    netAmount: params?.net_amount || "",
+    returnAmount: params?.returned_items_amount || "",
+    invoiceAmount: params?.invoice_amount | "",
   });
 
   useEffect(() => {
     let mount = true;
 
-    mount && AccountService.GetList(null, (callback) => { setVendorList(callback) })
-    if(params?.id){
+    mount &&
+      AccountService.GetList(null, (callback) => {
+        setVendorList(callback);
+      });
+    if (params?.id) {
       mount && getMediaList();
     }
 
@@ -127,19 +131,22 @@ const PurchaseForm = (props) => {
     return () => {
       mount = false;
     };
-  }, [isFocused])
+  }, [isFocused]);
 
   useEffect(() => {
     if (isFocused) {
       getProducts();
-      getStatusId()
+      getStatusId();
     }
   }, [isFocused]);
 
-  const calculatedData =()=>{
-    let value = purchaseRef && purchaseRef.current &&  purchaseRef.current.invoiceAmount - purchaseRef.current.returnAmount
-    setNetAmount(value)
-  }
+  const calculatedData = () => {
+    let value =
+      purchaseRef &&
+      purchaseRef.current &&
+      purchaseRef.current.invoiceAmount - purchaseRef.current.returnAmount;
+    setNetAmount(value);
+  };
 
   const preloadedValues = {
     vendor_invoice_number: params?.vendorInvoiceNumber || "",
@@ -147,14 +154,13 @@ const PurchaseForm = (props) => {
     description: params?.description || "",
     net_amount: params?.net_amount || "",
     purchaseDate: params?.purchaseDate,
-    mrp : selectedItem?.mrp,
-    vendor : param?.vendor_id ? param?.vendor_id : params?.vendor_id,
-    invoice_amount:invoiceAmount,
-    returnedItemsAmount:returnAmount,
-    reviewer:reviewer,
-    due_date:dueDate,
-    owner:owner,
-
+    mrp: selectedItem?.mrp,
+    vendor: param?.vendor_id ? param?.vendor_id : params?.vendor_id,
+    invoice_amount: invoiceAmount,
+    returnedItemsAmount: returnAmount,
+    reviewer: reviewer,
+    due_date: dueDate,
+    owner: owner,
   };
 
   const {
@@ -163,48 +169,53 @@ const PurchaseForm = (props) => {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: preloadedValues
+    defaultValues: preloadedValues,
   });
 
   const getMediaList = async () => {
-    await mediaService.search(params?.id ? params?.id : param?.id, ObjectName.PURCHASE, callback => {
-
+    await mediaService.search(
+      params?.id ? params?.id : param?.id,
+      ObjectName.PURCHASE,
+      (callback) => {
         setMediaData(callback.data.data);
         setTotalMedia(callback.data.totalCount);
-    });
-};
+      }
+    );
+  };
 
   useEffect(() => {
     updateDateValues();
   }, [selectedItem]);
 
   const getPermission = async () => {
-    let editPermission = await PermissionService.hasPermission(Permission.PURCHASE_EDIT);
+    let editPermission = await PermissionService.hasPermission(
+      Permission.PURCHASE_EDIT
+    );
     setEditPermission(editPermission);
-    let purchaseHistoryViewPermission = await PermissionService.hasPermission(Permission.PURCHASE_HISTORY_VIEW)
-    setPurchaseHistoryViewPermission(purchaseHistoryViewPermission)
- }
+    let purchaseHistoryViewPermission = await PermissionService.hasPermission(
+      Permission.PURCHASE_HISTORY_VIEW
+    );
+    setPurchaseHistoryViewPermission(purchaseHistoryViewPermission);
+  };
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
-  }
+  };
 
   const uploadImage = (productDetails, callback) => {
-
     if (productDetails && file) {
-
       const data = new FormData();
 
       let mediaFile = {
         type: file?._data?.type,
         size: file?._data.size,
         uri: image,
-        name: file?._data.name
-      }
+        name: file?._data.name,
+      };
 
-      data.append("media_file", mediaFile)
+      data.append("media_file", mediaFile);
 
       data.append("image_name", file?._data.name);
 
@@ -227,38 +238,37 @@ const PurchaseForm = (props) => {
         setFile("");
         setImage("");
         return callback();
-      })
+      });
     } else {
       return callback();
     }
-  }
+  };
 
   const clearRowDetail = () => {
     if (stateRef) {
       const selectedItem = stateRef.selectedItem;
       const selectedRowMap = stateRef.selecredRowMap;
       if (selectedItem && selectedRowMap) {
-        closeRow(selectedRowMap, selectedItem.id)
+        closeRow(selectedRowMap, selectedItem.id);
         setSelectedItem("");
         stateRef.selectedItem = "";
         stateRef.selecredRowMap = "";
       }
     }
-  }
+  };
 
   const productEditModalToggle = () => {
     setProductEditModalOpen(!productEditModalOpen);
     clearRowDetail();
-    setManufactureDate("")
-    setMrp("")
-  }
+    setManufactureDate("");
+    setMrp("");
+  };
 
   const productDeleteModalToggle = () => {
-    setProductDeleteModalOpen(!productDeleteModalOpen)
-  }
+    setProductDeleteModalOpen(!productDeleteModalOpen);
+  };
 
   const getStatusId = async () => {
-
     let firstStatusId = await StatusService.getFirstStatus(
       ObjectName.PURCHASE_PRODUCT
     );
@@ -267,10 +277,7 @@ const PurchaseForm = (props) => {
   };
 
   const addPurchaseProduct = async (values, scannedProduct, productDetails) => {
-
     try {
-     
-
       let dataObject = {};
 
       dataObject.purchase_id = params?.id;
@@ -284,12 +291,14 @@ const PurchaseForm = (props) => {
       dataObject.igst_amount = values && values.igst_amount;
       dataObject.igst_percentage = values && values.igst_percentage;
       dataObject.discount_percentage = values && values.discount_percentage;
-      dataObject.storeId= params?.location ? params?.location : param.location,
-      dataObject.company_id= scannedProduct.company_id,
-      dataObject.taxable_amount =
-        values && values.taxable_amount ? values.taxable_amount : null;
-        dataObject.barcode= scannedProduct?.barcode,
-      dataObject.mrp = values && values.mrp;
+      (dataObject.storeId = params?.location
+        ? params?.location
+        : param.location),
+        (dataObject.company_id = scannedProduct.company_id),
+        (dataObject.taxable_amount =
+          values && values.taxable_amount ? values.taxable_amount : null);
+      (dataObject.barcode = scannedProduct?.barcode),
+        (dataObject.mrp = values && values.mrp);
       dataObject.discount_amount =
         values && Number.GetFloat(values.discount_amount);
 
@@ -312,25 +321,19 @@ const PurchaseForm = (props) => {
       dataObject.productId = values?.product_id;
       await purchaseProductService.create(dataObject, async (error, res) => {
         if (res && res.data) {
-          
-            getProducts()
+          getProducts();
 
           setScanModalVisible(false);
           setClicked("");
-          setManufactureDate("")
+          setManufactureDate("");
           productEditModalToggle();
-          reset()
-
-
+          reset();
         }
-
-      })
-
+      });
     } catch (err) {
       console.log(err);
     }
   };
-
 
   const onScanAction = async (selectedProduct) => {
     try {
@@ -346,9 +349,8 @@ const PurchaseForm = (props) => {
         mrp: selectedProduct?.mrp,
         product_id: selectedProduct?.product_id,
         barcode: selectedProduct?.barcode,
-        isAdding: true
-      }
-
+        isAdding: true,
+      };
 
       //validate already added product list
       if (purchaseProductList && purchaseProductList.length > 0) {
@@ -368,41 +370,37 @@ const PurchaseForm = (props) => {
           let returnObject = {
             updatedQuantity: updatedQuantity,
             product: productExist,
-            product_id: selectedProduct?.product_id
-          }
+            product_id: selectedProduct?.product_id,
+          };
 
           //set moda visiblity
           setProductExistModalOpen(true);
 
-          setSelectedItem(returnObject.product)
+          setSelectedItem(returnObject.product);
 
           //update quantity update object
           setQuantityUpdateObject(returnObject);
-          setSearchPhrase("")
-          setManufactureDate("")
-        } 
-        else {
-          productEditModalToggle()
-          reset()
+          setSearchPhrase("");
+          setManufactureDate("");
+        } else {
+          productEditModalToggle();
+          reset();
           setSelectedItem(AddProduct);
           stateRef.selectedItem = selectedProduct;
-          setSearchPhrase("")
-          
+          setSearchPhrase("");
         }
-      }
-       else {
+      } else {
         //add invenotry product
-        productEditModalToggle()
-        reset()
+        productEditModalToggle();
+        reset();
         setSelectedItem(AddProduct);
         stateRef.selectedItem = selectedProduct;
-        setSearchPhrase("")
-
+        setSearchPhrase("");
       }
     } catch (err) {
-      setSearchPhrase("")
+      setSearchPhrase("");
     }
-  }
+  };
 
   const productOnClick = async (selectedProduct) => {
     const updatedPriceProductList = await productService.getProductUpdatedPrice(
@@ -418,7 +416,7 @@ const PurchaseForm = (props) => {
 
       setProductSelectModalOpen(true);
     }
-  }
+  };
 
   const syncAction = async (barCode) => {
     const updatedPriceProductList = await productService.getProductUpdatedPrice(
@@ -435,7 +433,7 @@ const PurchaseForm = (props) => {
     } else {
       productNotFoundToggle();
     }
-  }
+  };
 
   const handleScannedData = async (data) => {
     try {
@@ -465,7 +463,7 @@ const PurchaseForm = (props) => {
         } else {
           SyncService.SyncProduct(barCode, null, (response) => {
             syncAction(barCode);
-          })
+          });
         }
       }
     } catch (err) {
@@ -475,25 +473,22 @@ const PurchaseForm = (props) => {
 
   const addNew = () => {
     setScanModalVisible(true);
-  }
-
+  };
 
   const onDateSelect = (value) => {
     setSelectedDate(value);
-
-  }
+  };
   const onManufactureDateSelect = (value) => {
-    setManufactureDate(value)
-
-  }
+    setManufactureDate(value);
+  };
 
   const onInvoiceDateSelect = (value) => {
     setInvoiceDate(value);
-  }
+  };
 
   const onDueDateSelect = (value) => {
     setDueDate(value);
-  }
+  };
 
   const getProducts = async () => {
     let props = {
@@ -512,7 +507,7 @@ const PurchaseForm = (props) => {
         setPurchaseProductList(purchaseProductList);
       }
     );
-  }
+  };
 
   const renderItem = (data) => {
     let item = data?.item;
@@ -561,7 +556,7 @@ const PurchaseForm = (props) => {
           onPress={() => {
             setProductEditModalOpen(!productEditModalOpen);
             setSelectedItem(data?.item);
-            setMrp(null)
+            setMrp(null);
             stateRef.selectedItem = data?.item;
             stateRef.selecredRowMap = rowMap;
           }}
@@ -638,7 +633,6 @@ const PurchaseForm = (props) => {
         dataObject,
         values?.id,
         (error, response) => {
-
           setProductExistModalOpen(false);
 
           if (purchaseProductList != undefined) {
@@ -660,12 +654,11 @@ const PurchaseForm = (props) => {
             }
           }
           productEditModalToggle();
-          reset()
-          getProducts()
+          reset();
+          getProducts();
           setClicked("");
-        })
-
-
+        }
+      );
     } catch (err) {
       console.log(err);
     }
@@ -678,7 +671,7 @@ const PurchaseForm = (props) => {
         clearRowDetail();
       });
     }
-  }
+  };
 
   const updateDateValues = () => {
     let date = params?.purchaseDate;
@@ -689,36 +682,7 @@ const PurchaseForm = (props) => {
     if (manufactured_date) {
       setManufactureDate(manufactured_date);
     }
-  }
-  const productFooter = (
-    <>
-
-
-      <View
-        style={{
-          flex: 0.5,
-          justifyContent: "center",
-          alignItems: "center",
-          marginLeft: 2,
-        }}
-      >
-        {!searchPhrase && (
-          <View style={{ width: "100%" }}>
-            <Button
-              title={"Scan"}
-              color={Color.COMPLETE}
-              onPress={() => {
-                addNew();
-              }}
-            />
-          </View>
-        )}
-      </View>
-
-
-    </>
-  )
-
+  };
 
   const AddPurchase = async (values) => {
     const createData = {
@@ -740,8 +704,8 @@ const PurchaseForm = (props) => {
     await purchaseService.createPurchase(createData, (err, res) => {
       let id = res.data.purchase.id;
       navigation.navigate("MediaList", { id: id, object: ObjectName.PURCHASE });
-    })
-  }
+    });
+  };
 
   const updatePurchase = async (values) => {
     setIsSubmit(true);
@@ -769,66 +733,62 @@ const PurchaseForm = (props) => {
       due_date: dueDate,
       owner: owner,
       vendor_invoice_date: invoiceDate,
-    }
+    };
 
     await purchaseService.updatePurchase(
       params?.id ? params?.id : param.id,
       updateData,
       (response) => {
-        if(response){
+        if (response) {
           if (params) {
             setActiveTab(TabName.SUMMARY);
             setDisableEdit(true);
             setIsSubmit(false);
-          } 
-          else {
+          } else {
             setIsSubmit(false);
             navigation.navigate("Purchase");
           }
-        }else {
-          setIsSubmit(false)
+        } else {
+          setIsSubmit(false);
         }
-
-      })
-  }
+      }
+    );
+  };
 
   const toggle = () => {
     setScanModalVisible(!modalVisible);
-  }
+  };
   const productExistModalToggle = () => {
     setProductExistModalOpen(!productExistModalOpen);
     setClicked("");
-  }
+  };
 
   const productNotFoundToggle = () => {
     setProductNotFoundModalOpen(!productNotFoundModalOpen);
-    setClicked("")
-  }
+    setClicked("");
+  };
 
   const productSelectModalToggle = () => {
     setProductSelectModalOpen(!productSelectModalOpen);
-    setClicked("")
-  }
-
-
-
+    setClicked("");
+  };
 
   const onNetAmountChange = (value) => {
-    setNetAmount(value)
-    purchaseRef.current.netAmount = value
-    calculatedData()
+    setNetAmount(value);
+    purchaseRef.current.netAmount = value;
+    calculatedData();
   };
   const onInvoiceAmountChange = (value) => {
-    setInvoiceAmount(value)
-    purchaseRef.current.invoiceAmount = value
+    setInvoiceAmount(value);
+    purchaseRef.current.invoiceAmount = value;
 
-    calculatedData()
+    calculatedData();
   };
   const onReturnedAmountChange = (value) => {
-    setReturnedAmount(value)
-    purchaseRef.current.returnAmount = value
+    setReturnedAmount(value);
+    purchaseRef.current.returnAmount = value;
 
-    calculatedData()
+    calculatedData();
   };
 
   const handleMrpChange = (value) => {
@@ -836,18 +796,16 @@ const PurchaseForm = (props) => {
       ...prevValues,
       mrp: value,
     }));
-    setMrp(value)
-  }
-
+    setMrp(value);
+  };
 
   const content = (
-
     <DatePicker
       title={"Manufacturing Date"}
       onDateSelect={onManufactureDateSelect}
       selectedDate={manufactureDate}
     />
-  )
+  );
 
   const takePicture = async (e) => {
     const image = await Media.getImage();
@@ -864,27 +822,28 @@ const PurchaseForm = (props) => {
         async (response) => {
           if (response) {
             getMediaList();
-
           }
-        })
+        }
+      );
     }
   };
 
   const updateState = () => {
-    setActiveTab(TabName.SUMMARY)
-    setNewPurchase(false)
-  }
+    setActiveTab(TabName.SUMMARY);
+    setNewPurchase(false);
+  };
 
   const Attachment = () => (
     <MediaList mediaData={MediaData} getMediaList={getMediaList} />
-  )
+  );
   const Products = () => (
     <>
       <BarcodeScanner
         toggle={toggle}
         modalVisible={modalVisible}
         id={params?.id ? params?.id : param?.id}
-        handleScannedData={handleScannedData} />
+        handleScannedData={handleScannedData}
+      />
       <DeleteModal
         modalVisible={productDeleteModalOpen}
         toggle={productDeleteModalToggle}
@@ -914,8 +873,8 @@ const PurchaseForm = (props) => {
         modalVisible={productSelectModalOpen}
         toggle={productSelectModalToggle}
         items={scannedProductList}
-        updateAction={onScanAction} />
-
+        updateAction={onScanAction}
+      />
 
       {!searchPhrase &&
         purchaseProductList &&
@@ -927,26 +886,12 @@ const PurchaseForm = (props) => {
         )}
     </>
   );
-  const FooterContent =
-    params || param ? (
-      !newPurchase ? (
-        ""
-      ) : (
-        <SaveButton
-          onPress={handleSubmit((values) => {
-            updatePurchase(values);
-          })}
-          isSubmit={isSubmit}
-        />
-      )
-    ) : (
-      <NextButton onPress={handleSubmit((values) => AddPurchase(values))} />
-    );
-  const AttachmentFooter = (
-    <NextButton
-      onPress={(e) => {
-        newPurchase ? updateState() : setActiveTab(TabName.PRODUCTS);
-      }}
+  const FooterContent = (
+    <SaveButton
+      onPress={handleSubmit((values) => {
+        updatePurchase(values);
+      })}
+      isSubmit={isSubmit}
     />
   );
 
@@ -1008,9 +953,7 @@ const PurchaseForm = (props) => {
       FooterContent={
         activeTab === TabName.SUMMARY && FooterContent
           ? activeTab === TabName.SUMMARY && FooterContent
-          : activeTab === TabName.PRODUCTS
-          ? productFooter
-          : newPurchase && AttachmentFooter
+          : newPurchase
       }
       showBackIcon
       backButtonNavigationUrl="Purchase"
@@ -1022,11 +965,7 @@ const PurchaseForm = (props) => {
           ? takePicture(e)
           : newPurchase && setActiveTab(TabName.ATTACHMENTS)
       }
-      buttonLabel2={
-        !newPurchase && activeTab === TabName.SUMMARY && !disableEdit
-          ? "Save"
-          : ""
-      }
+      buttonLabel2={activeTab === TabName.SUMMARY ? "Save" : ""}
       button2OnPress={handleSubmit((values) => {
         updatePurchase(values);
       })}
@@ -1035,10 +974,7 @@ const PurchaseForm = (props) => {
       }}
       updateValue={newPurchase ? updateValue : false}
       showActionMenu={
-        !newPurchase &&
-        editPermission &&
-        disableEdit &&
-        activeTab === TabName.SUMMARY
+        !newPurchase && editPermission && activeTab === TabName.SUMMARY
           ? true
           : false
       }
@@ -1072,7 +1008,6 @@ const PurchaseForm = (props) => {
               onDateSelect={onDateSelect}
               selectedDate={selectedDate ? selectedDate : params?.purchase_date}
               style={styles.input}
-              disabled={!disableEdit}
               divider
             />
             <VerticalSpace10 paddingTop={5} />
@@ -1085,7 +1020,6 @@ const PurchaseForm = (props) => {
               divider
               getDetails={(value) => setVendorName(value)}
               placeholder="Select Account"
-              disable={disableEdit}
             />
 
             <VerticalSpace10 paddingTop={5} />
@@ -1095,7 +1029,6 @@ const PurchaseForm = (props) => {
               name="vendor_invoice_number"
               control={control}
               showBorder={false}
-              editable={!disableEdit}
               divider
             />
             <VerticalSpace10 paddingTop={5} />
@@ -1108,7 +1041,6 @@ const PurchaseForm = (props) => {
               }
               style={styles.input}
               divider
-              disabled={!disableEdit}
             />
 
             <VerticalSpace10 paddingTop={5} />
@@ -1124,7 +1056,6 @@ const PurchaseForm = (props) => {
               data={params?.location ? params?.location : param?.location}
               control={control}
               placeholder="Select Location"
-              disable={disableEdit}
             />
             <VerticalSpace10 paddingTop={5} />
 
@@ -1135,22 +1066,8 @@ const PurchaseForm = (props) => {
               showBorder={false}
               edit
               divider
-              noEditable={disableEdit}
               onInputChange={onInvoiceAmountChange}
               values={invoiceAmount ? invoiceAmount.toString() : ""}
-            />
-            <VerticalSpace10 paddingTop={5} />
-
-            <Currency
-              title="Rejected Items Amount"
-              name="rejected_items_amount"
-              control={control}
-              showBorder={false}
-              edit
-              divider
-              noEditable={disableEdit}
-              onInputChange={onReturnedAmountChange}
-              values={returnAmount ? returnAmount.toString() : ""}
             />
             <VerticalSpace10 paddingTop={5} />
 
@@ -1163,7 +1080,6 @@ const PurchaseForm = (props) => {
               divider
               onInputChange={onNetAmountChange}
               values={netAmount ? netAmount.toString() : ""}
-              noEditable={disableEdit}
             />
             <VerticalSpace10 />
             <View>
@@ -1174,7 +1090,6 @@ const PurchaseForm = (props) => {
                   name={"owner_id"}
                   onChange={(value) => setSelectedOwner(value.value)}
                   control={control}
-                  disable={disableEdit}
                   placeholder="Select Owner"
                 />
               </View>
@@ -1186,7 +1101,6 @@ const PurchaseForm = (props) => {
                 name={"reviewer_id"}
                 onChange={(value) => setSelectedReviewer(value.value)}
                 control={control}
-                disable={disableEdit}
                 placeholder="Select Reviewer"
               />
             </View>
@@ -1197,7 +1111,6 @@ const PurchaseForm = (props) => {
               selectedDate={dueDate ? dueDate : params?.due_date}
               style={styles.input}
               divider
-              disabled={!disableEdit}
             />
             <TextArea
               name="description"
@@ -1206,7 +1119,6 @@ const PurchaseForm = (props) => {
               showBorder={false}
               divider
               style={styles.input}
-              editable={!disableEdit}
             />
             <Label text={"Attachments"} bold size={13} />
             <MediaCarousel

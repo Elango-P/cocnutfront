@@ -74,8 +74,7 @@ const General = (props) => {
         <DatePicker
           title="Date"
           onDateSelect={onDateSelect}
-          disabled={false}
-          selectedDate={DateTime.getDate(selectedDate ? selectedDate : param.date)}
+          selectedDate={DateTime.getDate(selectedDate ? selectedDate : param?.orderDetail?.date)}
           showTime={true}
         />
         <VerticalSpace10 paddingTop={5} />

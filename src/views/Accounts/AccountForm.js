@@ -9,7 +9,6 @@ import Layout from "../../components/Layout";
 import Select from "../../components/Select";
 import TextInput from "../../components/TextInput";
 import TextArea from "../../components/TextArea";
-import Currency from "../../components/Currency";
 import Tab from "../../components/Tab";
 import Name from "../../components/Name";
 import AlternativeColor from "../../components/AlternativeBackground";
@@ -19,7 +18,6 @@ import NoRecordFound from "../../components/NoRecordFound";
 import ShowMore from "../../components/ShowMore";
 import PhoneNumber from "../../components/PhoneNumber";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
-import PaymentAccountSelect from "../../components/PaymentAccountSelect";
 import VerticalSpace10 from "../../components/VerticleSpace10";
 
 // Service
@@ -41,14 +39,7 @@ import ContactList from "./Components/ContactList";
 import AddressList from "./Components/AddressList";
 import AgreementList from "./Components/Agreement";
 import AccountProductList from "./Components/AccountProductList";
-import PurchaseOrderList from "./Components/PurchaseOrderList";
-import BillList from "./Components/BillList";
 import PaymentList from "./Components/PaymentList";
-import LoyaltyList from "./Components/LoyaltyList";
-import RatingList from "./Components/RatingList";
-import AddressSelect from "../../components/AddressSelect";
-import CheckBox from "../../components/CheckBox";
-import settingService from "../../services/SettingService";
 
 const AccountForm = (props) => {
   const params = props?.route?.params?.item;
@@ -128,7 +119,7 @@ const AccountForm = (props) => {
       : paymentAccount,
     mobile: params?.mobile_number,
     status: params?.statusId,
-    billingName: params?.billing_name
+    billingName: params?.billing_name,
   };
 
   const {
@@ -175,37 +166,9 @@ const AccountForm = (props) => {
     setNotes(value);
   };
 
-  const onPaymentChange = (value) => {
-    setPayment(value);
-  };
-  const onPaymentAccountChange = (value) => {
-    setPaymentAccount(value);
-  };
-  const onReturnChange = (value) => {
-    setReturnTerm(value);
-  };
-  const onCashDiscount = (value) => {
-    setCash(value);
-  };
-
   const AccountDeleteModalToggle = () => {
     setAccountDeleteModalOpen(!accountDeleteModalOpen);
   };
-
-  const typeOption = [
-    {
-      value: Account.TYPE_CUSTOMER,
-      label: Account.ACCOUNT_CUSTOMER_TEXT,
-    },
-    {
-      value: Account.TYPE_EMPLOYEE,
-      label: Account.ACCOUNT_EMPLOYEE_TEXT,
-    },
-    {
-      value: Account.TYPE_VENDOR,
-      label: Account.ACCOUNT_VENDOR_TEXT,
-    },
-  ];
 
   const Options = [
     {
@@ -217,6 +180,7 @@ const AccountForm = (props) => {
       label: Status.INACTIVE_TEXT,
     },
   ];
+
   const updateAccount = async (values) => {
     setIsSubmit(true);
     const updateData = {
@@ -250,7 +214,11 @@ const AccountForm = (props) => {
         : cash
         ? cash
         : null,
-        billing_name:  values?.billingName?.value ? values?.billingName?.value : values?.billingName?.value ? values?.billingName?.value : params?.billing_name
+      billing_name: values?.billingName?.value
+        ? values?.billingName?.value
+        : values?.billingName?.value
+        ? values?.billingName?.value
+        : params?.billing_name,
     };
     await accountService.update(id, updateData, async (err, response) => {
       if (response) {
@@ -278,26 +246,6 @@ const AccountForm = (props) => {
       setSettingsDetails(firstSettingName);
       setAccountSettings(secondSettingName);
     });
-  };
-
-  const handleUpdate = async (value) => {
-    const updateData = {
-      objectId: id,
-      objectName: ObjectName.ACCOUNT,
-      invoice_line_item_amount_includes_tax: value,
-    };
-
-    await settingService.update(updateData, async (err, response) => {});
-  };
-
-  const handleCheckBoxUpdate = async (value) => {
-    const updateData = {
-      objectId: id,
-      objectName: ObjectName.ACCOUNT,
-      invoice_line_item_amount_includes_tax: value,
-    };
-
-    await settingService.update(updateData, async (err, response) => {});
   };
 
   const getActionItems = async () => {
@@ -391,18 +339,12 @@ const AccountForm = (props) => {
       title: TabName.CONTACTS,
       tabName: TabName.CONTACTS,
     },
-    {
-      title: TabName.AGREEMENT,
-      tabName: TabName.AGREEMENT,
-    },
+
     {
       title: TabName.PRODUCTS,
       tabName: TabName.PRODUCTS,
     },
-    {
-      title: TabName.PURCHASE_ORDER,
-      tabName: TabName.PURCHASE_ORDER,
-    },
+
     {
       title: TabName.BILL,
       tabName: TabName.BILL,
@@ -411,32 +353,16 @@ const AccountForm = (props) => {
       title: TabName.PAYMENT,
       tabName: TabName.PAYMENT,
     },
-    {
-      title: TabName.LOYALTY,
-      tabName: TabName.LOYALTY,
-    },
-    {
-      title: TabName.RATINGS,
-      tabName: TabName.RATINGS,
-    },
-    {
-      title: TabName.SETTING,
-      tabName: TabName.SETTING,
-    },
   ];
-  if (category === Account.ACCOUNT_CATEGORY_VENDOR) {
-    title.push({
-      title: TabName.PURCHASES,
-      tabName: TabName.PURCHASES,
-    });
-  }
+  title.push({
+    title: TabName.PURCHASES,
+    tabName: TabName.PURCHASES,
+  });
 
-  if (accountHistoryViewPermission) {
-    title.push({
-      title: TabName.HISTORY,
-      tabName: TabName.HISTORY,
-    });
-  }
+  title.push({
+    title: TabName.HISTORY,
+    tabName: TabName.HISTORY,
+  });
   return (
     <Layout
       title={params ? `Accounts#: ${params?.id}` : "Account"}
@@ -520,88 +446,24 @@ const AccountForm = (props) => {
           />
 
           <VerticalSpace10 />
-          <TextInput
-            title="Website"
-            name="vendor_url"
-            control={control}
-            editable={allowEdit}
-          />
-          <VerticalSpace10 />
-          {category === Account.ACCOUNT_CATEGORY_CUSTOMER && (
-            <>
-              <TextInput
-                title="GST Number"
-                name="gst_number"
-                control={control}
-                editable={allowEdit}
-              />
-              <VerticalSpace10 />
-              <PhoneNumber
-                title="Phone Number"
-                name="mobile"
-                control={control}
-                required
-                values={phoneNumber}
-                onInputChange={handlePhoneNumberChange}
-                editable={allowEdit}
-              />
-            </>
-          )}
-          {category == Account.ACCOUNT_CATEGORY_VENDOR && (
-            <>
-              <PaymentAccountSelect
-                control={control}
-                name="payment_account"
-                label="Payment Account"
-                placeholder={"Select Payment Account"}
-                onChange={onPaymentAccountChange}
-                disable={!allowEdit}
-              />
-              <VerticalSpace10 />
-              <Currency
-                name="cash_discount_percentage"
-                title="Cash Discount %"
-                control={control}
-                placeholder="Cash Discount"
-                onInputChange={onCashDiscount}
-                edit={allowEdit}
-                values={cash.toString()}
-                showBorder={allowEdit}
-                percentage
-              />
-
-              <VerticalSpace10 />
-                  <AddressSelect
-                  label="Billing name"
-                  name = "billingName"
-                  control={control}
-                  data = {params?.billing_name}
-                  placeholder="Select Billing Name"
-                  disable={!allowEdit}
-              />
-              <VerticalSpace10 />
-
-              <TextArea
-                name="payment_terms"
-                title="Payment Terms"
-                control={control}
-                values={payment}
-                onInputChange={onPaymentChange}
-                editable={allowEdit}
-              />
-              <VerticalSpace10 />
-
-              <TextArea
-                name="return_terms"
-                title="Return Terms"
-                control={control}
-                values={returnTerm}
-                onInputChange={onReturnChange}
-                editable={allowEdit}
-              />
-              <VerticalSpace10 />
-            </>
-          )}
+          <>
+            <TextInput
+              title="GST Number"
+              name="gst_number"
+              control={control}
+              editable={allowEdit}
+            />
+            <VerticalSpace10 />
+            <PhoneNumber
+              title="Phone Number"
+              name="mobile"
+              control={control}
+              required
+              values={phoneNumber}
+              onInputChange={handlePhoneNumberChange}
+              editable={allowEdit}
+            />
+          </>
 
           <TextArea
             name="notes"
@@ -667,47 +529,13 @@ const AccountForm = (props) => {
             <AccountProductList AccountId={id} />
           </ScrollView>
         )}
-        {activeTab === TabName.PURCHASE_ORDER && (
-          <ScrollView>
-            <PurchaseOrderList AccountId={id} />
-          </ScrollView>
-        )}
-        {activeTab === TabName.BILL && (
-          <ScrollView>
-            <BillList AccountId={id} />
-          </ScrollView>
-        )}
+
         {activeTab === TabName.PAYMENT && (
           <ScrollView>
             <PaymentList AccountId={id} />
           </ScrollView>
         )}
-        {activeTab === TabName.LOYALTY && (
-          <ScrollView>
-            <LoyaltyList AccountId={id} />
-          </ScrollView>
-        )}
-        {activeTab === TabName.RATINGS && (
-          <ScrollView>
-            <RatingList AccountId={id} />
-          </ScrollView>
-        )}
-        {activeTab === TabName.SETTING && (
-          <ScrollView>
-            <View style={styles.container}>
-              <CheckBox
-                label={"Invoice Line Item Amount Includes Tax"}
-                isChecked={settingsDetails}
-                onPress={handleUpdate}
-              />
-              <CheckBox
-                label={"Allow Duplicate Invoice Number"}
-                isChecked={accountSettings}
-                onPress={handleCheckBoxUpdate}
-              />
-            </View>
-          </ScrollView>
-        )}
+
         {activeTab === TabName.HISTORY && (
           <ScrollView>
             <HistoryList objectName={ObjectName.ACCOUNT} objectId={id} />

@@ -262,9 +262,11 @@ class DateTime {
     return this.formattedfDate(new Date(), format);
   }
 
-  static getDate (dateString)  {
-    return moment(dateString, 'DD-MMM-YYYY').toDate();
+  static getDate(dateString) {
+    console.debug("DateTime ~ dateString--------------->>>", moment(dateString, moment.ISO_8601).toDate());
+    return moment(dateString, moment.ISO_8601).toDate();
 }
+
 
 
 static Today (date)  {
