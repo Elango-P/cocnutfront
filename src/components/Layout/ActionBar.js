@@ -145,7 +145,7 @@ const ActionBar = ({
                 <Ionicons
                   name="chevron-back"
                   size={35}
-                  color={Color.ACTIONBAR_TEXT}
+                  color={Color.WHITE}
                 />
               </TouchableOpacity>
 

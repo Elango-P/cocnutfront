@@ -109,7 +109,7 @@ const Accounts = () => {
       refreshing={refreshing}
       addButton={permission && permission.accountAdd ? true : false}
       buttonOnPress={permission && permission.accountAdd ? AddNew : ""}
-      showBackIcon={false}
+      showBackIcon={true}
     >
       <Refresh refreshing={refreshing} setRefreshing={setRefreshing} >
         <View style={styles.container}>

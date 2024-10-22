@@ -591,7 +591,7 @@ if (type && type?.isDeliveryOrder === OrderType.IS_DELIVERY_ORDER) {
         refreshing={refreshing}
         showFilter={showFilter}
         onFilterPress={closeDrawer}
-        showBackIcon={false}
+        showBackIcon={true}
         closeModal={visible}
         filter={
             <DateFilter

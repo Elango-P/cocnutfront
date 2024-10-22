@@ -54,7 +54,9 @@ const Products = (props) => {
       isLoading={isLoading}
       refreshing={refreshing}
       showFilter={true}
+      showBackIcon={true}
       onFilterPress={closeDrawer}>
+        
       <ProductList
         brandId={brandId}
         categoryId={categoryId}

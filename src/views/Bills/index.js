@@ -317,7 +317,7 @@ const Bills = () => {
       refreshing={refreshing}
       showFilter={true}
       onFilterPress={closeDrawer}
-      showBackIcon={false}
+      showBackIcon={true}
     >
       <FilterDrawer
         values={values}

@@ -330,7 +330,7 @@ const Payments = (props) => {
             refreshing={refreshing}
             addButton={addPermission ? true : false}
             buttonOnPress={() => props.navigation.navigate("Payments/Form")}
-            showBackIcon={false}
+            showBackIcon={true}
             showFilter={true}
             onFilterPress={closeDrawer}
         >
