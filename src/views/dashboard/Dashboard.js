@@ -1,125 +1,45 @@
-// Import React and Component
-import {
-  CommonActions,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Alert,
   AppState,
   BackHandler,
   ImageBackground,
-  NativeModules,
   Text,
   View,
 } from "react-native";
 import Layout from "../../components/Layout";
 import MultiAlert from "../../components/Modal/MultiAlert";
-import Refresh from "../../components/Refresh";
-import VerticalSpace10 from "../../components/VerticleSpace10";
 import AsyncStorageConstants from "../../helper/AsyncStorage";
 import { Color } from "../../helper/Color";
 import ObjectName from "../../helper/ObjectName";
-import Order from "../../helper/Order";
-import Permission from "../../helper/Permission";
-import AlertMessage from "../../lib/Alert";
 import AsyncStorage from "../../lib/AsyncStorage";
-import Boolean from "../../lib/Boolean";
-import device from "../../lib/Device";
 import Setting from "../../lib/Setting";
 import SystemSetting from "../../lib/SystemSettings";
-import {
-  default as AsyncStorageService,
-  default as asyncStorageService,
-} from "../../services/AsyncStorageService";
-import AttendanceService from "../../services/AttendanceService";
-import dashboardService from "../../services/DashboardService";
-import inventoryTransferService from "../../services/InventoryTransferService";
-import messageService from "../../services/MessageService";
-import orderService from "../../services/OrderService";
-import PermissionService from "../../services/PermissionService";
-import saleSettlementService from "../../services/SaleSettlementService";
+import { default as AsyncStorageService } from "../../services/AsyncStorageService";
 import settingService from "../../services/SettingService";
 import SyncService from "../../services/SyncService";
-import TransferTypeService from "../../services/TransferTypeService";
-import CustomerInfoModal from "../order/CustomerInfoModal";
-import AttendanceCard from "./AttendanceCard";
-import FineList from "./FineList";
-import GeoFencing from "./GeoFencingSection";
-import HeaderCard from "./HeaderCard";
-import ItemCountCard from "./ItemCountCard";
-import QuickLinks from "./QuickLinks";
-import SyncCard from "./SyncCard";
-import TicketList from "./TicketList";
 import userService from "../../services/UserService";
 import { getFullName } from "../../lib/Format";
-import DateTime from "../../lib/DateTime";
-import BarcodeScanner from "../../components/BarcodeScanner";
-import productService from "../../services/ProductService";
-import ProductListModal from "../../components/Modal/ProductListModal";
 import User from "../../helper/User";
-import OrderTypeService from "../../services/orderTypeService";
-import Response from "../../lib/NetworkStatus";
-import ActivityList from "./ActivityList";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-const { RNDeviceInfo } = NativeModules;
-let DeviceInfo;
-if (RNDeviceInfo) {
-  DeviceInfo = require("react-native-device-info");
-}
 
 const Dashboard = (props) => {
   const param = props.route.params;
 
   const [refreshing, setRefreshing] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
-  const [locationName, setLocationName] = useState();
-  const [userName, setUserName] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [locationId, setLocationId] = useState();
-  const [
-    attendanceCheckinCheckPermission,
-    setAttendanceCheckinCheckPermission,
-  ] = useState("");
-  const navigator = useNavigation();
   const focused = useIsFocused();
-  const [transferTypeList, setTransferTypeList] = useState([]);
   const navigation = useNavigation();
-  const [todayAttendance, setTodayAttendance] = useState([]);
-  const [ticketViewPermission, setTicketViewPermission] = useState();
-  const [fineViewPermission, setFineViewPermission] = useState();
-  const [transferViewPermission, setTransferViewPermission] = useState();
-  const [geofencingViewPermission, setGeofencingViewPermission] = useState();
-  const [messageViewPermission, setMessageViewPermission] = useState();
-  const [transfermanageOtherPermission, setTransferManageOtherPermission] =
-    useState();
-  const [
-    salesettlementManageOtherPermission,
-    setSalesettlementManageOtherPermission,
-  ] = useState();
-  const [orderManageOtherPermission, setOrderManageOtherPemission] = useState();
-  const [forceLogout, setForceLogout] = useState();
-  const [collectCustomerInfo, setCollectCustomerInfo] = useState("");
   const [appId, setAppId] = useState("");
   const [userDetail, setUserDetail] = useState("");
-  const [modalVisible, setScanModalVisible] = useState(false);
-  const [productModalOpen, setProductSelectModalOpen] = useState(false);
-  const [scannedProductList, setScannedProductList] = useState([]);
-  const [activityViewPermission, setActivityViewPermission] = useState();
 
-  const [isSubmit, setIsSubmit] = useState(false);
   useEffect(() => {
     getAsyncStorageItem();
-    getTransferTypeByRole();
     getUserDetail();
-    getPermission();
-    getForceLogout();
-    getCustomerNumber();
-  }, [focused, isLoading]);
+  }, [focused]);
 
   useEffect(() => {
     const SystemSettings = async () => {
@@ -135,7 +55,6 @@ const Dashboard = (props) => {
       );
     };
     SystemSettings();
-    getMessage();
   }, [focused, refreshing]);
 
   useEffect(() => {
@@ -215,13 +134,6 @@ const Dashboard = (props) => {
     return () => backHandler.remove();
   };
 
-  const getTransferTypeByRole = () => {
-    TransferTypeService.searchByRole(null, (error, response) => {
-      if (response && response.data && response.data.data) {
-        setTransferTypeList(response.data.data);
-      }
-    });
-  };
   const getUserDetail = async () => {
     const userId = await AsyncStorage.getItem(AsyncStorageConstants.USER_ID);
     if (userId) {
@@ -233,110 +145,11 @@ const Dashboard = (props) => {
     }
   };
 
-  const getPermission = async () => {
-    const isExist = await PermissionService.hasPermission(
-      Permission.USER_MOBILE_CHECKIN
-    );
-    setAttendanceCheckinCheckPermission(isExist);
-    const ticketViewPermission = await PermissionService.hasPermission(
-      Permission.TICKET_VIEW
-    );
-    setTicketViewPermission(ticketViewPermission);
-    const fineViewPermission = await PermissionService.hasPermission(
-      Permission.FINE_VIEW
-    );
-    setFineViewPermission(fineViewPermission);
-    const transferViewPermission = await PermissionService.hasPermission(
-      Permission.TRANSFER_VIEW
-    );
-    setTransferViewPermission(transferViewPermission);
-    const transfermanageOtherPermission = await PermissionService.hasPermission(
-      Permission.TRANSFER_MANAGE_OTHERS
-    );
-    setTransferManageOtherPermission(transfermanageOtherPermission);
-    const salesettlementManageOtherPermission =
-      await PermissionService.hasPermission(
-        Permission.SALE_SETTLEMENT_MANAGE_OTHERS
-      );
-    setSalesettlementManageOtherPermission(salesettlementManageOtherPermission);
-    const orderManageOtherPermission = await PermissionService.hasPermission(
-      Permission.ORDER_MANAGE_OTHERS
-    );
-    setOrderManageOtherPemission(orderManageOtherPermission);
-    const messageViewPermission = await PermissionService.hasPermission(
-      Permission.MOBILEAPP_DASHBOARD_MENU_MESSAGES
-    );
-    setMessageViewPermission(messageViewPermission);
-    const geofencingViewPermission = await PermissionService.hasPermission(
-      Permission.MOBILEAPP_DASHBOARD_MENU_GEOFENCING
-    );
-    setGeofencingViewPermission(geofencingViewPermission);
-    const activityViewPermission = await PermissionService.hasPermission(
-      Permission.ACTIVITY_VIEW
-    );
-    setActivityViewPermission(activityViewPermission);
-  };
-  const getMessage = () => {
-    messageService.unRead((err, response) => {
-      if (response && response.data) {
-        const messages = response.data.data;
-        if (messages && messages.length > 0) {
-          messages.forEach(async (message) => {
-            const { id, first_name, last_name, recent_last_message } = message;
-
-            Alert.alert(
-              "New Message Received",
-              `${first_name} ${last_name}: ${recent_last_message}`,
-              [
-                {
-                  text: "OK",
-                  onPress: async () => {
-                    await messageService.update(id, null, (response) => {});
-                  },
-                },
-              ]
-            );
-          });
-        }
-      }
-    });
-  };
-
   const getAsyncStorageItem = async () => {
-    let storeId = await AsyncStorageService.getSelectedLocationId();
-    setLocationId(storeId);
-    let locationName = await AsyncStorageService.getSelectedLocationName();
-    setLocationName(locationName);
-    let userName = await AsyncStorageService.getUserName();
-    setUserName(userName);
     let userId = await AsyncStorageService.getUserId();
     setSelectedUser(userId);
     let appId = await AsyncStorageService.getAppId();
     setAppId(appId);
-  };
-
-  const getCustomerNumber = async () => {
-    await settingService.getByName(
-      Setting.COLLECT_CUSTOMER_INFO,
-      (err, response) => {
-        setCollectCustomerInfo(response);
-      }
-    );
-  };
-
-  const getForceLogout = async () => {
-    const roleId = await asyncStorageService.getRoleId();
-    await settingService.get(
-      Setting.FORCE_LOGOUT_AFTER_CHECKOUT,
-      (err, response) => {
-        if (response && response.settings && response.settings[0].value) {
-          const forceLogout =
-            response && response.settings && response.settings[0].value;
-          setForceLogout(forceLogout);
-        }
-      },
-      roleId
-    );
   };
 
   let Name = getFullName(
@@ -361,8 +174,7 @@ const Dashboard = (props) => {
       Name={Name}
       hideContentPadding
       hideFooterPadding={true}
-      showMessage={messageViewPermission}
-      isLoading={isLoading}
+      showMessage={false}
       refreshing={refreshing}
       showBackIcon={false}
       backButtonNavigationOnPress={() => props && handleBackPress()}

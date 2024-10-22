@@ -61,6 +61,7 @@ const ProductList = (props) => {
   const [searchParam, setSearchParam] = useState("")
 
   const [editPermission, setEditPermission] = useState("")
+  console.debug("editPermission--------------->>>", editPermission)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -69,9 +70,7 @@ const ProductList = (props) => {
   const [brandList, setBrandList] = useState([]);
 
 
-  const [values, setValues] = useState({
-    status: Status.ACTIVE
-  });
+  const [values, setValues] = useState();
 
   useEffect(() => {
     if(refreshing){

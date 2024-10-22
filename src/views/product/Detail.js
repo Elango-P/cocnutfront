@@ -6,20 +6,12 @@ import {
   TouchableOpacity,
   NativeModules,
   View,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 
 import { useForm } from "react-hook-form";
 
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-
-// Storage
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-//Helpers
-
-import AsyncStorageConstants from "../../helper/AsyncStorage";
 
 import { weightUnitOptions } from "../../helper/product";
 
@@ -63,8 +55,6 @@ import Tab from "../../components/Tab";
 
 import TabName from "../../helper/Tab";
 
-import InventoryTransferService from "../../services/InventoryTransferService";
-
 import NoRecordFound from "../../components/NoRecordFound";
 
 import PermissionService from "../../services/PermissionService";
@@ -99,7 +89,7 @@ const ProductDetails = (props) => {
     ALL_QUANTITY: "All",
     NO_STOCK_QUANTITY: "NoStock",
     EXCESS_QUANTITY: "Excess",
-    SHORTAGE_QUANTITY: "Shortage"
+    SHORTAGE_QUANTITY: "Shortage",
   };
   const [detail, setDetail] = useState("");
 
@@ -115,17 +105,14 @@ const ProductDetails = (props) => {
   const [openCopySelectModal, setShowNumberOfCopySelectModal] = useState(false);
   const [numberofCopies, setNumberofCopies] = useState("");
   const [activeTab, setActiveTab] = useState(TabName.DETAIL);
-  const [openQuantitySelectModal, setQuantitySelectModal] = useState(false);
-  const [selectedQuantity, setSelectedQuantity] = useState("");
-  const [storeID, setSelectedLocationId] = useState("");
-  const [defaultStoreId, setStoreId] = useState();
   const [visible, setVisible] = useState(false);
   const [updatedStoreproductList, setUpdatedStoreProductList] = useState([]);
   const [selectedMenu, setSelectedMenu] = useState(
     ActionMenu.SHORTAGE_QUANTITY
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [allowEdit, setEdit] = useState(true);
+  const [allowEdit, setEdit] = useState(false);
+  console.debug("allowEdit--------------->>>", allowEdit);
   const [permission, setPermission] = useState("");
   const [priceList, setPriceList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -134,10 +121,11 @@ const ProductDetails = (props) => {
   const [page, setPage] = useState(2);
   const [priceTabView, setPriceTabView] = useState("");
   const [previousBarCode, setPreviousBarCode] = useState(null);
-  const [priceAddPermission, setPriceAddPermission] = useState(false)
-  const [statusUpdatePermission, setStatusUpdatePermission] = useState('')
-  const [productHistoryViewPermission, setProductHistoryViewPermission] = useState()
-  const [isSubmit, setIsSubmit] = useState(false)
+  const [priceAddPermission, setPriceAddPermission] = useState(false);
+  const [statusUpdatePermission, setStatusUpdatePermission] = useState("");
+  const [productHistoryViewPermission, setProductHistoryViewPermission] =
+    useState();
+  const [isSubmit, setIsSubmit] = useState(false);
   const isFocused = useIsFocused();
   const [purchaseTabView, setPurchaseTabView] = useState(false);
 
@@ -152,8 +140,7 @@ const ProductDetails = (props) => {
     mount && categoryService.getCategoryList(setCategoryList);
     mount && editPermission();
     getStoreProductList(true, selectedMenu);
-    getProductDetail()
-    getStoreID();
+    getProductDetail();
     //cleanup function
     return () => {
       mount = false;
@@ -162,7 +149,6 @@ const ProductDetails = (props) => {
   useEffect(() => {
     getPriceList();
   }, [isFocused, activeTab === TabName.PRICE]);
-
 
   const getProductDetail = async () => {
     let id = props.route.params.productId;
@@ -173,8 +159,7 @@ const ProductDetails = (props) => {
         setIsLoading(false);
       }
     });
-
-  }
+  };
   const getStoreProductList = (pageLoad, selectedMenu) => {
     let storeProductList = new Array();
 
@@ -200,7 +185,7 @@ const ProductDetails = (props) => {
                 last_stock_entry_date,
                 order_quantity,
                 updatedQuantity,
-                replenishedQuantity
+                replenishedQuantity,
               } = storeProduct[i];
 
               let storeProductObject = {
@@ -216,7 +201,7 @@ const ProductDetails = (props) => {
                 updatedQuantity: updatedQuantity,
                 orderQuantity: order_quantity,
                 updatedQuantity: updatedQuantity,
-                replenishedQuantity: replenishedQuantity
+                replenishedQuantity: replenishedQuantity,
               };
 
               storeProductList.push(storeProductObject);
@@ -231,17 +216,11 @@ const ProductDetails = (props) => {
     );
   };
 
-  const getStoreID = async () => {
-    await AsyncStorage.getItem(AsyncStorageConstants.SELECTED_LOCATION_ID).then(
-      (res) => setStoreId(res)
-    );
-  };
-
   const getPriceList = async () => {
     setIsLoading(true);
     let params = {
       page: 1,
-      product_id: details.productId ? details?.productId : id
+      product_id: details.productId ? details?.productId : id,
     };
     await ProductPriceService.search(params, (response) => {
       if (response) {
@@ -257,7 +236,6 @@ const ProductDetails = (props) => {
       }
     });
   };
-  
 
   const preloadedValues = {
     name: details && details?.name,
@@ -272,21 +250,21 @@ const ProductDetails = (props) => {
       ? categoryValue.value
       : details && details.category_id,
     Unit: unit ? unit.value : details && details?.unit,
-    rack_number : details && details.rack_number,
+    rack_number: details && details.rack_number,
   };
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
-    defaultValues: preloadedValues
+    defaultValues: preloadedValues,
   });
 
   const UpdateProducts = async (values) => {
-    try {      
-      setIsSubmit(true)
+    try {
+      setIsSubmit(true);
       if (values.name) {
         let bodyData = {
           name: values.name,
@@ -300,7 +278,11 @@ const ProductDetails = (props) => {
           rack_number: values.rack_number,
           Size: values.size,
           Unit: values.unit && values.unit?.value,
-          status: values ? values.status && values.status : status ? status.value : StatusText(details.status)
+          status: values
+            ? values.status && values.status
+            : status
+            ? status.value
+            : StatusText(details.status),
         };
 
         ProductService.updateProduct(
@@ -315,20 +297,21 @@ const ProductDetails = (props) => {
                   setOverlayLoader(false);
                   ProductService.reindex(details.productId, (err, res) => {
                     if (res) {
-                      setIsSubmit(false)
-                      navigation.navigate("BrandAndCategoryList", { activeTab: TabName.PRODUCTS });
-                      reset({})
-
+                      setIsSubmit(false);
+                      navigation.navigate("BrandAndCategoryList", {
+                        activeTab: TabName.PRODUCTS,
+                      });
+                      reset({});
                     }
                   });
                 });
               }
-              navigation.navigate("BrandAndCategoryList", { activeTab: TabName.PRODUCTS });
-              reset({})
-
+              navigation.navigate("BrandAndCategoryList", {
+                activeTab: TabName.PRODUCTS,
+              });
+              reset({});
             } else {
-              setIsSubmit(false)
-
+              setIsSubmit(false);
             }
           }
         );
@@ -346,7 +329,7 @@ const ProductDetails = (props) => {
         type: file?._data?.type,
         size: file?._data.size,
         uri: image,
-        name: file?._data.name
+        name: file?._data.name,
       };
 
       data.append("media_file", mediaFile);
@@ -446,55 +429,6 @@ const ProductDetails = (props) => {
     }
   };
 
-  const handleReplenish = (item) => {
-    let updatedQuantity = selectedQuantity
-      ? selectedQuantity
-      : item && item.replenishQuantity;
-
-    let updatedStoreId = storeID ? storeID : item && item.store_id;
-
-    if (updatedStoreId && updatedQuantity) {
-      let bodyData = {
-        toLocationId: updatedStoreId,
-        fromLocationId: defaultStoreId,
-        quantity: updatedQuantity,
-        productId: details?.productId
-      };
-
-      InventoryTransferService.replenish(bodyData, (error, response) => {
-        if (response) {
-          closeQuantityModal();
-          getStoreProductList(false, selectedMenu);
-        }
-      });
-    } else {
-      Toast.show("Missing Required Fields", Toast.LONG);
-    }
-  };
-
-  const quantityOnChange = (value, item) => {
-    if (item) {
-      setSelectedLocationId(item?.store_id);
-      setSelectedQuantity(value);
-    } else if (value) {
-      setSelectedQuantity(value.value);
-    }
-  };
-
-  const quantitySelectModal = (item) => {
-    if (item) {
-      setSelectedLocationId(item?.store_id);
-      setSelectedQuantity(item?.replenishedQuantity);
-    }
-    setQuantitySelectModal(true);
-  };
-
-  const closeQuantityModal = () => {
-    setQuantitySelectModal(false);
-    setSelectedLocationId("");
-    setSelectedQuantity("");
-  };
-
   const editPermission = async () => {
     const editPermission = await PermissionService.hasPermission(
       Permission.PRODUCT_EDIT
@@ -508,10 +442,12 @@ const ProductDetails = (props) => {
     const addPricePermission = await PermissionService.hasPermission(
       Permission.PRODUCT_PRICE_ADD
     );
-    setPriceAddPermission(addPricePermission)
+    setPriceAddPermission(addPricePermission);
 
-    const statusUpdatePermission = await PermissionService.hasPermission(Permission.PRODUCT_UPDATE_STATUS)
-    setStatusUpdatePermission(statusUpdatePermission)
+    const statusUpdatePermission = await PermissionService.hasPermission(
+      Permission.PRODUCT_UPDATE_STATUS
+    );
+    setStatusUpdatePermission(statusUpdatePermission);
 
     const productHistoryViewPermission = await PermissionService.hasPermission(
       Permission.PRODUCT_HISTORY_VIEW
@@ -538,17 +474,19 @@ const ProductDetails = (props) => {
         <MenuItem
           onPress={() => {
             setEdit(true), setVisible(true);
-          }}>
+          }}
+        >
           Edit
         </MenuItem>,
         <MenuItem>
           <TouchableOpacity
             onPress={() => {
               onHandleLablePrintClick(), setVisible(true);
-            }}>
+            }}
+          >
             <Text>Print Price Tag</Text>
           </TouchableOpacity>
-        </MenuItem>
+        </MenuItem>,
       ];
     } else {
       actionItems = [
@@ -556,10 +494,11 @@ const ProductDetails = (props) => {
           <TouchableOpacity
             onPress={() => {
               onHandleLablePrintClick(), setVisible(true);
-            }}>
+            }}
+          >
             <Text>Print Price Tag</Text>
           </TouchableOpacity>
-        </MenuItem>
+        </MenuItem>,
       ];
     }
   }
@@ -592,51 +531,55 @@ const ProductDetails = (props) => {
       <MenuItem
         style={{
           backgroundColor:
-            selectedMenu == ActionMenu.ALL_QUANTITY ? Color.ACTIVE : ""
+            selectedMenu == ActionMenu.ALL_QUANTITY ? Color.ACTIVE : "",
         }}
         onPress={() => {
           setVisible(true);
           onChangeActionMenu(ActionMenu.ALL_QUANTITY);
-        }}>
+        }}
+      >
         {" "}
         All
       </MenuItem>,
       <MenuItem
         style={{
           backgroundColor:
-            selectedMenu == ActionMenu.NO_STOCK_QUANTITY ? Color.ACTIVE : ""
+            selectedMenu == ActionMenu.NO_STOCK_QUANTITY ? Color.ACTIVE : "",
         }}
         onPress={() => {
           setVisible(true);
           onChangeActionMenu(ActionMenu.NO_STOCK_QUANTITY);
-        }}>
+        }}
+      >
         {" "}
         No Stock
       </MenuItem>,
       <MenuItem
         style={{
           backgroundColor:
-            selectedMenu == ActionMenu.SHORTAGE_QUANTITY ? Color.ACTIVE : ""
+            selectedMenu == ActionMenu.SHORTAGE_QUANTITY ? Color.ACTIVE : "",
         }}
         onPress={() => {
           setVisible(true);
           onChangeActionMenu(ActionMenu.SHORTAGE_QUANTITY);
-        }}>
+        }}
+      >
         {" "}
         Shortage
       </MenuItem>,
       <MenuItem
         style={{
           backgroundColor:
-            selectedMenu == ActionMenu.EXCESS_QUANTITY ? Color.ACTIVE : ""
+            selectedMenu == ActionMenu.EXCESS_QUANTITY ? Color.ACTIVE : "",
         }}
         onPress={() => {
           setVisible(true);
           onChangeActionMenu(ActionMenu.EXCESS_QUANTITY);
-        }}>
+        }}
+      >
         {" "}
         Excess
-      </MenuItem>
+      </MenuItem>,
     ];
   }
 
@@ -644,42 +587,41 @@ const ProductDetails = (props) => {
     navigation.navigate("PriceForm", {
       productId: details?.productId,
       details,
-      previousBarCode: previousBarCode
+      previousBarCode: previousBarCode,
     });
   };
 
   let title = [
     {
       title: TabName.DETAIL,
-      tabName: TabName.DETAIL
+      tabName: TabName.DETAIL,
     },
     {
       title: TabName.LOCATION,
-      tabName: TabName.LOCATION
-    }
+      tabName: TabName.LOCATION,
+    },
   ];
 
   if (purchaseTabView) {
     title.push({
       title: TabName.PURCHASES,
-      tabName: TabName.PURCHASES
+      tabName: TabName.PURCHASES,
     });
   }
 
   if (priceTabView) {
     title.push({
       title: TabName.PRICE,
-      tabName: TabName.PRICE
+      tabName: TabName.PRICE,
     });
   }
 
   if (productHistoryViewPermission) {
     title.push({
       title: TabName.HISTORY,
-      tabName: TabName.HISTORY
+      tabName: TabName.HISTORY,
     });
   }
-
 
   return (
     <Layout
@@ -775,33 +717,33 @@ const ProductDetails = (props) => {
         <View>
           {activeTab === TabName.PRICE && priceList && priceList.length > 0
             ? priceList.map((item, index) => {
-              const containerStyle =
-                AlternativeColor.getBackgroundColor(index);
-              return (
-                <PriceListCard
-                  date={item.date}
-                  status={item.statusText}
-                  mrp={item.mrp}
-                  salePrice={item.salePrice}
-                  barCode={item.barCode}
-                  type={item.type}
-                  alternative={containerStyle}
-                  key={index}
-                  onPress={() => {
-                    navigation.navigate("PriceForm", {
-                      item,
-                      productId: details?.productId,
-                      details,
-                    });
-                  }}
-                />
-              );
-            })
+                const containerStyle =
+                  AlternativeColor.getBackgroundColor(index);
+                return (
+                  <PriceListCard
+                    date={item.date}
+                    status={item.statusText}
+                    mrp={item.mrp}
+                    salePrice={item.salePrice}
+                    barCode={item.barCode}
+                    type={item.type}
+                    alternative={containerStyle}
+                    key={index}
+                    onPress={() => {
+                      navigation.navigate("PriceForm", {
+                        item,
+                        productId: details?.productId,
+                        details,
+                      });
+                    }}
+                  />
+                );
+              })
             : activeTab === TabName.PRICE && (
-              <>
-                <NoRecordFound iconName={"receipt"} />
-              </>
-            )}
+                <>
+                  <NoRecordFound iconName={"receipt"} />
+                </>
+              )}
 
           {activeTab === TabName.PRICE && (
             <ShowMore
@@ -904,5 +846,3 @@ const ProductDetails = (props) => {
 };
 
 export default ProductDetails;
-
-

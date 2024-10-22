@@ -22,8 +22,6 @@ import UserAvatar from "react-native-user-avatar";
 import AlternativeColor from "../../components/AlternativeBackground";
 import { Color } from "../../helper/Color";
 import Refresh from "../../components/Refresh";
-import fineService from "../../services/FineService";
-import FineCard from "../fine/components/FineCard";
 import PermissionService from "../../services/PermissionService";
 import Permission from "../../helper/Permission";
 import HistoryList from "../../components/HistoryList";
@@ -43,7 +41,6 @@ const SalaryDetailPage = (props) => {
   const [page, setPage] = useState(1);
   const [HasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [fine, setFine] = useState([]);
   const [salaryHistoryView, setSalaryHistoryView] = useState("");
 
   const isFocused = useIsFocused();
@@ -54,23 +51,6 @@ const SalaryDetailPage = (props) => {
     defaultValues: preloadedValues,
   });
 
-  useEffect(() => {
-    let mount = true;
-    if (params?.user_id) {
-      mount && getAttendanceList({ user: params?.user_id });
-      mount &&
-        getFineList({
-          user: params?.user_id,
-          ...(activeTab == TabName.BONUS
-            ? { isBonusType: true }
-            : { isFineType: true }),
-        });
-    }
-    //cleanup function
-    return () => {
-      mount = false;
-    };
-  }, [activeTab]);
   useEffect(() => {
     getSalaryPermission();
   }, [isFocused]);
@@ -136,8 +116,7 @@ const SalaryDetailPage = (props) => {
                   </Text>
                 )}
                 <Text>Date: {DateTime.formatDate(item?.date)}</Text>
-                {item?.type && <Text>Type: {item?.typeName
-                  }</Text>}
+                {item?.type && <Text>Type: {item?.typeName}</Text>}
 
                 <View style={styles.container1}>
                   {!item?.attendanceTypeDetail?.is_leave && (
@@ -161,28 +140,6 @@ const SalaryDetailPage = (props) => {
     );
   };
 
-  const renderFineItem = (data) => {
-    let item = data?.item;
-    let index = data?.index;
-    const containerStyle = AlternativeColor.getBackgroundColor(index);
-    return (
-      <FineCard
-        id={item.id}
-        date={item.date}
-        type={item.type}
-        user={item.user}
-        media_url={item.media_url}
-        amount={item.amount}
-        status={item.status}
-        statusColor={item.statusColor}
-        alternative={containerStyle}
-        onPress={() => {
-          navigation.navigate("FineForm", { item });
-        }}
-      />
-    );
-  };
-
   const renderHiddenItem = (data, rowMap) => {
     return (
       <View style={styles.swipeStyle}>
@@ -197,34 +154,6 @@ const SalaryDetailPage = (props) => {
           <Text style={styles.btnText}>Delete</Text>
         </TouchableOpacity>
       </View>
-    );
-  };
-
-  const getAttendanceList = (values) => {
-    setIsLoading(true);
-
-    let param = {
-      page: 1,
-      sort: "created_at",
-      sortDir: "DESC",
-      startDate: params?.salaryDate?.startDate,
-      endDate: params?.salaryDate?.endDate,
-      ...values,
-    };
-
-    AttendanceService.getAttendanceList(
-      navigation,
-      param,
-      (err, attendanceList) => {
-        setAttendanceList(attendanceList);
-        setPage(2);
-        setIsLoading(false);
-
-        if (err) {
-          console.error(err);
-          setIsLoading(false);
-        }
-      }
     );
   };
 
@@ -256,53 +185,6 @@ const SalaryDetailPage = (props) => {
     }
   };
 
-  const getFineList = async (values) => {
-    fine && fine.length === 0 && setIsLoading(true);
-
-    let param = {
-      sort: "id",
-      sortDir: "DESC",
-      startDate: params?.salaryDate?.startDate,
-      endDate: params?.salaryDate?.endDate,
-      ...values,
-    };
-
-    await fineService.search(param, (err, response) => {
-      let fines = response && response?.data && response?.data?.data;
-      setFine(fines);
-      setIsLoading(false);
-      setRefreshing(false);
-    });
-  };
-
-  const LoadMoreFineList = async (values) => {
-    try {
-      setIsFetching(true);
-
-      let param = {
-        page: page,
-        sort: "id",
-        sortDir: "DESC",
-        startDate: params?.salaryDate?.startDate,
-        endDate: params?.salaryDate?.endDate,
-        ...values,
-      };
-      fineService.search(param, (err, response) => {
-        let fines = response && response?.data && response?.data?.data;
-
-        // Set response in state
-        setFine((prevTitles) => {
-          return [...new Set([...prevTitles, ...fines])];
-        });
-        setPage((prevPageNumber) => prevPageNumber + 1);
-        setHasMore(fines.length > 0);
-        setIsFetching(false);
-      });
-    } catch (err) {
-      console.log(err);
-      setIsLoading(false);
-    }
-  };
   let title = [
     {
       title: TabName.SUMMARY,
@@ -690,56 +572,6 @@ const SalaryDetailPage = (props) => {
                 isFetching={isFetching}
                 HasMore={HasMore}
                 onPress={() => LoadMoreList({ user: params?.user_id })}
-              />
-            </View>
-          )}
-          {activeTab == TabName.FINE && (
-            <View>
-              {fine && fine.length > 0 ? (
-                <SwipeListView
-                  data={fine}
-                  renderItem={renderFineItem}
-                  rightOpenValue={-70}
-                  previewOpenValue={-40}
-                  previewOpenDelay={3000}
-                  disableRightSwipe={true}
-                  disableLeftSwipe={false}
-                  closeOnRowOpen={true}
-                  keyExtractor={(item) => String(item.id)}
-                />
-              ) : (
-                <NoRecordFound iconName={"receipt"} styles={style.noRecord} />
-              )}
-              <ShowMore
-                List={fine}
-                isFetching={isFetching}
-                HasMore={HasMore}
-                onPress={() => LoadMoreFineList({ user: params?.user_id })}
-              />
-            </View>
-          )}
-          {activeTab == TabName.BONUS && (
-            <View>
-              {fine && fine.length > 0 ? (
-                <SwipeListView
-                  data={fine}
-                  renderItem={renderFineItem}
-                  rightOpenValue={-70}
-                  previewOpenValue={-40}
-                  previewOpenDelay={3000}
-                  disableRightSwipe={true}
-                  disableLeftSwipe={false}
-                  closeOnRowOpen={true}
-                  keyExtractor={(item) => String(item.id)}
-                />
-              ) : (
-                <NoRecordFound iconName={"receipt"} styles={style.noRecord} />
-              )}
-              <ShowMore
-                List={fine}
-                isFetching={isFetching}
-                HasMore={HasMore}
-                onPress={() => LoadMoreFineList({ user: params?.user_id })}
               />
             </View>
           )}

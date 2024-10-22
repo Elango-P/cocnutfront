@@ -49,7 +49,7 @@ const PaymentForm = (props) => {
     const [account, setAccount] = useState("")
     const [paymentAccount, setPaymentAccount] = useState("");
     const [statusList, setStatusList] = useState([])
-    const [allowEdit, setEdit] = useState(true);
+    const [allowEdit, setEdit] = useState(false);
     const [visible, setVisible] = useState(false)
     const [actionList, setActionList] = useState([])
     const [accountName,setAccountName] = useState()

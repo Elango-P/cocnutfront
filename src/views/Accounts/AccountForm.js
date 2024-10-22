@@ -59,7 +59,7 @@ const AccountForm = (props) => {
   const [paymentAccount, setPaymentAccount] = useState(
     params?.payment_account || ""
   );
-  const [allowEdit, setEdit] = useState(true);
+  const [allowEdit, setEdit] = useState(false);
   const [actionList, setActionList] = useState([]);
   const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
   const [purchase, setPurchase] = useState();

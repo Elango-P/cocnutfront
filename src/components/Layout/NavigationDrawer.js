@@ -104,10 +104,7 @@ const Menu = (props) => {
       Feature.ENABLE_STOCK_ENTRY,
       Permission.STOCK_ENTRY_VIEW
     );
-    const enableWishList = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_WISH_LIST,
-      Permission.WISHLIST_VIEW
-    );
+
     const enableActivity = await PermissionService.getFeaturePermission(
       Feature.ENABLE_ACTIVITY,
       Permission.ACTIVITY_VIEW
@@ -140,10 +137,7 @@ const Menu = (props) => {
       Feature.ENABLE_PAYMENT,
       Permission.PAYMENT_VIEW
     );
-    const enableInspection = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_INSPECTION,
-      Permission.INSPECTION_VIEW
-    );
+
     const enableUser = await PermissionService.getFeaturePermission(
       Feature.ENABLE_USER,
       Permission.USER_VIEW
@@ -160,27 +154,17 @@ const Menu = (props) => {
       Feature.ENABLE_ACCOUNT,
       Permission.ACCOUNT_VIEW
     );
-    const enableGatePass = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_GATE_PASS,
-      Permission.GATE_PASS_VIEW
-    );
+   
     const enableCustomer = await PermissionService.getFeaturePermission(
       Feature.ENABLE_CUSTOMER,
       Permission.CUSTOMER_VIEW
     );
-    const enablePurchaseOrder = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_PURCHASE_ORDER,
-      Permission.PURCHASE_ORDER_VIEW
-    );
+    
     const enableSalary = await PermissionService.getFeaturePermission(
       Feature.ENABLE_SALARY,
       Permission.SALARY_VIEW
     );
-    const enableLocationAllocation =
-      await PermissionService.getFeaturePermission(
-        Feature.ENABLE_LOCATION_ALLOCATION,
-        Permission.LOCATION_ALLOCATION_VIEW
-      );
+  
     const enableDistribution = await PermissionService.getFeaturePermission(
       Feature.ENABLE_DISTRIBUTION,
       Permission.DISTRIBUTION_VIEW
@@ -193,10 +177,7 @@ const Menu = (props) => {
       Feature.ENABLE_SYNC,
       Permission.SYNC_VIEW
     );
-    const enableRecurringTask = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_RECURRING_TASK,
-      Permission.RECURRING_TASK_VIEW
-    );
+
     const enableBulkOrder = await PermissionService.getFeaturePermission(
       Feature.ENABLE_BULK_ORDER,
       Permission.BULK_ORDER_VIEW
@@ -213,7 +194,6 @@ const Menu = (props) => {
       enableOrders: enableOrders,
       enableTransfer: enableTransfer,
       enableStock: enableStock,
-      enableWishList: enableWishList,
       enableActivity: enableActivity,
       enableTicket: enableTicket,
       enableFine: enableFine,
@@ -222,20 +202,15 @@ const Menu = (props) => {
       enableVisitor: enableVisitor,
       enableReplenish: enableReplenish,
       enablePayment: enablePayment,
-      enableInspection: enableInspection,
       enableUser: enableUser,
       enableBills: enableBills,
       enableLeads: enableLeads,
       enableAccounts: enableAccounts,
-      enableGatePass: enableGatePass,
       enableCustomer: enableCustomer,
-      enablePurchaseOrder: enablePurchaseOrder,
       enableSalary: enableSalary,
-      enableLocationAllocation: enableLocationAllocation,
       enableDistribution: enableDistribution,
       enableSettings: enableSettings,
       enableSync: enableSync,
-      enableRecurringTask: enableRecurringTask,
       enableBulkOrder: enableBulkOrder,
       enableContact: enableContact,
     });

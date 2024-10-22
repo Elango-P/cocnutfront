@@ -26,7 +26,6 @@ export const endpoints = () => ({
   accountAPI: appApi("v1/account"),
   billAPI: appApi("v1/accounts/bill"),
   brandAPI: appApi("v1/product/brand"),
-  inventoryAPI: appApi("v1/inventory"),
   categoryAPI: appApi("v1/product/category"),
   locationAPI: appApi("v1/location"),
   storeProductAPI: appApi("v1/storeProduct"),
@@ -57,24 +56,16 @@ export const endpoints = () => ({
   UserAPI: appApi("user/v1"),
 
   ShiftAPI: appApi("v1/shift"),
-  
-  sprintAPI: appApi("v1/sprint"),
 
+  sprintAPI: appApi("v1/sprint"),
 
   PermissionAPI: appApi("v1/user/role/permission"),
 
   MediaAPI: appApi("v1/media"),
 
-  WishListAPI: appApi("v1/wishlist"),
-
   SaleSettlementAPI: appApi("v1/saleSettlement"),
 
   PurchaseAPI: appApi("v1/purchase"),
-
-  purchaseOrderAPI: appApi("v1/purchaseOrder"),
-
-  purchaseOrderProductAPI: appApi("v1/purchaseOrderProduct"),
-
 
   PurchaseProductAPI: appApi("v1/purchaseProduct"),
 
@@ -91,8 +82,6 @@ export const endpoints = () => ({
   TicketApi: appApi("v1/ticket"),
 
   FineBonusApi: appApi("v1/fineBonus"),
-
-  GatePassApi : appApi("v1/gatePass"),
 
   UserDeviceInfoApi: appApi("v1/userDeviceInfo"),
 
@@ -120,7 +109,6 @@ export const endpoints = () => ({
 
   orderSummaryReportAPI: appApi("v1/orderSummaryReport"),
 
-
   OrderProductReportAPI: appApi("v1/orderProduct"),
 
   SettingAPI: appApi("v1/setting"),
@@ -135,27 +123,23 @@ export const endpoints = () => ({
 
   locationWiseAttendanceAPI: appApi("v1/attendanceReport"),
 
-
   projectTicketTypeAPI: appApi("v1/projectTicketType"),
 
   replenishReportAPI: appApi("v1/replenishReport"),
 
-  stockEntryReportApi:appApi("v1/stockEntryReport"),
+  stockEntryReportApi: appApi("v1/stockEntryReport"),
 
   purchaseRecommendationReportAPI: appApi("v1/purchaseRecommendationReport"),
 
-  mobileDashboardApi : appApi("v1/mobileDashboard"),
+  mobileDashboardApi: appApi("v1/mobileDashboard"),
 
-  accountAgreementAPI:appApi("v1/accountAgreement"),
+  accountAgreementAPI: appApi("v1/accountAgreement"),
 
   accountProductAPI: appApi("v1/accountProduct"),
 
   accountLoyalty: appApi("v1/accountLoyalty"),
 
-  ratingAPI:appApi("v1/rating"),
-
-  // Custom Form API
-  InspectionApi: appApi("v1/inspection"),
+  ratingAPI: appApi("v1/rating"),
 
   CustomField: appApi("v1/customField"),
 
@@ -171,26 +155,20 @@ export const endpoints = () => ({
 
   salaryAPI: appApi("v1/salary"),
 
-  RecurringTaskAPI: appApi("v1/recurringTask"),
-
   OtpAPI: appApi("v1/otp"),
 
   ReplenishmentAllocationAPI: appApi("v1/replenishmentAllocation"),
 
   PublicRoute: appApi("v1/public"),
-  LocationAllocationAPI: appApi("v1/locationAllocation"),
   customerRoute: appApi("v1/customer"),
-  LocationAllocationUserAPI: appApi("v1/locationAllocationUser"),
-  publicPageBlockAPI:appApi("v1/public/pageBlock"),
+  publicPageBlockAPI: appApi("v1/public/pageBlock"),
 
-  customerOrderAPI:appApi("v1/customer/order/create"),
+  customerOrderAPI: appApi("v1/customer/order/create"),
   replenishmentAllocationAPI: appApi("v1/replenishmentAllocation"),
 
   invoiceAPI: appApi("v1/invoice"),
   invoiceProductAPI: appApi("v1/invoiceProduct"),
   accountTypeAPI: appApi("v1/accountType"),
-  contactAPI : appApi("v1/contact"),
+  contactAPI: appApi("v1/contact"),
   orderTypeAPI: appApi("v1/orderType"),
-
-
 });

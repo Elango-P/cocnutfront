@@ -6,14 +6,10 @@ import {
     Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import SearchBar from "../../components/SearchBar";
 import Layout from "../../components/Layout";
 import { useIsFocused } from "@react-navigation/native";
-import VisitorService from "../../services/VisitorService";
 import Refresh from "../../components/Refresh";
 import ShowMore from "../../components/ShowMore";
-import Permission from "../../helper/Permission";
-import PermissionService from "../../services/PermissionService";
 import orderService from "../../services/OrderService";
 import AlternativeColor from "../../components/AlternativeBackground";
 import styles from "../../helper/Styles";

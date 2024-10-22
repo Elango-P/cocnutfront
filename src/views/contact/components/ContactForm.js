@@ -18,7 +18,7 @@ const ContactForm = (props) => {
   const [isDeleteModelOpen, setIsDeleteModelOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [actionList, setActionList] = useState([]);
-  const [allowEdit, setEdit] = useState(true);
+  const [allowEdit, setEdit] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

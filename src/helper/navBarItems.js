@@ -8,7 +8,6 @@ const Menu = {
   LOCATION: "Location",
   TRANSFER: "inventoryTransfer",
   PRODUCT: "BrandAndCategoryList",
-  WISHLIST: "WishListProducts",
   LAST_SYNC: "Sync",
   SALE_SETTLEMENT: "SalesSettlement",
   ACTIVITY_LIST: "ActivityList",

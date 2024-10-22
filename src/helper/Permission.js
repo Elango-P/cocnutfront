@@ -3,9 +3,8 @@ class Permission {
   static ACCOUNT_VIEW = "account_view";
   static ACCOUNT_EDIT = "account_edit";
   static ACCOUNT_ADD = "account_add";
-  static ACCOUNT_DELETE = "account_delete"
+  static ACCOUNT_DELETE = "account_delete";
   static ACCOUNT_HISTORY_VIEW = "account_history_view";
-
 
   // Account Entry Permissions
   static ACCOUNT_ENTRY_VIEW = "account_entry_view";
@@ -21,14 +20,11 @@ class Permission {
   static ACTIVITY_DELETE = "activity_delete";
   static ACTIVITY_MANAGE_OTHERS = "activity_manage_others";
 
-
   // Activity Type Permissions
   static ACTIVITY_TYPE_VIEW = "activity_type_view";
   static ACTIVITY_TYPE_ADD = "activity_type_add";
   static ACTIVITY_TYPE_EDIT = "activity_type_edit";
   static ACTIVITY_TYPE_DELETE = "activity_type_delete";
-
-
 
   // Attendance Permissions
   static ATTENDANCE_VIEW = "attendance_view";
@@ -44,9 +40,7 @@ class Permission {
   static BILL_ADD = "bill_add";
   static BILL_EDIT = "bill_edit";
   static BILL_DELETE = "bill_delete";
-  static BILL_HISTORY_VIEW = "bill_history_view"
-
-
+  static BILL_HISTORY_VIEW = "bill_history_view";
 
   // Brand Permissions
   static BRAND_VIEW = "brand_view";
@@ -96,8 +90,7 @@ class Permission {
   static CONTACT_DELETE = "Contact_Delete";
   static CONTACT_VIEW = "Contact_View";
   //Distribution
-  static DISTRIBUTION_VIEW = "distribution_view"
-
+  static DISTRIBUTION_VIEW = "distribution_view";
 
   // Feature Permission
   static FEATURE_VIEW = "feature_view";
@@ -111,17 +104,13 @@ class Permission {
   static FINE_DELETE = "fine_delete";
   static FINE_STATUS_UPDATE = "fine_status_update";
   static FINE_MANAGE_OTHERS = "fine_manage_others";
-  static FINE_HISTORY_VIEW = "fine_history_view"
+  static FINE_HISTORY_VIEW = "fine_history_view";
 
   //GatePass Permission
   static GATE_PASS_VIEW = "gate_pass_view";
   static GATE_PASS_ADD = "gate_pass_add";
   static GATE_PASS_EDIT = "gate_pass_edit";
   static GATE_PASS_DELETE = "gate_pass_delete";
-
-  //Inspection View 
-  static INSPECTION_VIEW = "inspection_view";
-  static INSPECTION_DELETE = "inspection_delete";
 
   static LEADS_VIEW = "leads_view";
   static LEADS_ADD = "leads_add";
@@ -132,18 +121,26 @@ class Permission {
   static MEDIA_VIEW = "media_view";
 
   //Mobile App Dashboard Menu
-  static MOBILEAPP_DASHBOARD_MENU_ACTIVITIES = "mobileapp_dashboard_menu_activities";
-  static MOBILEAPP_DASHBOARD_MENU_DELIVERY = "mobileapp_dashboard_menu_delivery";
-  static MOBILEAPP_DASHBOARD_MENU_DISTRIBUTION = "mobileapp_dashboard_menu_distribution";
-  static MOBILEAPP_DASHBOARD_MENU_ORDER_SUMMARY_VIEW = "mobileapp_dashboard_menu_order_summary_view";
+  static MOBILEAPP_DASHBOARD_MENU_ACTIVITIES =
+    "mobileapp_dashboard_menu_activities";
+  static MOBILEAPP_DASHBOARD_MENU_DELIVERY =
+    "mobileapp_dashboard_menu_delivery";
+  static MOBILEAPP_DASHBOARD_MENU_DISTRIBUTION =
+    "mobileapp_dashboard_menu_distribution";
+  static MOBILEAPP_DASHBOARD_MENU_ORDER_SUMMARY_VIEW =
+    "mobileapp_dashboard_menu_order_summary_view";
   static MOBILEAPP_DASHBOARD_MENU_ORDER = "mobileapp_dashboard_menu_order";
   static MOBILEAPP_DASHBOARD_MENU_PRODUCT = "mobileapp_dashboard_menu_product";
-  static MOBILEAPP_DASHBOARD_MENU_REPLENISH = "mobileapp_dashboard_menu_replenish";
+  static MOBILEAPP_DASHBOARD_MENU_REPLENISH =
+    "mobileapp_dashboard_menu_replenish";
   static MOBILEAPP_DASHBOARD_MENU_REPORTS = "mobileapp_dashboard_menu_reports";
   static MOBILEAPP_DASHBOARD_MENU_TICKET = "mobileapp_dashboard_menu_ticket";
-  static MOBILEAPP_DASHBOARD_MENU_TRANSFER = "mobileapp_dashboard_menu_transfer";
-  static MOBILEAPP_DASHBOARD_MENU_MESSAGES = "mobileapp_dashboard_menu_messages";
-  static MOBILEAPP_DASHBOARD_MENU_GEOFENCING="mobileapp_dashboard_menu_geofencing"
+  static MOBILEAPP_DASHBOARD_MENU_TRANSFER =
+    "mobileapp_dashboard_menu_transfer";
+  static MOBILEAPP_DASHBOARD_MENU_MESSAGES =
+    "mobileapp_dashboard_menu_messages";
+  static MOBILEAPP_DASHBOARD_MENU_GEOFENCING =
+    "mobileapp_dashboard_menu_geofencing";
 
   // Order Permissions
   static ORDER_VIEW = "order_view";
@@ -154,7 +151,7 @@ class Permission {
   static ORDER_IMPORT = "order_import";
   static ORDER_MANAGE_OTHERS = "order_manage_others";
   static ORDER_TOTAL_VIEW = "order_total_view";
-  static ORDER_HISTORY_VIEW = "order_history_view"
+  static ORDER_HISTORY_VIEW = "order_history_view";
 
   // Order Product Permissions
   static ORDER_PRODUCT_VIEW = "order_product_view";
@@ -164,12 +161,11 @@ class Permission {
   static ORDER_PRODUCT_CANCEL = "order_product_cancel";
   static ORDER_MANUAL_PRICE_UPDATE = "order_manual_price_update";
 
-
-  //Payment Permission 
+  //Payment Permission
 
   static PAYMENT_VIEW = "payment_view";
-  static PAYMENT_EDIT="payment_edit";
-  static PAYMENT_ADD="payment_add";
+  static PAYMENT_EDIT = "payment_edit";
+  static PAYMENT_ADD = "payment_add";
   static PAYMENT_HISTORY_VIEW = "payment_history_view";
 
   // Product Permissions
@@ -191,8 +187,6 @@ class Permission {
   static PRODUCT_PRICE_VIEW = "product_price_view";
   static PRODUCT_PURCHASE_VIEW = "product_purchase_view";
 
-
-
   // Product Category Permissions
   static PRODUCT_CATEGORY_VIEW = "product_category_view";
   static PRODUCT_CATEGORY_ADD = "product_category_add";
@@ -200,47 +194,45 @@ class Permission {
   static PRODUCT_CATEGORY_DELETE = "product_category_delete";
   static PRODUCT_CATEGORY_UPDATE = "product_category_update";
 
-
   // Bill Permissions
   static PURCHASE_VIEW = "purchase_view";
   static PURCHASE_ADD = "purchase_add";
   static PURCHASE_EDIT = "purchase_edit";
   static PURCHASE_DELETE = "purchase_delete";
-  static PURCHASE_HISTORY_VIEW = "purchase_history_view"
+  static PURCHASE_HISTORY_VIEW = "purchase_history_view";
 
-
-  // Purchase Order Permission 
+  // Purchase Order Permission
 
   static PURCHASE_ORDER_VIEW = "purchase_order_view";
   static PURCHASE_ORDER_ADD = "purchase_order_add";
   static PURCHASE_ORDER_EDIT = "purchase_order_edit";
   static PURCHASE_ORDER_DELETE = "purchase_order_delete";
-  static PURCHASE_ORDER_HISTORY_VIEW = "purchase_order_history_view"
+  static PURCHASE_ORDER_HISTORY_VIEW = "purchase_order_history_view";
 
-   //Quick Links 
-   static QUICK_LINK_NEW_ACIVITY = "quick_link_new_activity"
-   static QUICK_LINK_NEW_ORDER = "quick_link_new_order"
-   static QUICK_LINK_NEW_TRANSFER = "quick_link_new_transfer"
-   static QUICK_LINK_NEW_SALES_SETTLEMENT = "quick_link_new_sales_settlement"
-   static QUICK_LINK_CHECK_PRICE = "quick_link_check_price"
-   static QUICK_LINK_BULK_ORDER = "quick_link_bulk_order"
+  //Quick Links
+  static QUICK_LINK_NEW_ACIVITY = "quick_link_new_activity";
+  static QUICK_LINK_NEW_ORDER = "quick_link_new_order";
+  static QUICK_LINK_NEW_TRANSFER = "quick_link_new_transfer";
+  static QUICK_LINK_NEW_SALES_SETTLEMENT = "quick_link_new_sales_settlement";
+  static QUICK_LINK_CHECK_PRICE = "quick_link_check_price";
+  static QUICK_LINK_BULK_ORDER = "quick_link_bulk_order";
 
-   //Replenish permission
+  //Replenish permission
 
-  static REPLENISH_VIEW = "replenish_view"
+  static REPLENISH_VIEW = "replenish_view";
 
   static RECURRING_TASK_VIEW = "recurring_task_view";
   static RECURRING_TASK_ADD = "recurring_task_add";
   static RECURRING_TASK_EDIT = "recurring_task_edit";
   static RECURRING_TASK_DELETE = "recurring_task_delete";
   static RECURRING_TASK_MANAGE_OTHERS = "recurring_task_manage_others";
-  static RECURRING_TASK_HISTORY_VIEW = "recurring_task_history_view"
+  static RECURRING_TASK_HISTORY_VIEW = "recurring_task_history_view";
 
   //Report View
 
-  static ORDER_REPORT_VIEW = "order_report_view"
-  static ORDER_SALES_SETTLEMENT_DISCREPANCY_REPORT_VIEW = "order_sales_settlement_discrepancy"
-
+  static ORDER_REPORT_VIEW = "order_report_view";
+  static ORDER_SALES_SETTLEMENT_DISCREPANCY_REPORT_VIEW =
+    "order_sales_settlement_discrepancy";
 
   // SALE Permissions
   static SALE_SETTLEMENT_VIEW = "sale_settlement_view";
@@ -249,8 +241,7 @@ class Permission {
   static SALE_SETTLEMENT_DELETE = "sale_settlement_delete";
   static SALE_SETTLEMENT_STATUS_UPDATE = "sale_settlement_status_edit";
   static SALE_SETTLEMENT_MANAGE_OTHERS = "sale_settlement_manage_others";
-  static SALE_SETTLEMENT_HISTORY_VIEW = "sale_settlement_history_view"
-
+  static SALE_SETTLEMENT_HISTORY_VIEW = "sale_settlement_history_view";
 
   // Scheduler Jobs Permission
   static SCHEDULER_JOBS_VIEW = "scheduler_view";
@@ -261,21 +252,22 @@ class Permission {
 
   // Settings Permission
 
-  static SETTINGS_VIEW = "settings_view"
+  static SETTINGS_VIEW = "settings_view";
 
   // Stock Entry
   static STOCK_ENTRY_VIEW = "stock_entry_view";
   static STOCK_ENTRY_ADD = "stock_entry_add";
   static STOCK_ENTRY_DELETE = "stock_entry_delete";
   static STOCK_ENTRY_MANAGE_OTHERS = "stock_entry_manage_others";
-  static STOCK_ENTRY_HISTORY_VIEW = "stock_entry_history_view"
+  static STOCK_ENTRY_HISTORY_VIEW = "stock_entry_history_view";
 
   // Stock Product Entry
   static STOCK_PRODUCT_ENTRY_VIEW = "stock_product_entry_view";
   static STOCK_PRODUCT_ENTRY_ADD = "stock_product_entry_Add";
   static STOCK_PRODUCT_ENTRY_EDIT = "stock_product_entry_edit";
   static STOCK_PRODUCT_ENTRY_DELETE = "stock_product_entry_delete";
-  static STOCK_PRODUCT_ENTRY_MANAGE_OTHERS = "stock_product_entry_manage_others";
+  static STOCK_PRODUCT_ENTRY_MANAGE_OTHERS =
+    "stock_product_entry_manage_others";
 
   // Store Permissions
   static LOCATION_VIEW = "location_view";
@@ -302,7 +294,6 @@ class Permission {
   static TAG_DELETE = "tag_delete";
   static TAG_STATUS_UPDATE = "tag_status_edit";
 
-
   // Transfer Permissions
   static TRANSFER_VIEW = "transfer_view";
   static TRANSFER_ADD = "transfer_add";
@@ -321,17 +312,16 @@ class Permission {
   static TICKET_ADD = "ticket_add";
   static TICKET_EDIT = "ticket_edit";
   static TICKET_DELETE = "ticket_delete";
-  static TICKET_HISTORY_VIEW = "ticket_history_view"
+  static TICKET_HISTORY_VIEW = "ticket_history_view";
   static TICKET_MANAGE_OTHERS = "ticket_manage_others";
-  static TICKET_ALLOW_ADVANCED_FILTER = "ticket_allow_advanced_filter"
-
+  static TICKET_ALLOW_ADVANCED_FILTER = "ticket_allow_advanced_filter";
 
   // Users
   static USER_VIEW = "user_view";
   static USER_ADD = "user_add";
   static USER_EDIT = "user_edit";
   static USER_DELETE = "user_delete";
-  static USER_HISTORY_VIEW = "user_history_view"
+  static USER_HISTORY_VIEW = "user_history_view";
   static USER_MANAGE_OTHERS = "user_manage_others";
   static ALLOW_IMPERSONATE_LOGIN = "allow_impersonate_login";
 
@@ -361,39 +351,23 @@ class Permission {
   static SUPPLIER_PRODUCT_UPDATE_IMPORT_STATUS =
     "supplier_product_update_import_status";
 
-
-
-
-
-
-  //WishList Permissions
-  static WISHLIST_VIEW = "wishlist_view";
-  static WISHLIST_ADD = "wishlist_add";
-  static WISHLIST_EDIT = "wishlist_edit";
-  static WISHLIST_DELETE = "wislist_delete";
-
   // visitor permision
   static VISITOR_VIEW = "visitor_view";
   static VISITOR_ADD = "visitor_add";
   static VISITOR_EDIT = "visitor_edit";
   static VISITOR_DELETE = "visitor_delete";
-  static VISITOR_HISTORY_VIEW = "visitor_history_view"
-
+  static VISITOR_HISTORY_VIEW = "visitor_history_view";
 
   //Salary
   static SALARY_VIEW = "salary_view";
-  static SALARY_HISTORY_VIEW = "salary_history_view"
+  static SALARY_HISTORY_VIEW = "salary_history_view";
 
-//Replenish 
-static REPLENISHMENT_EDIT = "replenishment_edit";
-static REPLENISHMENT_MANAGE_OTHERS = "replenishment_manage_others";
+  //Replenish
+  static REPLENISHMENT_EDIT = "replenishment_edit";
+  static REPLENISHMENT_MANAGE_OTHERS = "replenishment_manage_others";
 
-
-//Dashboard
-static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
-
-
-
+  //Dashboard
+  static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
 
   static UserPermissionLists() {
     return [
@@ -496,7 +470,7 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
       },
       {
         label: this.SALE_MANAGE_OTHERS,
-        value: this.SALE_MANAGE_OTHERS
+        value: this.SALE_MANAGE_OTHERS,
       },
       {
         label: this.CATEGORY_ADD,
@@ -976,24 +950,9 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
       },
       {
         label: this.STOCK_ENTRY_MANAGE_OTHERS,
-        value: this.STOCK_ENTRY_MANAGE_OTHERS
+        value: this.STOCK_ENTRY_MANAGE_OTHERS,
       },
-      {
-        label: this.WISHLIST_DELETE,
-        value: this.WISHLIST_DELETE,
-      },
-      {
-        label: this.WISHLIST_EDIT,
-        value: this.WISHLIST_EDIT,
-      },
-      {
-        label: this.WISHLIST_ADD,
-        value: this.WISHLIST_ADD,
-      },
-      {
-        label: this.WISHLIST_VIEW,
-        value: this.WISHLIST_VIEW,
-      },
+
       {
         label: this.ACTIVITY_VIEW,
         value: this.ACTIVITY_VIEW,
@@ -1029,7 +988,6 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
       {
         label: this.FINE_MANAGE_OTHERS,
         value: this.FINE_MANAGE_OTHERS,
-
       },
       {
         label: this.GATE_PASS_VIEW,
@@ -1081,9 +1039,9 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         value: this.MOBILEAPP_DASHBOARD_MENU_MESSAGES,
       },
       {
-        label : this.REPLENISHMENT_EDIT,
-        value : this.REPLENISHMENT_EDIT,
-      }
+        label: this.REPLENISHMENT_EDIT,
+        value: this.REPLENISHMENT_EDIT,
+      },
     ];
   }
 
@@ -1094,9 +1052,8 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.ACCOUNT_VIEW, label: "Account View" },
         { name: this.ACCOUNT_ADD, label: "Account Add" },
         { name: this.ACCOUNT_EDIT, label: "Account Edit" },
-        { name: this.ACCOUNT_DELETE, label: "Account Delete" }
+        { name: this.ACCOUNT_DELETE, label: "Account Delete" },
       ],
-
     },
     {
       title: "Company",
@@ -1122,7 +1079,10 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.STOCK_ENTRY_VIEW, label: "Stock Entry View" },
         { name: this.STOCK_ENTRY_ADD, label: "Stock Entry Add" },
         { name: this.STOCK_ENTRY_DELETE, label: "Stock Entry Delete" },
-        { name: this.STOCK_ENTRY_MANAGE_OTHERS, label: "Stock Entry Manage Others" },
+        {
+          name: this.STOCK_ENTRY_MANAGE_OTHERS,
+          label: "Stock Entry Manage Others",
+        },
       ],
     },
     {
@@ -1148,9 +1108,7 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
     },
     {
       title: "Replenish",
-      permission: [
-        { name: this.REPLENISH_VIEW, label: "Replenish View" },
-      ],
+      permission: [{ name: this.REPLENISH_VIEW, label: "Replenish View" }],
     },
     {
       title: "Bill Entry",
@@ -1253,7 +1211,7 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
     },
     {
       title: "Quick Links",
-      permission: [{ name: this.QUICK_LINKS, label: "Quick links View" },],
+      permission: [{ name: this.QUICK_LINKS, label: "Quick links View" }],
     },
     {
       title: "Customer",
@@ -1294,7 +1252,6 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.ORDER_IMPORT, label: "Order Import" },
         { name: this.ORDER_MANAGE_OTHERS, label: "Order Manage Others" },
         { name: this.ORDER_TOTAL_VIEW, label: "Order Total View" },
-
       ],
     },
     {
@@ -1359,7 +1316,7 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.LEADS_ADD, label: "Leads Add" },
         { name: this.LEADS_EDIT, label: "Leads Edit" },
         { name: this.LEADS_DELETE, label: "Leads Delete" },
-      ]
+      ],
     },
     {
       title: "Media",
@@ -1368,15 +1325,22 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
     {
       title: "Mobile App Dashboard Menu",
       permission: [
-        { name: this.MOBILEAPP_DASHBOARD_MENU_MESSAGES, label: "show Messages" },
+        {
+          name: this.MOBILEAPP_DASHBOARD_MENU_MESSAGES,
+          label: "show Messages",
+        },
         { name: this.MOBILEAPP_DASHBOARD_MENU_ORDER, label: "Show Order" },
         { name: this.MOBILEAPP_DASHBOARD_MENU_PRODUCT, label: "Show Product" },
-        { name: this.MOBILEAPP_DASHBOARD_MENU_REPLENISH, label: "Show Replenish" },
+        {
+          name: this.MOBILEAPP_DASHBOARD_MENU_REPLENISH,
+          label: "Show Replenish",
+        },
         { name: this.MOBILEAPP_DASHBOARD_MENU_REPORTS, label: "Show Reports" },
         { name: this.MOBILEAPP_DASHBOARD_MENU_TICKET, label: "Show Ticket" },
-        { name: this.MOBILEAPP_DASHBOARD_MENU_TRANSFER, label: "Show Transfer" },
-
-
+        {
+          name: this.MOBILEAPP_DASHBOARD_MENU_TRANSFER,
+          label: "Show Transfer",
+        },
       ],
     },
 
@@ -1387,7 +1351,6 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
           name: this.SETTINGS_VIEW,
           label: "Settings View",
         },
-
       ],
     },
     {
@@ -1433,15 +1396,15 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.ATTENDANCE_ADD, label: "Attendance Add" },
         { name: this.ATTENDANCE_EDIT, label: "Attendance Edit" },
         { name: this.ATTENDANCE_DELETE, label: "Attendance Delete" },
-        { name: this.ATTENDANCE_MANAGE_OTHERS, label: "Attendance Manage Others" },
+        {
+          name: this.ATTENDANCE_MANAGE_OTHERS,
+          label: "Attendance Manage Others",
+        },
       ],
     },
     {
       title: "Account",
-      permission: [
-        { name: this.ACCOUNTS_VIEW, label: "Accounts View" },
-
-      ],
+      permission: [{ name: this.ACCOUNTS_VIEW, label: "Accounts View" }],
     },
     {
       title: "Transfer",
@@ -1459,16 +1422,10 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.TRANSFER_PRODUCT_VIEW, label: "Transfer Product View" },
         { name: this.TRANSFER_PRODUCT_ADD, label: "Transfer Product Add" },
         { name: this.TRANSFER_PRODUCT_EDIT, label: "Transfer Product Edit" },
-        { name: this.TRANSFER_PRODUCT_DELETE, label: "Transfer Product Delete" },
-      ],
-    },
-    {
-      title: "Wishlist",
-      permission: [
-        { name: this.WISHLIST_VIEW, label: "Wishlist View" },
-        { name: this.WISHLIST_ADD, label: "Wishlist Add" },
-        { name: this.WISHLIST_EDIT, label: "Wishlist Edit" },
-        { name: this.WISHLIST_DELETE, label: "Wishlist Delete" },
+        {
+          name: this.TRANSFER_PRODUCT_DELETE,
+          label: "Transfer Product Delete",
+        },
       ],
     },
     {
@@ -1489,10 +1446,6 @@ static SHOW_CUSTOMER_DASHBOARD = "show_customer_dashboard";
         { name: this.FINE_DELETE, label: "Fine Delete" },
         { name: this.FINE_MANAGE_OTHERS, label: "Fine Manage Others" },
       ],
-    },
-    {
-      title: "Inspection",
-      permission: [{ name: this.INSPECTION_VIEW, label: "Inspection View" }],
     },
   ];
 }

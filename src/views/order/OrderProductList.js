@@ -358,9 +358,7 @@ const Billing = (props) => {
     setUpiAmount("");
     setTotalAmount("");
     {
-      isDeliveryOrder
-        ? navigation.navigate("Delivery")
-        : navigation.navigate("Order");
+     navigation.navigate("Order");
     }
   };
 
@@ -1263,23 +1261,7 @@ const Billing = (props) => {
       Permission.ORDER_CANCEL
     );
 
-    if (isDeliveryOrder) {
-      deliveryStatus &&
-        deliveryStatus.forEach((statusItem) => {
-          if (statusItem.id !== params?.status_id) {
-            actionItems.push(
-              <MenuItem
-                key={statusItem.id}
-                onPress={() => {
-                  updateDeliveryStatus(statusItem.id), setVisible(true);
-                }}
-              >
-                {statusItem.label}
-              </MenuItem>
-            );
-          }
-        });
-    }
+   
 
     if (
       cancelPermission &&
@@ -1503,7 +1485,7 @@ const Billing = (props) => {
             ? true
             : false
         }
-        backButtonNavigationUrl={`${isDeliveryOrder ? "Delivery" : "Order"}`}
+        backButtonNavigationUrl= "Order"
         HideSideMenu={
           params?.group == Status.GROUP_DRAFT || params?.isNewOrder
             ? true
@@ -1594,7 +1576,7 @@ const Billing = (props) => {
             )}`}
             toggle={productCompleteModalToggle}
             button1Label="PAID"
-            title={isDeliveryOrder ? "Complete Delivery" : "Complete Order"}
+            title="Complete"
             handlePaymentChange={handlePaymentChange}
             selectedPayment={selectedPayment}
             MediaData={images ? images : MediaData}

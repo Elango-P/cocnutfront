@@ -8,7 +8,6 @@ import { Linking } from 'react-native';
 import DateText from "./DateText";
 import DateTime from "../lib/DateTime";
 import { useNavigation } from "@react-navigation/native";
-import RatingCard from "./RatingCard";
 import asyncStorageService from "../services/AsyncStorageService";
 import userService from "../services/UserService";
 
@@ -74,7 +73,6 @@ const UserCard = (props) => {
         </View>
         <View style={styles.infoContainers}>
           {show && <Text style={textStyle ? textStyle : text ? styles.textName : name ? styles.userName : styles.nameText}>{fullName}</Text>}
-          {showRating && <RatingCard rating={rating} onPress={(value) => handleStarPress(value)}/>}
           {email && <Text style={styles.userText}>{email}</Text>}
           {mobileNumber && <Text style={styles.userText}>{mobileNumber}</Text>}
           {last_loggedIn_At && <><View style={styles?.direction}><Text>Last Logged In : </Text><DateText date={(last_loggedIn_At)} /></View></>}
