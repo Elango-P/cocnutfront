@@ -16,8 +16,15 @@ import Feature from "../../helper/Feature";
 import settingService from "../../services/SettingService";
 import Setting from "../../lib/Setting";
 import { Platform } from "react-native";
-
 const BottomToolBar = (props) => {
+const homeIcon = require('../../assets/home.png');
+const ledgerIcon = require('../../assets/ledgers.png');
+const productIcon = require('../../assets/box.png');
+const menuIcon = require('../../assets/menus.png');
+
+
+
+
   let { updateMenuState, setSideMenuOpen, menuOpen } = props;
   const navigation = useNavigation();
   const [ticketViewPermission, setTicketViewPermission] = useState();
@@ -179,6 +186,15 @@ const BottomToolBar = (props) => {
     );
     setSideMenuOpen && setSideMenuOpen(false);
   };
+  const handleLedgerPress = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Ledger" }],
+      })
+    );
+    setSideMenuOpen && setSideMenuOpen(false);
+  };
 
   const handleProductPress = () => {
     navigation.dispatch(
@@ -197,15 +213,22 @@ const BottomToolBar = (props) => {
   const renderToolBarItems = () => {
     const toolBarItems = [
       {
-        icon: "home",
+        icon: {homeIcon},
         label: "Home",
         onPress: handleHomePress,
         selected: menuItemValue === IconValue.DASHBOARD,
         margin: 0,
       },
+      {
+        icon: {ledgerIcon},
+        label: "Ledger",
+        onPress: handleLedgerPress,
+        selected: menuItemValue === IconValue.DASHBOARD,
+        margin: 0,
+      },
 
       {
-        icon: "box-open",
+        icon: {productIcon},
         label: "Products",
         onPress: handleProductPress,
         selected: menuItemValue === IconValue.PRODUCT,
@@ -214,7 +237,7 @@ const BottomToolBar = (props) => {
       
 
       {
-        icon: "bars",
+        icon: {menuIcon},
         label: "Menu",
         onPress: handleMenuPress,
         selected: menuItemValue === IconValue.MENU,
@@ -246,18 +269,32 @@ const BottomToolBar = (props) => {
           return true;
       }
     });
-    if (filteredItems.length == 2) {
+    if (filteredItems.length > 2) {
       return (
         <View style={style.centeredIcon}>
           <ToolBarItem
-            icon="home"
+            icon={homeIcon}
             label="Home"
             onPress={handleHomePress}
             selected={menuItemValue === IconValue.DASHBOARD}
             // toolBarIconColor={bottomToolBarIconColor}
           />
+           <ToolBarItem
+            icon= {ledgerIcon}
+            label= "Ledger"
+            onPress= {handleLedgerPress}
+            selected= {menuItemValue === IconValue.DASHBOARD}
+            // toolBarIconColor={bottomToolBarIconColor}
+          />
+           <ToolBarItem
+            icon= {productIcon}
+            label= "Products"
+            onPress= {handleProductPress}
+            selected= {menuItemValue === IconValue.PRODUCT}
+            // toolBarIconColor={bottomToolBarIconColor}
+          />
           <ToolBarItem
-            icon="bars"
+            icon={menuIcon}
             label="Menu"
             onPress={handleMenuPress}
             selected={menuItemValue === IconValue.MENU}
@@ -331,7 +368,6 @@ const style = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: "20%",
-    paddingBottom: Platform.OS === "ios" ? "7%" : 0,
+    paddingBottom: Platform.OS === "ios" ? "7%" : 10,
   },
 });

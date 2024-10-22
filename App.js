@@ -36,6 +36,8 @@ import OrderProductList from "./src/views/order/OrderProductList";
 import OrderTypeSelect from "./src/views/order/OrderTypeSelect";
 
 import Purchase from "./src/views/Purchase";
+import Ledger from "./src/views/Ledger";
+
 
 import PurchaseForm from "./src/views/Purchase/components/PurchaseForm";
 
@@ -309,6 +311,8 @@ export default function App(props) {
 
           {/* Bill */}
           <Stack.Screen name="Purchase" component={Purchase} />
+          <Stack.Screen name="Ledger" component={Ledger} />
+
 
           <Stack.Screen name="PurchaseForm" component={PurchaseForm} />
 
