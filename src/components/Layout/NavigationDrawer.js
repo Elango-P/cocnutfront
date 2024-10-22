@@ -25,7 +25,15 @@ import PermissionService from "../../services/PermissionService";
 import settingService from "../../services/SettingService";
 import VerticalSpace10 from "../VerticleSpace10";
 const { BluetoothManager } = NativeModules;
+const homeIcon = require("../../assets/seller.png");
+const productIcon = require("../../assets/box.png");
+const customerIcon = require("../../assets/customer-review.png");
+const userIcon = require("../../assets/profile.png");
+const paymentIcon = require("../../assets/payment.png");
+const saleIcon = require("../../assets/sale.png");
+const purchaseIcon = require("../../assets/online-shop.png");
 
+const menuIcon = require("../../assets/menus.png");
 const Menu = (props) => {
   useEffect(() => {
     getPermission();
@@ -154,17 +162,17 @@ const Menu = (props) => {
       Feature.ENABLE_ACCOUNT,
       Permission.ACCOUNT_VIEW
     );
-   
+
     const enableCustomer = await PermissionService.getFeaturePermission(
       Feature.ENABLE_CUSTOMER,
       Permission.CUSTOMER_VIEW
     );
-    
+
     const enableSalary = await PermissionService.getFeaturePermission(
       Feature.ENABLE_SALARY,
       Permission.SALARY_VIEW
     );
-  
+
     const enableDistribution = await PermissionService.getFeaturePermission(
       Feature.ENABLE_DISTRIBUTION,
       Permission.DISTRIBUTION_VIEW
@@ -239,7 +247,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Location"}
-        Icon="warehouse"
+        imageSource=""
       />
     );
   };
@@ -253,7 +261,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Vendors"}
-        Icon={"bank"}
+        imageSource={homeIcon}
         MaterialCommunityIcon
       />
     );
@@ -268,7 +276,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Contacts"}
-        Icon={"contacts"}
+        imageSource={"contacts"}
         MaterialCommunityIcon
       />
     );
@@ -283,7 +291,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Users"}
-        Icon="user"
+        imageSource={userIcon}
       />
     );
   };
@@ -300,7 +308,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Sales"}
-        Icon="receipt"
+        imageSource={saleIcon}
       />
     );
   };
@@ -315,7 +323,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Products"}
-        Icon="box-open"
+        imageSource={productIcon}
       />
     );
   };
@@ -329,7 +337,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Bills"}
-        Icon="money-bill-wave-alt"
+        imageSource="money-bill-wave-alt"
       />
     );
   };
@@ -343,7 +351,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Purchases"}
-        Icon="store"
+        imageSource={purchaseIcon}
       />
     );
   };
@@ -357,7 +365,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Payments"}
-        Icon="dollar-sign"
+        imageSource={paymentIcon}
       />
     );
   };
@@ -371,7 +379,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Customer"}
-        Icon={"user"}
+        imageSource={customerIcon}
       />
     );
   };
