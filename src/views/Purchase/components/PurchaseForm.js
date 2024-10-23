@@ -6,25 +6,18 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   ScrollView,
 } from "react-native";
 import Currency from "../../../components/Currency";
-import Select from "../../../components/Select";
 import AccountService from "../../../services/AccountService";
 import DatePicker from "../../../components/DatePicker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import purchaseService from "../../../services/PurchaseService";
-import DateTime from "../../../lib/DateTime";
-import NextButton from "../../../components/NextButton";
 import ObjectName from "../../../helper/ObjectName";
 import Tab from "../../../components/Tab";
 import TabName from "../../../helper/Tab";
-import MediaList from "../../../components/MediaList";
 import ProductCard from "../../../components/ProductCard";
 import { SwipeListView } from "react-native-swipe-list-view";
-import BarcodeScanner from "../../../components/BarcodeScanner";
-import ProductEditModal from "../../../components/Modal/ProductEditModal";
 import DeleteModal from "../../../components/Modal/DeleteModal";
 import ConfirmationModal from "../../../components/Modal/ConfirmationModal";
 import ProductSelectModal from "../../../components/Modal/ProductSelectModal";
@@ -35,22 +28,16 @@ import NoRecordFound from "../../../components/NoRecordFound";
 import Search from "./Search";
 import { Color } from "../../../helper/Color";
 import SaveButton from "../../../components/SaveButton";
-import Media from "../../../helper/Media";
 import mediaService from "../../../services/MediaService";
 import VerticalSpace10 from "../../../components/VerticleSpace10";
 import LocationSelect from "../../../components/LocationSelect";
-import SyncService from "../../../services/SyncService";
 import AccountSelect from "../../../components/AccountSelect";
 import TextArea from "../../../components/TextArea";
-import TextBox from "../../../components/TextBox";
 import TextInput from "../../../components/TextInput";
-import StatusService from "../../../services/StatusServices";
 import { MenuItem } from "react-native-material-menu";
 import PermissionService from "../../../services/PermissionService";
 import Permission from "../../../helper/Permission";
 import HistoryList from "../../../components/HistoryList";
-import Label from "../../../components/Label";
-import MediaCarousel from "../../../components/MediaCarousel";
 import UserSelect from "../../../components/UserSelect";
 import PurchaseProductModel from "./PurchaseProductModel";
 import Number from "../../../lib/Number";
@@ -70,7 +57,6 @@ const PurchaseForm = (props) => {
   const [selectedItem, setSelectedItem] = useState("");
   const [productDeleteModalOpen, setProductDeleteModalOpen] = useState(false);
   const [productEditModalOpen, setProductEditModalOpen] = useState(false);
-  const [modalVisible, setScanModalVisible] = useState(false);
   const [scannedCode, setScannedCode] = useState("");
   const [scannedProductList, setScannedProductList] = useState("");
   const [productExistModalOpen, setProductExistModalOpen] = useState(false);
@@ -82,13 +68,10 @@ const PurchaseForm = (props) => {
   const [mrp, setMrp] = useState("");
   const [newPurchase, setNewPurchase] = useState(param?.isNewPurchase);
   const [searchPhrase, setSearchPhrase] = useState("");
-  const [MediaData, setMediaData] = useState([]);
-  const [totalMedia, setTotalMedia] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [storeList, setStoreList] = useState([]);
   const [image, setImage] = useState(null);
   const [file, setFile] = useState(null);
-  const [statusId, setStatusId] = useState("");
   const [disableEdit, setDisableEdit] = useState(!param?.isNewPurchase && true);
   const [editPermission, setEditPermission] = useState(false);
   const [visible, setIsVisible] = useState(false);
@@ -98,9 +81,7 @@ const PurchaseForm = (props) => {
   const [dueDate, setDueDate] = useState(params?.due_date || "");
   const [owner, setSelectedOwner] = useState(params?.owner_id);
   const [invoiceAmount, setInvoiceAmount] = useState(params?.invoice_amount);
-  const [returnAmount, setReturnedAmount] = useState(
-    params?.returned_items_amount
-  );
+
   const [reviewer, setSelectedReviewer] = useState(params?.reviewer_id);
   const [purchaseHistoryViewPermission, setPurchaseHistoryViewPermission] =
     useState();
@@ -110,7 +91,6 @@ const PurchaseForm = (props) => {
   const stateRef = useRef(null);
   const purchaseRef = useRef({
     netAmount: params?.net_amount || "",
-    returnAmount: params?.returned_items_amount || "",
     invoiceAmount: params?.invoice_amount | "",
   });
 
@@ -121,9 +101,6 @@ const PurchaseForm = (props) => {
       AccountService.GetList(null, (callback) => {
         setVendorList(callback);
       });
-    if (params?.id) {
-      mount && getMediaList();
-    }
 
     getPermission();
 
@@ -136,15 +113,12 @@ const PurchaseForm = (props) => {
   useEffect(() => {
     if (isFocused) {
       getProducts();
-      getStatusId();
     }
   }, [isFocused]);
 
   const calculatedData = () => {
     let value =
-      purchaseRef &&
-      purchaseRef.current &&
-      purchaseRef.current.invoiceAmount - purchaseRef.current.returnAmount;
+      purchaseRef && purchaseRef.current && purchaseRef.current.invoiceAmount;
     setNetAmount(value);
   };
 
@@ -157,7 +131,6 @@ const PurchaseForm = (props) => {
     mrp: selectedItem?.mrp,
     vendor: param?.vendor_id ? param?.vendor_id : params?.vendor_id,
     invoice_amount: invoiceAmount,
-    returnedItemsAmount: returnAmount,
     reviewer: reviewer,
     due_date: dueDate,
     owner: owner,
@@ -171,17 +144,6 @@ const PurchaseForm = (props) => {
   } = useForm({
     defaultValues: preloadedValues,
   });
-
-  const getMediaList = async () => {
-    await mediaService.search(
-      params?.id ? params?.id : param?.id,
-      ObjectName.PURCHASE,
-      (callback) => {
-        setMediaData(callback.data.data);
-        setTotalMedia(callback.data.totalCount);
-      }
-    );
-  };
 
   useEffect(() => {
     updateDateValues();
@@ -268,14 +230,6 @@ const PurchaseForm = (props) => {
     setProductDeleteModalOpen(!productDeleteModalOpen);
   };
 
-  const getStatusId = async () => {
-    let firstStatusId = await StatusService.getFirstStatus(
-      ObjectName.PURCHASE_PRODUCT
-    );
-
-    setStatusId(firstStatusId);
-  };
-
   const addPurchaseProduct = async (values, scannedProduct, productDetails) => {
     try {
       let dataObject = {};
@@ -323,7 +277,6 @@ const PurchaseForm = (props) => {
         if (res && res.data) {
           getProducts();
 
-          setScanModalVisible(false);
           setClicked("");
           setManufactureDate("");
           productEditModalToggle();
@@ -416,63 +369,6 @@ const PurchaseForm = (props) => {
 
       setProductSelectModalOpen(true);
     }
-  };
-
-  const syncAction = async (barCode) => {
-    const updatedPriceProductList = await productService.getProductUpdatedPrice(
-      barCode
-    );
-
-    if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-      onScanAction(updatedPriceProductList[0]);
-    } else if (updatedPriceProductList && updatedPriceProductList.length > 1) {
-      //set store product list
-      setScannedProductList(updatedPriceProductList);
-
-      setProductSelectModalOpen(true);
-    } else {
-      productNotFoundToggle();
-    }
-  };
-
-  const handleScannedData = async (data) => {
-    try {
-      setScanModalVisible(false);
-
-      //get bar code
-      let barCode = data?.data;
-
-      //validate bar code exist and loading
-      if (barCode) {
-        //set scanned code
-        setScannedCode(barCode);
-
-        const updatedPriceProductList =
-          await productService.getProductUpdatedPrice(barCode);
-
-        if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-          onScanAction(updatedPriceProductList[0]);
-        } else if (
-          updatedPriceProductList &&
-          updatedPriceProductList.length > 1
-        ) {
-          //set store product list
-          setScannedProductList(updatedPriceProductList);
-
-          setProductSelectModalOpen(true);
-        } else {
-          SyncService.SyncProduct(barCode, null, (response) => {
-            syncAction(barCode);
-          });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const addNew = () => {
-    setScanModalVisible(true);
   };
 
   const onDateSelect = (value) => {
@@ -684,29 +580,6 @@ const PurchaseForm = (props) => {
     }
   };
 
-  const AddPurchase = async (values) => {
-    const createData = {
-      date: selectedDate,
-      vendor_purchase_number: values.vendor_invoice_number,
-      description: values.description,
-      location: storeId,
-      vendor_name: vendorName.label,
-      net_amount: netAmount ? netAmount : "",
-      due_date: dueDate ? dueDate : params?.due_date,
-      invoice_amount: invoiceAmount,
-      invoice_amount: invoiceAmount,
-      returnedItemsAmount: returnAmount,
-      reviewer: reviewer,
-      due_date: dueDate,
-      owner: owner,
-      vendor_invoice_date: invoiceDate,
-    };
-    await purchaseService.createPurchase(createData, (err, res) => {
-      let id = res.data.purchase.id;
-      navigation.navigate("MediaList", { id: id, object: ObjectName.PURCHASE });
-    });
-  };
-
   const updatePurchase = async (values) => {
     setIsSubmit(true);
     const updateData = {
@@ -755,9 +628,6 @@ const PurchaseForm = (props) => {
     );
   };
 
-  const toggle = () => {
-    setScanModalVisible(!modalVisible);
-  };
   const productExistModalToggle = () => {
     setProductExistModalOpen(!productExistModalOpen);
     setClicked("");
@@ -773,31 +643,14 @@ const PurchaseForm = (props) => {
     setClicked("");
   };
 
-  const onNetAmountChange = (value) => {
-    setNetAmount(value);
-    purchaseRef.current.netAmount = value;
-    calculatedData();
-  };
   const onInvoiceAmountChange = (value) => {
     setInvoiceAmount(value);
     purchaseRef.current.invoiceAmount = value;
 
     calculatedData();
   };
-  const onReturnedAmountChange = (value) => {
-    setReturnedAmount(value);
-    purchaseRef.current.returnAmount = value;
 
-    calculatedData();
-  };
 
-  const handleMrpChange = (value) => {
-    setSelectedItem((prevValues) => ({
-      ...prevValues,
-      mrp: value,
-    }));
-    setMrp(value);
-  };
 
   const content = (
     <DatePicker
@@ -807,43 +660,8 @@ const PurchaseForm = (props) => {
     />
   );
 
-  const takePicture = async (e) => {
-    const image = await Media.getImage();
-    if (image && image.assets) {
-      const response = await fetch(image.assets[0].uri);
-      const blob = await response.blob();
-      await Media.uploadImage(
-        params?.id ? params?.id : param?.id,
-        blob,
-        image.assets[0].uri,
-        ObjectName.PURCHASE,
-        null,
-        null,
-        async (response) => {
-          if (response) {
-            getMediaList();
-          }
-        }
-      );
-    }
-  };
-
-  const updateState = () => {
-    setActiveTab(TabName.SUMMARY);
-    setNewPurchase(false);
-  };
-
-  const Attachment = () => (
-    <MediaList mediaData={MediaData} getMediaList={getMediaList} />
-  );
   const Products = () => (
     <>
-      <BarcodeScanner
-        toggle={toggle}
-        modalVisible={modalVisible}
-        id={params?.id ? params?.id : param?.id}
-        handleScannedData={handleScannedData}
-      />
       <DeleteModal
         modalVisible={productDeleteModalOpen}
         toggle={productDeleteModalToggle}
@@ -873,7 +691,6 @@ const PurchaseForm = (props) => {
         modalVisible={productSelectModalOpen}
         toggle={productSelectModalToggle}
         items={scannedProductList}
-        updateAction={onScanAction}
       />
 
       {!searchPhrase &&
@@ -925,10 +742,6 @@ const PurchaseForm = (props) => {
       {
         title: `${TabName.PRODUCTS} (${totalCount || 0})`,
         tabName: TabName.PRODUCTS,
-      },
-      {
-        title: `${TabName.ATTACHMENTS}`,
-        tabName: TabName.ATTACHMENTS,
       }
     );
   }
@@ -959,11 +772,6 @@ const PurchaseForm = (props) => {
       backButtonNavigationUrl="Purchase"
       buttonLabel={
         activeTab === TabName.ATTACHMENTS && editPermission ? "Upload" : ""
-      }
-      buttonOnPress={(e) =>
-        activeTab === TabName.ATTACHMENTS
-          ? takePicture(e)
-          : newPurchase && setActiveTab(TabName.ATTACHMENTS)
       }
       buttonLabel2={activeTab === TabName.SUMMARY ? "Save" : ""}
       button2OnPress={handleSubmit((values) => {
@@ -1028,7 +836,7 @@ const PurchaseForm = (props) => {
               title="Vendor Invoice Number# "
               name="vendor_invoice_number"
               control={control}
-              showBorder={false}
+              showBorder={true}
               divider
             />
             <VerticalSpace10 paddingTop={5} />
@@ -1051,7 +859,7 @@ const PurchaseForm = (props) => {
                 setStoreId(value);
               }}
               options={storeList}
-              showBorder={false}
+              showBorder={true}
               divider
               data={params?.location ? params?.location : param?.location}
               control={control}
@@ -1063,7 +871,7 @@ const PurchaseForm = (props) => {
               title="Invoice Amount"
               name="invoice_amount"
               control={control}
-              showBorder={false}
+              showBorder={true}
               edit
               divider
               onInputChange={onInvoiceAmountChange}
@@ -1071,17 +879,6 @@ const PurchaseForm = (props) => {
             />
             <VerticalSpace10 paddingTop={5} />
 
-            <Currency
-              title="Net Amount"
-              name="net_amount"
-              control={control}
-              showBorder={false}
-              edit
-              divider
-              onInputChange={onNetAmountChange}
-              values={netAmount ? netAmount.toString() : ""}
-            />
-            <VerticalSpace10 />
             <View>
               <View>
                 <UserSelect
@@ -1120,17 +917,9 @@ const PurchaseForm = (props) => {
               divider
               style={styles.input}
             />
-            <Label text={"Attachments"} bold size={13} />
-            <MediaCarousel
-              images={MediaData}
-              showAddButton={true}
-              getMediaList={getMediaList}
-              handleAdd={() => takePicture()}
-            />
           </View>
         )}
 
-        {activeTab === TabName.ATTACHMENTS && <Attachment />}
         {activeTab === TabName.PRODUCTS && (
           <>
             <Search
@@ -1168,9 +957,7 @@ const PurchaseForm = (props) => {
                 BottonLabel1={selectedItem?.isAdding ? "Add" : "Save"}
                 updateAction={updatedQuantity}
                 control={control}
-                onMrpChange={handleMrpChange}
                 mrpField
-                mrp={mrp ? mrp : selectedItem?.mrp}
                 TextBoxQuantityField
                 setSelectedItem={setSelectedItem}
                 quantityOnChange={updatedQuantity}

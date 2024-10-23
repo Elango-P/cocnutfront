@@ -231,7 +231,7 @@ const BottomModal = (props) => {
     let unit_price = netAmount / quantityValue;
 
     // marginamount
-    let marginValue = mrpValue - unit_price;
+    let marginValue = mrpValue;
 
     // margin percentage
     let unitMarginPercentage = (marginValue / mrpValue) * 100;
@@ -253,8 +253,8 @@ const BottomModal = (props) => {
       igst_amount: Number.getEmpty(result.igstAmount),
       totalTax: Number.getEmpty(totalTax),
       net_amount:
-        dataRef && dataRef.current.net_amount
-          ? dataRef.current.net_amount
+        mrpValue && quantityValue
+          ? mrpValue * quantityValue
           : Number.GetFloat(result.taxableAmount) +
             Number.GetFloat(result.totalTaxAmount),
       unitMarginAmount: Number.getEmpty(marginValue),
@@ -265,12 +265,6 @@ const BottomModal = (props) => {
     // assign  data to state
     setPurchaseData(data);
   };
-  const actionsMenuList = [
-    {
-      value: "Sync Tax From Product",
-      label: "Sync Tax From Product",
-    },
-  ];
 
   const initialValues = {
     cgst_percentage:
@@ -375,9 +369,7 @@ const BottomModal = (props) => {
                     <View>
                       <ImageCard
                         ImageUrl={
-                          item?.image
-                            ? item?.image
-                            : item.featured_media_url
+                          item?.image ? item?.image : item.featured_media_url
                         }
                       />
                     </View>
@@ -485,17 +477,6 @@ const BottomModal = (props) => {
                 >
                   <View style={styles.infoHalf}>
                     <CurrencyInput
-                      title="MRP"
-                      name="mrp"
-                      control={control}
-                      onInputChange={handleMrpChange}
-                      values={initialValues?.mrp?.toString()}
-                      edit
-                    />
-                  </View>
-
-                  <View style={styles.infoHalf}>
-                    <CurrencyInput
                       title="Net Amount"
                       name="net_amount"
                       control={control}
@@ -515,6 +496,7 @@ const BottomModal = (props) => {
                   control={control}
                   values={initialValues?.unit_price?.toString()}
                   noEditable={true}
+                  onInputChange={handleMrpChange}
                   edit
                 />
                 <VerticalSpace10 />
@@ -746,7 +728,9 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: platform.isIOS() ? Dimensions.get("window").height * 0.94 : Dimensions.get("window").height, 
+    maxHeight: platform.isIOS()
+      ? Dimensions.get("window").height * 0.94
+      : Dimensions.get("window").height,
   },
   ProductEditDivider: {
     width: "100%",

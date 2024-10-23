@@ -4,6 +4,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import userService from "../services/UserService";
 import User from "../helper/User";
+import accountService from "../services/AccountService";
 
 
 const UserSelect = ({ selectedUserId, label, onChange, required, placeholder, divider, disable, control, name, showBorder, customOption=null }) => {
@@ -17,7 +18,7 @@ const UserSelect = ({ selectedUserId, label, onChange, required, placeholder, di
 
 
     const getUserList = () => {
-        userService.list(null, (response) => {
+        accountService.GetList(null, (response) => {
             setUserList(response);
 
         })

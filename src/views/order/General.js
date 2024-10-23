@@ -35,27 +35,25 @@ const General = (props) => {
     onPress,
   } = props;
 
-    let isDeliveryOrder = param?.type && param?.type?.allow_delivery == true ? true:false
+  let isDeliveryOrder =
+    param?.type && param?.type?.allow_delivery == true ? true : true;
 
   const allow =
-    allowEdit &&
-    (param?.allow_edit == Status.ALLOW_EDIT_ENABLED ? true : false);
+    allowEdit && (param?.allow_edit == Status.ALLOW_EDIT_ENABLED ? true : true);
 
-    const onDateSelect = async (value) => {
-    
-            setSelectedDate(new Date(value))
-         }
-    const handleShiftOnChange = (value) => {
-        setSelectedShift(value.value)
-    }
-    const handleStoreOnChange = (value) => {
+  const onDateSelect = async (value) => {
+    setSelectedDate(new Date(value));
+  };
+  const handleShiftOnChange = (value) => {
+    setSelectedShift(value.value);
+  };
+  const handleStoreOnChange = (value) => {
+    setSelectedStore(value);
+  };
 
-        setSelectedStore(value)
-    }
- 
-    const handleStatusOnChange = (value) =>{
-        setStatus(value.value)
-    }
+  const handleStatusOnChange = (value) => {
+    setStatus(value.value);
+  };
 
   const preloadedValues = {
     shift: param?.shiftId,
@@ -74,23 +72,13 @@ const General = (props) => {
         <DatePicker
           title="Date"
           onDateSelect={onDateSelect}
-          selectedDate={DateTime.getDate(selectedDate ? selectedDate : param?.orderDetail?.date)}
+          selectedDate={DateTime.getDate(
+            selectedDate ? selectedDate : param?.orderDetail?.date
+          )}
           showTime={true}
         />
         <VerticalSpace10 paddingTop={5} />
 
-        <ShiftSelect
-          label={"Shift"}
-          data={param?.shiftId}
-          disableSearch
-          name={"shift"}
-          control={control}
-          divider
-          disable={allow ? false : true}
-          showBorder={false}
-          placeholder={"Select Shift"}
-          onChange={handleShiftOnChange}
-        />
         <VerticalSpace10 paddingTop={5} />
 
         <LocationSelect
@@ -98,19 +86,19 @@ const General = (props) => {
           label={"Location"}
           name={"store"}
           placeholder={"Select Location"}
-          showBorder={false}
+          showBorder={true}
           divider
-          disable={allow ? false : true}
+          disable={allow ? false : false}
           data={Number.Get(param?.storeId)}
         />
         <VerticalSpace10 paddingTop={5} />
 
         <UserSelect
-          label="Owner"
+          label="Vendor"
           onChange={(values) => setSelectedUser(values.value)}
           divider
-          showBorder={false}
-          disable={allow ? false : true}
+          showBorder={true}
+          disable={allow ? false : false}
           control={control}
           selectedUserId={selectedUser ? Number.Get(selectedUser) : ""}
           placeholder="Select Owner"
@@ -123,12 +111,12 @@ const General = (props) => {
           control={control}
           onChange={handleStatusOnChange}
           placeholder={"Select Status"}
-          showBorder={false}
+          showBorder={true}
           object={ObjectName.ORDER_TYPE}
           divider
           data={param?.status_id ? Number.Get(param?.status_id) : ""}
           currentStatusId={param?.status_id}
-          disable={allow ? false : true}
+          disable={allow ? false : false}
         />
         <>
           <VerticalSpace10 paddingTop={5} />
@@ -136,7 +124,7 @@ const General = (props) => {
             title="Total Amount"
             name="total_amount"
             control={control}
-            showBorder={false}
+            showBorder={true}
             values={param && param.totalAmount}
             divider={true}
           />
@@ -149,21 +137,10 @@ const General = (props) => {
           options={PaymentTypeOptions}
           data={param && (param?.paymentType || param?.payment_type)}
           disable
-          showBorder={false}
+          showBorder={true}
           divider={true}
         />
       </ScrollView>
-      {isDeliveryOrder && param.group == Status.GROUP_DRAFT && (
-        <View style={{ width: "100%", borderRadius: 10 }}>
-          <Button
-            title={"COMPLETE"}
-            backgroundColor={Color.BLACK}
-            onPress={() => {
-              onPress();
-            }}
-          />
-        </View>
-      )}
     </>
   );
 };

@@ -32,6 +32,7 @@ const userIcon = require("../../assets/profile.png");
 const paymentIcon = require("../../assets/payment.png");
 const saleIcon = require("../../assets/sale.png");
 const purchaseIcon = require("../../assets/online-shop.png");
+const locationIcon = require("../../assets/location.png");
 
 const menuIcon = require("../../assets/menus.png");
 const Menu = (props) => {
@@ -247,7 +248,7 @@ const Menu = (props) => {
           setSideMenuOpen && setSideMenuOpen(false);
         }}
         name={"Location"}
-        imageSource=""
+        imageSource={locationIcon}
       />
     );
   };
@@ -402,7 +403,8 @@ const Menu = (props) => {
           {permission?.enableContact &&
             renderContactScreen &&
             renderContactScreen()}
-
+{_renderStore &&
+            _renderStore()}
           {permission?.enableProducts &&
             !devicePendingStatus &&
             _renderProducts &&
