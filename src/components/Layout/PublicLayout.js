@@ -88,7 +88,7 @@ const PublicLayout = ({
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [themeColor, setThemeColor] = useState(Color.WHITE)
+  const [themeColor, setThemeColor] = useState('#43C6AC')
 
   const [isInternetConnection, setIsInternetConnection] = useState(false)
 

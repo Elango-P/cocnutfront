@@ -69,7 +69,7 @@ const ActionBar = ({
 
   const [addVisible, setAddVisible] = useState(false);
   const [portalName, setPortalName] = useState("");
-  const [themeColor, setThemeColor] = useState(Color.WHITE);
+  const [themeColor, setThemeColor] = useState('#43C6AC');
   const [textColor, setTextColor] = useState(Color.WHITE)
   const isFocused = useIsFocused();
 
@@ -94,10 +94,10 @@ const ActionBar = ({
  
   const getThemeColor = async () => {
     try {
-          await settingService.getByName(Setting.PORTAL_HEADER_COLOR,(err,response)=>{
-            setThemeColor(response)
-            setStatusBar(response)
-          })
+          // await settingService.getByName(Setting.PORTAL_HEADER_COLOR,(err,response)=>{
+          //   setThemeColor("green")
+          //   setStatusBar(response)
+          // })
           await settingService.getByName(Setting.PORTAL_HEADER_TEXT_COLOR,(err,response)=>{
             setTextColor(response)
           })

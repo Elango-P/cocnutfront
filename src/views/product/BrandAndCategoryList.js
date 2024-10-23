@@ -54,6 +54,7 @@ const BrandAndCategoryList = (props) => {
       <Layout
         title={"Products"}
         refreshing={refreshing}
+        backButtonNavigationUrl= "Dashboard"
         showBackIcon={true}
         showFilter={activeTab === TabName.PRODUCTS ? true : false}
         addButton={activeTab === TabName.PRODUCTS && addPermission ?  true : false}

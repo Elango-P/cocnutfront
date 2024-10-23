@@ -126,7 +126,7 @@ const Layout = ({
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [themeColor, setThemeColor] = useState(Color.WHITE)
+  const [themeColor, setThemeColor] = useState('#43C6AC')
 
   const { BackgroundFetch } = NativeModules;
   const [isInternetConnection, setIsInternetConnection] = useState(false)

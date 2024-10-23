@@ -25,9 +25,9 @@ import User from "../../helper/User";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
+import { LinearGradient } from "expo-linear-gradient";
 const Dashboard = (props) => {
-  const param = props.route.params;
+  const param = props.route.params
 
   const [refreshing, setRefreshing] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -180,59 +180,67 @@ const Dashboard = (props) => {
       backButtonNavigationOnPress={() => props && handleBackPress()}
       showLogo
     >
-      <ImageBackground
-        source={require("../../assets/cc8.jpg")} // Add a background image
-        style={styles.backgroundImage}
-      >
-        <View style={styles.container}>
-          <View style={styles.featuresContainer}>
-            {Object.keys(featureNavigationMap).map((feature, index) => (
-              <TouchableOpacity
-                key={index}
+      <View style={styles.container}>
+        <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
+        <View style={styles.featuresContainer}>
+          {Object.keys(featureNavigationMap).map((feature, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.touchableOpacityWrapper}
+              onPress={() => navigation.navigate(featureNavigationMap[feature])}
+            >
+              <LinearGradient
+                colors={getGradientColors(index)} // Function to get different gradients
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.featureButton}
-                onPress={() =>
-                  navigation.navigate(featureNavigationMap[feature])
-                }
               >
                 <Text style={styles.featureButtonText}>{feature}</Text>
                 <Ionicons
                   name="arrow-forward"
-                  size={20}
+                  size={24}
                   color="white"
                   style={styles.icon}
                 />
-              </TouchableOpacity>
-            ))}
-          </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          ))}
         </View>
-      </ImageBackground>
+      </View>
     </Layout>
   );
 };
+const getGradientColors = (index) => {
+  const gradients = [
+    ["#6A82FB", "#FC5C7D"], // Blue to pink gradient
+    ["#F09819", "#EDDE5D"], // Orange to yellow gradient
+    ["#56CCF2", "#2F80ED"], // Light blue to blue gradient
+    ["#9B51E0", "#6A67CE"], // Purple gradient
+    ["#43C6AC", "#191654"], // Green to dark blue gradient
+    ["#FF6F61", "#D7263D"], // Red gradient
+  ];
+  return gradients[index % gradients.length]; // Cycle through gradients
+};
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-    // Add a gradient background if desired
-  },
   container: {
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#43C6AC", // Light background for better contrast
   },
   welcomeText: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "black", // Green color
-    marginBottom: 20,
+    fontSize: 30, // Slightly larger font size
+    fontWeight: "bold",
+    color: Color.WHITE, // Darker color for better readability
+    marginBottom: 25,
     textAlign: "center",
   },
   featuresContainer: {
-    marginTop: 0,
-    width: "90%",
+    marginTop: 10,
+    width: "80%",
   },
   featuresTitle: {
-    fontSize: 20,
+    fontSize: 24, // Larger title font size
     fontWeight: "bold",
     color: "#333",
     marginBottom: 15,
@@ -242,30 +250,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 10,
-    borderRadius: 20,
+    padding: 10, // Increased padding for better touch area
+    borderRadius: 20, // More rounded corners
     backgroundColor: Color.INDIGO,
-    marginBottom: 15,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   featureButtonText: {
-    fontSize: 18,
+    fontSize: 20, // Slightly larger text
     color: "white",
-    marginLeft: 10,
     fontWeight: "600",
   },
   icon: {
-    marginRight: 10,
+    marginLeft: 10,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark background for modal
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     width: "80%",
@@ -275,7 +282,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22, // Larger modal title
     fontWeight: "bold",
     marginBottom: 15,
   },
