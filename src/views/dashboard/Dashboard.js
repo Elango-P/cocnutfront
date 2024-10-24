@@ -229,7 +229,7 @@ const Dashboard = (props) => {
               layout={"default"} // Choose 'default', 'stack', or 'tinder' for different effects
               loop={true} // Enable looping
               autoplay={true} // Autoplay the carousel
-              autoplayInterval={3000} // Set autoplay interval
+              autoplayInterval={4000} // Set autoplay interval
             />
           )}
           <View style={styles.featuresContainer}>
@@ -265,7 +265,7 @@ const getGradientColors = (index) => {
     ["#F09819", "#EDDE5D"], // Orange to yellow gradient
     ["#56CCF2", "#2F80ED"], // Light blue to blue gradient
     ["#9B51E0", "#6A67CE"], // Purple gradient
-    ["#43C6AC", "#191654"], // Green to dark blue gradient
+    ["#191654", "#43C6AC"], // Green to dark blue gradient
     ["#FF6F61", "#D7263D"], // Red gradient
   ];
   return gradients[index % gradients.length]; // Cycle through gradients
