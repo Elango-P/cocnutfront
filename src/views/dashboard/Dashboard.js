@@ -1,13 +1,7 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  AppState,
-  BackHandler,
-  ImageBackground,
-  Text,
-  View,
-} from "react-native";
+import { AppState, BackHandler, ScrollView, Text, View } from "react-native";
 import Layout from "../../components/Layout";
 import MultiAlert from "../../components/Modal/MultiAlert";
 import AsyncStorageConstants from "../../helper/AsyncStorage";
@@ -26,8 +20,12 @@ import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import productService from "../../services/ProductService";
+import Refresh from "../../components/Refresh";
+import Loader from "../../components/Loader";
+
 const Dashboard = (props) => {
-  const param = props.route.params
+  const param = props.route.params;
 
   const [refreshing, setRefreshing] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -35,7 +33,8 @@ const Dashboard = (props) => {
   const navigation = useNavigation();
   const [appId, setAppId] = useState("");
   const [userDetail, setUserDetail] = useState("");
-
+  const [productLists, setProductList] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getAsyncStorageItem();
     getUserDetail();
@@ -55,7 +54,21 @@ const Dashboard = (props) => {
       );
     };
     SystemSettings();
+    getProductsList();
   }, [focused, refreshing]);
+  const getProductsList = async (values) => {
+    try {
+      setLoading(true);
+      productService.search(null, null, (error, response) => {
+        let products = response;
+
+        setProductList(products);
+        setLoading(false);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     getUserDetail();
@@ -180,33 +193,70 @@ const Dashboard = (props) => {
       backButtonNavigationOnPress={() => props && handleBackPress()}
       showLogo
     >
-      <View style={styles.container}>
-        <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
-        <View style={styles.featuresContainer}>
-          {Object.keys(featureNavigationMap).map((feature, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.touchableOpacityWrapper}
-              onPress={() => navigation.navigate(featureNavigationMap[feature])}
-            >
-              <LinearGradient
-                colors={getGradientColors(index)} // Function to get different gradients
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.featureButton}
-              >
-                <Text style={styles.featureButtonText}>{feature}</Text>
-                <Ionicons
-                  name="arrow-forward"
-                  size={24}
-                  color="white"
-                  style={styles.icon}
-                />
-              </LinearGradient>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+      <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
+
+            <View style={styles.singleProductCard}>
+              <View style={styles.stockTitleContainer}>
+                <Text style={styles.stockTitle}>Stock</Text>
+              </View>
+              <View style={{ backgroundColor: "green", height: 1, marginBottom:10}} />
+              {loading ? (
+                <Loader />
+              ) : (
+                productLists &&
+                productLists.length > 0 && (
+                  <>
+                    {productLists.map((product, index) => (
+                      <View key={index} style={styles.productDetails}>
+                        <Text style={styles.productName}>{product.product_display_name}</Text>
+                        <View style={styles.quantityContainer}>
+                          <Text style={styles.productMinQty}>Quantity:</Text>
+                          <Text style={styles.quantityText}>
+                            {product.min_quantity || 0}
+                          </Text>
+                          <Text style={styles.productUnit}>
+                            {product.unit || ""}
+                          </Text>
+                        </View>
+                        <View style={styles.divider} />
+                      </View>
+                    ))}
+                  </>
+                )
+              )}
+            </View>
+            <View style={styles.featuresContainer}>
+              {Object.keys(featureNavigationMap).map((feature, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.touchableOpacityWrapper}
+                  onPress={() =>
+                    navigation.navigate(featureNavigationMap[feature])
+                  }
+                >
+                  <LinearGradient
+                    colors={getGradientColors(index)} // Function to get different gradients
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.featureButton}
+                  >
+                    <Text style={styles.featureButtonText}>{feature}</Text>
+                    <Ionicons
+                      name="arrow-forward"
+                      size={24}
+                      color="white"
+                      style={styles.icon}
+                    />
+                  </LinearGradient>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      </Refresh>
     </Layout>
   );
 };
@@ -228,6 +278,83 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#43C6AC", // Light background for better contrast
   },
+  quantityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  stockTitleContainer: {
+    justifyContent: "center", // centers vertically
+    alignItems: "center", // centers horizontally
+    marginBottom: 10, // space below the title
+  },
+  stockTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  divider: {
+    backgroundColor: "gray",
+    height: 1,
+    top: 3,
+  },
+  productUnit: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: "#666",
+  },
+  roundQuantity: {
+    width: 80, // Adjust size for the circle
+    height: 40,
+    borderRadius: 20, // To make it perfectly round
+    backgroundColor: "#FF6347", // Tomato color or any other you prefer
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productListContainer: {
+    marginBottom: 20,
+  },
+  singleProductCard: {
+    padding: 15,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    marginBottom: 20,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  productDetails: {
+    marginBottom: 10, // Adds space between each product
+  },
+  productCard: {
+    padding: 15,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  productMinQty: {
+    fontSize: 16,
+    color: "green",
+  },
+  quantityText: {
+    backgroundColor: "#FF6347", // Example color (tomato)
+    color: "white",
+    paddingHorizontal: 5,
+    borderRadius: 30,
+  },
   welcomeText: {
     fontSize: 30, // Slightly larger font size
     fontWeight: "bold",
@@ -237,7 +364,7 @@ const styles = StyleSheet.create({
   },
   featuresContainer: {
     marginTop: 10,
-    width: "80%",
+    width: "100%",
   },
   featuresTitle: {
     fontSize: 24, // Larger title font size
@@ -275,7 +402,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
+    width: "100%",
     padding: 20,
     backgroundColor: "#fff",
     borderRadius: 10,

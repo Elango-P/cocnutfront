@@ -178,14 +178,10 @@ const Billing = (props) => {
   const [images, setImages] = useState([]);
   const [manualPrice, setManualPrice] = useState(true);
   const [enableManualPrice, setEnableManualPrice] = useState(false);
-  const [moreToggle, setMoreToggle] = useState(true);
   const [reason, setReason] = useState("");
   const [orderHistoryViewPermission, setOrderHistoryViewPermission] =
     useState("");
   const [accountId, setAccountId] = useState("");
-  const [qrCodeScanModalVisible, setQrCodeScanModalVisible] = useState(false);
-  const [customerMobileNumber, setCustomerMobileNumber] = useState();
-  const [customModalVisible, setCustomModalVisible] = useState(false);
   const [enableButton, setEnableButton] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [deliveryStatus, setDeliveryStatus] = useState([]);
@@ -358,7 +354,7 @@ const Billing = (props) => {
     setUpiAmount("");
     setTotalAmount("");
     {
-     navigation.navigate("Order");
+      navigation.navigate("Order");
     }
   };
 
@@ -396,7 +392,6 @@ const Billing = (props) => {
 
   const handleSearchOnChange = async (e) => {
     const products = await productService.SearchFromLocalDB(e);
-    console.debug("products--------------->>>", products)
     setStoreProductList(products);
   };
 
@@ -728,56 +723,6 @@ const Billing = (props) => {
     }
   };
 
-  const getProducts = async (barCode) => {
-    const updatedPriceProductList = await ProductService.getProductUpdatedPrice(
-      barCode
-    );
-
-    if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-      validateProductInOrderProduct(updatedPriceProductList[0]);
-    } else if (updatedPriceProductList && updatedPriceProductList.length > 1) {
-      //set store product list
-      setScannedProductList(updatedPriceProductList);
-
-      setProductSelectModalOpen(true);
-    } else {
-      productNotFoundToggle();
-    }
-  };
-
-  const handleContinue = async () => {
-    try {
-      const createDate = {
-        acount_name: customerMobileNumber,
-        status: Status.ACTIVE,
-        type: Account.TYPE_CUSTOMER,
-        mobile: customerMobileNumber,
-        isCreateNewAccount: true,
-      };
-      await orderService.createOrder(createDate, async (err, response) => {
-        if (response && response?.data && response?.data) {
-          setAccountId(response?.data && response?.data?.account_id);
-          setOrderId(response?.data?.orderId);
-          setOrderNumber(response?.data?.orderDetail?.order_number);
-          setCustomModalVisible(false);
-          setQrCodeScanModalVisible(false);
-          setCustomerMobileNumber("");
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  const handleAlertClose = async () => {
-    try {
-      setCustomModalVisible(false);
-      setQrCodeScanModalVisible(false);
-      setCustomerMobileNumber("");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
@@ -894,35 +839,16 @@ const Billing = (props) => {
       data.upi = totalAmount;
     }
 
-    if (selectedPayment === PaymentType.UPI_VALUE) {
-      if (images && images.length > 0) {
-        setEnableButton(true);
+    setEnableButton(true);
+    setIsSubmit(false);
+    OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
+      if (res) {
         setIsSubmit(false);
-        uploadImages();
-        OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
-          if (err) {
-            setIsSubmit(false);
-          }
-          setEnableButton(false);
-        });
+        clearStackNavigate();
       } else {
-        setIsSubmit(false);
-
-        return alert("UPI Payment Attachment is Missing");
+        setEnableButton(false);
       }
-    }
-    if (selectedPayment === PaymentType.CASH_VALUE) {
-      setEnableButton(true);
-      setIsSubmit(false);
-      OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
-        if (res) {
-          setIsSubmit(false);
-          clearStackNavigate();
-        } else {
-          setEnableButton(false);
-        }
-      });
-    }
+    });
 
     if (selectedPayment === PaymentType.MIXED_VALUE) {
       if (value?.cash == 0 || value?.upi == 0) {
@@ -937,16 +863,11 @@ const Billing = (props) => {
       (data.cash = value?.cash), (data.upi = value?.upi);
       setEnableButton(true);
 
-      if (images && images.length > 0) {
-        uploadImages();
-        OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
-          if (err) {
-            setEnableButton(false);
-          }
-        });
-      } else {
-        return alert("UPI Payment Attachment is Missing");
-      }
+      OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
+        if (err) {
+          setEnableButton(false);
+        }
+      });
     }
   };
 
@@ -1028,141 +949,38 @@ const Billing = (props) => {
     setAllowCancel(item.allowCancel);
     return (
       <View style={{ flex: 1, alignItems: "flex-end" }}>
-        <>
-          {item?.status != Order.STATUS_CANCEL &&
-            orderProductCancelPermission &&
-            item.allowCancel && (
-              <TouchableOpacity
-                style={
-                  (params?.group == Status.GROUP_DRAFT || params?.isNewOrder) &&
-                  allowCancel
-                    ? styles.productDelete
-                    : item.allowEdit === Status.ALLOW_EDIT_ENABLED
-                    ? styles.productDelete
-                    : styles.actionDeleteButton
-                }
-                onPress={() => {
-                  productDeleteModalToggle();
-                  setSelectedItem(data?.item);
-                  stateRef.selectedItem = data?.item;
-                  stateRef.selecredRowMap = rowMap;
-                  closeRow(rowMap, data?.item.orderProductId);
+        {
+          <>
+            {(item.allowEdit || !params?.isNewOrder) && (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                <Text style={styles.btnText}>Cancel</Text>
-              </TouchableOpacity>
-            )}
-        </>
-        <>
-          {(item.allowEdit === Status.ALLOW_EDIT_ENABLED ||
-            enableManualPrice) &&
-          allowCancel ? (
-            <View
-              style={{
-                alignItems: "center",
-                bottom: 10,
-                justifyContent: "center",
-                position: "absolute",
-                top: 10,
-                width: 70,
-                backgroundColor: Color.SECONDARY,
-              }}
-            >
-              <DropDownMenu
-                label="More"
-                color={Color.WHITE}
-                icon="ellipsis-horizontal"
-                onPress={() => {
-                  setMoreToggle(true);
-                }}
-                menuStyle={{ position: "absolute" }}
-                MenuItems={[
-                  <>
-                    {item.allowEdit === Status.ALLOW_EDIT_ENABLED &&
-                      moreToggle && (
-                        <MenuItem
-                          onPress={() => {
-                            productModalToggle();
-                            setMoreToggle(true);
-                            setSelectedItem(data?.item);
-                            stateRef.selectedItem = data?.item;
-                            stateRef.selecredRowMap = rowMap;
-                            closeRow(rowMap, data?.item.orderProductId);
-                          }}
-                        >
-                          <Text>Edit</Text>
-                        </MenuItem>
-                      )}
-                    {enableManualPrice && moreToggle && (
-                      <MenuItem
-                        onPress={() => {
-                          priceModalToggle();
-                          setSelectedItem(data?.item);
-                          stateRef.selectedItem = data?.item;
-                          stateRef.selecredRowMap = rowMap;
-                          closeRow(rowMap, data?.item.orderProductId);
-                          setMoreToggle(true);
-                        }}
-                      >
-                        <Text>Update Price</Text>
-                      </MenuItem>
-                    )}
-                  </>,
-                ]}
-              />
-            </View>
-          ) : (
-            <>
-              {(params?.group == Status.GROUP_DRAFT || params?.isNewOrder) && (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                <TouchableOpacity
+                  style={[
+                    styles.orderProductEdit,
+                    {
+                      marginRight: enableManualPrice ? 2 : "",
+                      width: !enableManualPrice ? "35%" : "",
+                    },
+                  ]}
+                  onPress={() => {
+                    productModalToggle();
+                    setSelectedItem(data?.item);
+                    stateRef.selectedItem = data?.item;
+                    stateRef.selecredRowMap = rowMap;
+                    closeRow(rowMap, data?.item.orderProductId);
                   }}
                 >
-                  {item.allowEdit === Status.ALLOW_EDIT_ENABLED && (
-                    <TouchableOpacity
-                      style={[
-                        styles.orderProductEdit,
-                        {
-                          marginRight: enableManualPrice ? 2 : "",
-                          width: !enableManualPrice ? "35%" : "",
-                        },
-                      ]}
-                      onPress={() => {
-                        productModalToggle();
-                        setSelectedItem(data?.item);
-                        stateRef.selectedItem = data?.item;
-                        stateRef.selecredRowMap = rowMap;
-                        closeRow(rowMap, data?.item.orderProductId);
-                      }}
-                    >
-                      <Text style={styles.btnText}>Edit</Text>
-                    </TouchableOpacity>
-                  )}
-                  {enableManualPrice && (
-                    <TouchableOpacity
-                      style={[
-                        styles.orderProductEdit,
-                        { width: !allowProductEdit ? "35%" : "" },
-                      ]}
-                      onPress={() => {
-                        priceModalToggle();
-                        setSelectedItem(data?.item);
-                        stateRef.selectedItem = data?.item;
-                        stateRef.selecredRowMap = rowMap;
-                        closeRow(rowMap, data?.item.orderProductId);
-                      }}
-                    >
-                      <Text style={{ color: "white" }}>Update Price</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              )}
-            </>
-          )}
-        </>
+                  <Text style={styles.btnText}>Edit</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </>
+        }
       </View>
     );
   };
@@ -1233,17 +1051,6 @@ const Billing = (props) => {
     OrderService.updateOrder(orderId ? orderId : id, data, () => {});
   };
 
-  const updateDeliveryStatus = async (status) => {
-    let data = {
-      status: status,
-    };
-    OrderService.updateStatus(orderId ? orderId : id, data, (err, response) => {
-      if (response) {
-        clearStackNavigate();
-      }
-    });
-  };
-
   const createRefundRequest = async (id) => {
     setVisible(false);
     navigation.navigate("Invoice/invoiceProductList", {
@@ -1260,8 +1067,6 @@ const Billing = (props) => {
     const cancelPermission = await PermissionService.hasPermission(
       Permission.ORDER_CANCEL
     );
-
-   
 
     if (
       cancelPermission &&
@@ -1430,16 +1235,7 @@ const Billing = (props) => {
     },
   ];
 
-    title.push({
-      title: TabName.CUSTOMER,
-      tabName: TabName.CUSTOMER,
-    });
-  if (params?.paymentType !== PaymentType.CASH_VALUE) {
-    title.push({
-      title: TabName.ATTACHMENTS,
-      tabName: TabName.ATTACHMENTS,
-    });
-  }
+  
   if (orderHistoryViewPermission && !params?.isNewOrder) {
     title.push({
       title: TabName.HISTORY,
@@ -1459,8 +1255,7 @@ const Billing = (props) => {
         showActionMenu={true}
         isSubmit={isSubmit}
         buttonLabel={
-          activeTab === TabName.SUMMARY 
-          
+          activeTab === TabName.SUMMARY
             ? "Save"
             : activeTab === TabName.ATTACHMENTS && allowEdit
             ? "Upload"
@@ -1485,7 +1280,7 @@ const Billing = (props) => {
             ? true
             : false
         }
-        backButtonNavigationUrl= "Order"
+        backButtonNavigationUrl="Order"
         HideSideMenu={
           params?.group == Status.GROUP_DRAFT || params?.isNewOrder
             ? true
@@ -1525,26 +1320,16 @@ const Billing = (props) => {
           />
         )}
 
-        
-          <View style={styles.tabBar}>
-            <>
-              <Tab
-                title={title}
-                setActiveTab={setActiveTab}
-                defaultTab={activeTab}
-              />
-            </>
-          </View>
-        {activeTab === TabName.CUSTOMER && (
+        <View style={styles.tabBar}>
+          <>
+            <Tab
+              title={title}
+              setActiveTab={setActiveTab}
+              defaultTab={activeTab}
+            />
+          </>
+        </View>
 
-          <CustomerInfo
-            accountList={accountList}
-            param={items ? items : params}
-          />
-        )}
-        {activeTab === TabName.ATTACHMENTS && (
-          <MediaList mediaData={MediaData} getMediaList={getMediaList} />
-        )}
         {activeTab === TabName.SUMMARY && (
           <General
             permission={permission}
@@ -1561,6 +1346,7 @@ const Billing = (props) => {
             onPress={() => setProductCompleteModalOpen(true)}
           />
         )}
+        
         {productCompleteModalOpen && (
           <ProductModal
             modalVisible={productCompleteModalOpen}
@@ -1624,7 +1410,7 @@ const Billing = (props) => {
 
         {activeTab === TabName.PRODUCTS && (
           <View style={{ flex: 1 }}>
-            { (
+            {
               <View style={{ width: searchPhrase ? "100%" : "85%" }}>
                 <SearchBar
                   searchPhrase={searchPhrase}
@@ -1635,11 +1421,9 @@ const Billing = (props) => {
                   noScanner
                 />
               </View>
-            )}
-           
+            }
 
-            {
-              searchPhrase &&
+            {searchPhrase &&
               storeProductList &&
               storeProductsList.length > 0 && (
                 <View>
