@@ -1,7 +1,14 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { AppState, BackHandler, ScrollView, Text, View } from "react-native";
+import {
+  AppState,
+  BackHandler,
+  Dimensions,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Layout from "../../components/Layout";
 import MultiAlert from "../../components/Modal/MultiAlert";
 import AsyncStorageConstants from "../../helper/AsyncStorage";
@@ -23,7 +30,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import productService from "../../services/ProductService";
 import Refresh from "../../components/Refresh";
 import Loader from "../../components/Loader";
+import Carousel from "react-native-snap-carousel";
 
+const { width: viewportWidth } = Dimensions.get("window");
 const Dashboard = (props) => {
   const param = props.route.params;
 
@@ -173,11 +182,22 @@ const Dashboard = (props) => {
   const featureNavigationMap = {
     Vendors: "Accounts", // Replace with your actual screen name
     Purchase: "Purchase", // Replace with your actual screen name
+    Sales: "Order", // Replace with your actual screen name
     Payments: "Payments", // Replace with your actual screen name
     Product: "Products", // Replace with your actual screen name
-    Sales: "Order", // Replace with your actual screen name
     User: "Users", // Replace with your actual screen name
   };
+
+  const renderProductCard = ({ item }) => (
+    <View style={styles.productCard}>
+      <Text style={styles.productName}>{item.name}</Text>
+      <View style={styles.quantityContainer}>
+        <Text style={styles.productMinQty}>Quantity:</Text>
+        <Text style={styles.quantityText}>{item.min_quantity || 0}</Text>
+        <Text style={styles.productUnit}>{item.unit || ""}</Text>
+      </View>
+    </View>
+  );
   return (
     <Layout
       showPortalName
@@ -193,70 +213,49 @@ const Dashboard = (props) => {
       backButtonNavigationOnPress={() => props && handleBackPress()}
       showLogo
     >
-      <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.container}>
-            <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
+      <View style={styles.container}>
+        <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
+          <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
 
-            <View style={styles.singleProductCard}>
-              <View style={styles.stockTitleContainer}>
-                <Text style={styles.stockTitle}>Stock</Text>
-              </View>
-              <View style={{ backgroundColor: "green", height: 1, marginBottom:10}} />
-              {loading ? (
-                <Loader />
-              ) : (
-                productLists &&
-                productLists.length > 0 && (
-                  <>
-                    {productLists.map((product, index) => (
-                      <View key={index} style={styles.productDetails}>
-                        <Text style={styles.productName}>{product.product_display_name}</Text>
-                        <View style={styles.quantityContainer}>
-                          <Text style={styles.productMinQty}>Quantity:</Text>
-                          <Text style={styles.quantityText}>
-                            {product.min_quantity || 0}
-                          </Text>
-                          <Text style={styles.productUnit}>
-                            {product.unit || ""}
-                          </Text>
-                        </View>
-                        <View style={styles.divider} />
-                      </View>
-                    ))}
-                  </>
-                )
-              )}
-            </View>
-            <View style={styles.featuresContainer}>
-              {Object.keys(featureNavigationMap).map((feature, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.touchableOpacityWrapper}
-                  onPress={() =>
-                    navigation.navigate(featureNavigationMap[feature])
-                  }
+          <View style={{ backgroundColor: "green", height: 1 }} />
+          {loading ? (
+            <Loader />
+          ) : (
+            <Carousel
+              data={productLists}
+              renderItem={renderProductCard}
+              sliderWidth={viewportWidth}
+              itemWidth={viewportWidth * 0.9} // Each card takes 75% of the screen width
+              layout={"default"} // Choose 'default', 'stack', or 'tinder' for different effects
+              loop={true} // Enable looping
+              autoplay={true} // Autoplay the carousel
+              autoplayInterval={3000} // Set autoplay interval
+            />
+          )}
+          <View style={styles.featuresContainer}>
+            {Object.keys(featureNavigationMap).map((feature, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.touchableOpacityWrapper}
+                onPress={() =>
+                  navigation.navigate(featureNavigationMap[feature])
+                }
+              >
+                <LinearGradient
+                  colors={getGradientColors(index)} // Function to get different gradients
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.featureButton}
                 >
-                  <LinearGradient
-                    colors={getGradientColors(index)} // Function to get different gradients
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.featureButton}
-                  >
+                  <View style={styles.featureButtonTextWrapper}>
                     <Text style={styles.featureButtonText}>{feature}</Text>
-                    <Ionicons
-                      name="arrow-forward"
-                      size={24}
-                      color="white"
-                      style={styles.icon}
-                    />
-                  </LinearGradient>
-                </TouchableOpacity>
-              ))}
-            </View>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
           </View>
-        </ScrollView>
-      </Refresh>
+        </Refresh>
+      </View>
     </Layout>
   );
 };
@@ -275,8 +274,12 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
     backgroundColor: "#43C6AC", // Light background for better contrast
+  },
+  touchableOpacityWrapper: {
+    width: "50%", // Two buttons per row (slightly less than 50% for spacing)
+    marginBottom: 10,
+    padding: "2%", // Add space between rows
   },
   quantityContainer: {
     flexDirection: "row",
@@ -286,7 +289,11 @@ const styles = StyleSheet.create({
   stockTitleContainer: {
     justifyContent: "center", // centers vertically
     alignItems: "center", // centers horizontally
-    marginBottom: 10, // space below the title
+  },
+  featureButtonTextWrapper: {
+    justifyContent: "center", // Center text within the button
+    alignItems: "center",
+    flexDirection: "row", // Ensures text stays centered
   },
   stockTitle: {
     fontSize: 18,
@@ -314,36 +321,27 @@ const styles = StyleSheet.create({
   productListContainer: {
     marginBottom: 20,
   },
-  singleProductCard: {
-    padding: 15,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    marginBottom: 20,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
   productDetails: {
     marginBottom: 10, // Adds space between each product
   },
   productCard: {
-    padding: 15,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    marginBottom: 10,
+    padding: 20,
+    backgroundColor: "#ffffff", // Clean white background
+    borderRadius: 15, // More rounded corners for a modern look
+    marginTop: 15,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5, // Softer shadow for a sleek look
     shadowRadius: 5,
-    elevation: 2,
+    elevation: 4, // Elevation for Android shadow
+    borderWidth: 1,
+    borderColor: "#e0e0e0", // Subtle border to define the card
   },
   productName: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 10,
+    color: "#333", // Darker color for product name contrast
   },
   productMinQty: {
     fontSize: 16,
@@ -363,8 +361,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   featuresContainer: {
-    marginTop: 10,
-    width: "100%",
+    flexDirection: "row", // Arrange buttons in a row
+    flexWrap: "wrap", // Allow wrapping of buttons to the next row
+    justifyContent: "space-between", // Space between buttons
+    padding: 10,
   },
   featuresTitle: {
     fontSize: 24, // Larger title font size
@@ -374,9 +374,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   featureButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    borderRadius: 10,
     padding: 10, // Increased padding for better touch area
     borderRadius: 20, // More rounded corners
     backgroundColor: Color.INDIGO,
@@ -386,6 +384,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 5,
+    justifyContent: "center", // Center vertically
+    alignItems: "center",
   },
   featureButtonText: {
     fontSize: 20, // Slightly larger text

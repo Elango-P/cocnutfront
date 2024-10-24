@@ -772,17 +772,18 @@ viewInvoiceButton: {
     height: 30,
   },
   iconName: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: Color.ICONS_GREY
+    color: Color.WHITE,
+    backgroundColor:"#43C6AC"
   },
   margin: {
     marginRight: 20,
   },
   marginAlign: {
     alignItems: "center",
-    backgroundColor: Color.TOOL_BAR_BACKGROUND
+    backgroundColor: "#43C6AC"
 
   },
   bottomToolBar: {

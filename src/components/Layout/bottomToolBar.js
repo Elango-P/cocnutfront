@@ -17,13 +17,10 @@ import settingService from "../../services/SettingService";
 import Setting from "../../lib/Setting";
 import { Platform } from "react-native";
 const BottomToolBar = (props) => {
-const homeIcon = require('../../assets/home.png');
-const ledgerIcon = require('../../assets/ledgers.png');
-const productIcon = require('../../assets/box.png');
-const menuIcon = require('../../assets/menus.png');
-
-
-
+  const homeIcon = require("../../assets/home.png");
+  const ledgerIcon = require("../../assets/ledgers.png");
+  const productIcon = require("../../assets/box.png");
+  const menuIcon = require("../../assets/menus.png");
 
   let { updateMenuState, setSideMenuOpen, menuOpen } = props;
   const navigation = useNavigation();
@@ -213,35 +210,30 @@ const menuIcon = require('../../assets/menus.png');
   const renderToolBarItems = () => {
     const toolBarItems = [
       {
-        icon: {homeIcon},
+        icon: { homeIcon },
         label: "Home",
         onPress: handleHomePress,
         selected: menuItemValue === IconValue.DASHBOARD,
-        margin: 0,
       },
       {
-        icon: {ledgerIcon},
+        icon: { ledgerIcon },
         label: "Ledger",
         onPress: handleLedgerPress,
         selected: menuItemValue === IconValue.DASHBOARD,
-        margin: 0,
       },
 
       {
-        icon: {productIcon},
+        icon: { productIcon },
         label: "Products",
         onPress: handleProductPress,
         selected: menuItemValue === IconValue.PRODUCT,
-        margin: 0,
       },
-      
 
       {
-        icon: {menuIcon},
+        icon: { menuIcon },
         label: "Menu",
         onPress: handleMenuPress,
         selected: menuItemValue === IconValue.MENU,
-        margin: 0,
       },
     ];
 
@@ -279,18 +271,18 @@ const menuIcon = require('../../assets/menus.png');
             selected={menuItemValue === IconValue.DASHBOARD}
             // toolBarIconColor={bottomToolBarIconColor}
           />
-           <ToolBarItem
-            icon= {ledgerIcon}
-            label= "Ledger"
-            onPress= {handleLedgerPress}
-            selected= {menuItemValue === IconValue.DASHBOARD}
+          <ToolBarItem
+            icon={ledgerIcon}
+            label="Ledger"
+            onPress={handleLedgerPress}
+            selected={menuItemValue === IconValue.DASHBOARD}
             // toolBarIconColor={bottomToolBarIconColor}
           />
-           <ToolBarItem
-            icon= {productIcon}
-            label= "Products"
-            onPress= {handleProductPress}
-            selected= {menuItemValue === IconValue.PRODUCT}
+          <ToolBarItem
+            icon={productIcon}
+            label="Products"
+            onPress={handleProductPress}
+            selected={menuItemValue === IconValue.PRODUCT}
             // toolBarIconColor={bottomToolBarIconColor}
           />
           <ToolBarItem
@@ -362,6 +354,8 @@ const style = StyleSheet.create({
     elevation: 2,
     paddingTop: Platform.OS === "ios" ? "1%" : 0,
     paddingHorizontal: Platform.OS === "ios" ? 15 : 10,
+    paddingHorizontal:0
+
   },
   centeredIcon: {
     flexDirection: "row",
@@ -369,5 +363,7 @@ const style = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingBottom: Platform.OS === "ios" ? "7%" : 10,
+    backgroundColor: "#43C6AC",
+    padding:5
   },
 });
