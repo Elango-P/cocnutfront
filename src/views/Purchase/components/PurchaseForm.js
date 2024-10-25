@@ -356,19 +356,8 @@ const PurchaseForm = (props) => {
   };
 
   const productOnClick = async (selectedProduct) => {
-    const updatedPriceProductList = await productService.getProductUpdatedPrice(
-      null,
-      selectedProduct.product_id
-    );
-
-    if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-      onScanAction(updatedPriceProductList[0]);
-    } else if (updatedPriceProductList && updatedPriceProductList.length > 1) {
-      //set store product list
-      setScannedProductList(updatedPriceProductList);
-
-      setProductSelectModalOpen(true);
-    }
+    setScannedProductList(selectedProduct);
+    onScanAction(selectedProduct);
   };
 
   const onDateSelect = (value) => {
@@ -650,16 +639,6 @@ const PurchaseForm = (props) => {
     calculatedData();
   };
 
-
-
-  const content = (
-    <DatePicker
-      title={"Manufacturing Date"}
-      onDateSelect={onManufactureDateSelect}
-      selectedDate={manufactureDate}
-    />
-  );
-
   const Products = () => (
     <>
       <DeleteModal
@@ -909,14 +888,6 @@ const PurchaseForm = (props) => {
               style={styles.input}
               divider
             />
-            <TextArea
-              name="description"
-              title="Description"
-              control={control}
-              showBorder={false}
-              divider
-              style={styles.input}
-            />
           </View>
         )}
 
@@ -952,7 +923,6 @@ const PurchaseForm = (props) => {
                   reset();
                 }}
                 item={selectedItem}
-                content={content}
                 title={selectedItem?.isAdding ? "Add Product" : "Edit Product"}
                 BottonLabel1={selectedItem?.isAdding ? "Add" : "Save"}
                 updateAction={updatedQuantity}

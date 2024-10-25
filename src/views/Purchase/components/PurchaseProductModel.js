@@ -9,14 +9,11 @@ import VerticalSpace10 from "../../../components/VerticleSpace10";
 import SaveButton from "../../../components/SaveButton";
 import ImageCard from "../../../components/ImageCard";
 import Currency from "../../../lib/Currency";
-import DatePicker from "../../../components/DatePicker";
-import QuantityButton from "../../../components/Quantity/index";
-import StatusSelect from "../../../components/StatusSelect";
-import ObjectName from "../../../helper/ObjectName";
 import Number from "../../../lib/Number";
 import { Card } from "react-native-paper";
 import { useForm } from "react-hook-form";
 import platform from "../../../lib/Platform";
+import TextInput from "../../../components/TextInput";
 
 const BottomModal = (props) => {
   const { title, modalVisible, toggle, item, BottonLabel1, updateAction } =
@@ -34,10 +31,6 @@ const BottomModal = (props) => {
 
   const [taxableAmount, setTaxableAmount] = useState(null);
 
-  const [statusDetail, setStatusDetail] = useState("");
-
-  const [date, setDate] = useState();
-
   const dataRef = useRef({
     productDetail: null,
     net_amount: null,
@@ -51,24 +44,9 @@ const BottomModal = (props) => {
     getPurchaseData();
   };
 
-  const handleDateChange = (values) => {
-    setDate(values);
-  };
-
-  const handleStatusChange = (values) => {
-    setStatusDetail(values && values?.value ? values?.value : "");
-  };
-
   const handleMrpChange = async (value) => {
     dataRef.current.mrp = value;
     getPurchaseData();
-  };
-
-  const handleAmountChange = (value) => {
-    if (value) {
-      dataRef.current.net_amount = value;
-      getPurchaseData();
-    }
   };
 
   const handleTaxableAmountChange = (value) => {
@@ -200,8 +178,7 @@ const BottomModal = (props) => {
         : item?.quantity;
 
     // mrp
-    let mrpValue =
-      dataRef && dataRef.current.mrp ? dataRef.current.mrp : item?.mrp;
+    let mrpValue = dataRef && dataRef.current.mrp ? dataRef.current.mrp : "";
 
     let param = {
       totalAmount:
@@ -222,19 +199,13 @@ const BottomModal = (props) => {
     // caluclated result
     const result = calculateAmountAndTax(param);
 
-    let netAmount =
-      dataRef && dataRef.current.net_amount
-        ? dataRef.current.net_amount
-        : Number.GetFloat(result.taxableAmount) +
-          Number.GetFloat(result.totalTaxAmount);
     // unitPrice
-    let unit_price = netAmount / quantityValue;
+    let unit_price = mrpValue;
 
     // marginamount
     let marginValue = mrpValue;
 
     // margin percentage
-    let unitMarginPercentage = (marginValue / mrpValue) * 100;
 
     // return data
     let data = {
@@ -257,9 +228,6 @@ const BottomModal = (props) => {
           ? mrpValue * quantityValue
           : Number.GetFloat(result.taxableAmount) +
             Number.GetFloat(result.totalTaxAmount),
-      unitMarginAmount: Number.getEmpty(marginValue),
-      marginAmount: Number.getEmpty(marginValue),
-      marginPercentage: Number.getEmpty(unitMarginPercentage),
     };
 
     // assign  data to state
@@ -300,14 +268,7 @@ const BottomModal = (props) => {
       Number.GetFloat(purchaseData?.unit_price) ??
       Number.GetFloat(item?.unit_price) ??
       null,
-    margin_percentage:
-      purchaseData?.marginPercentage >= 0
-        ? Number.GetFloat(purchaseData?.marginPercentage)
-        : Number.GetFloat(item?.margin_percentage),
-    unit_margin_amount:
-      purchaseData?.unitMarginAmount >= 0
-        ? Number.GetFloat(purchaseData?.unitMarginAmount)
-        : Number.GetFloat(item?.unit_margin_amount),
+
     taxable_amount:
       taxableAmount === ""
         ? ""
@@ -320,13 +281,7 @@ const BottomModal = (props) => {
       Number.GetFloat(purchaseData?.totalTaxAmount) ??
       Number.GetFloat(item?.tax_amount) ??
       null,
-    status: statusDetail ? statusDetail : item?.statusId,
 
-    manufactured_date: date
-      ? date
-      : item?.manufactured_date
-      ? item?.manufactured_date
-      : "",
     id: item?.id,
     product_id: item?.product_id,
   };
@@ -425,45 +380,23 @@ const BottomModal = (props) => {
                 )}
                 <VerticalSpace10 />
 
-                <DatePicker
-                  title={"Manufacturing Date"}
-                  onDateSelect={handleDateChange}
-                  selectedDate={initialValues?.manufactured_date}
-                  required={true}
-                />
-                <VerticalSpace10 />
-
                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
                   }}
                 >
-                  <View style={initialValues?.id && styles.infoHalf}>
-                    <QuantityButton
-                      quantityOnChange={handleQuantityChange}
-                      quantity={initialValues?.quantity}
-                      title="Quantity"
+                  <View style={{ width: "100%" }}>
+                    <TextInput
+                      title={"Quantity"}
+                      name="quantity"
+                      placeholder="Enter Quantity"
+                      control={control}
+                      required={true}
+                      onInputChange={handleQuantityChange}
+                      values={initialValues?.quantity?.toString()}
                     />
                   </View>
-                  {initialValues?.id && (
-                    <View style={styles.infoHalf}>
-                      <StatusSelect
-                        label={"Status"}
-                        name="status"
-                        control={control}
-                        placeholder={"Select"}
-                        object={ObjectName.PURCHASE_PRODUCT}
-                        data={
-                          initialValues?.status
-                            ? Number.GetFloat(initialValues?.status)
-                            : ""
-                        }
-                        currentStatusId={initialValues?.status}
-                        onChange={(value) => handleStatusChange(value)}
-                      />
-                    </View>
-                  )}
                 </View>
               </Card.Content>
             </Card>
@@ -475,64 +408,29 @@ const BottomModal = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
+                  <View style={styles.infoHalf}>
+                    <CurrencyInput
+                      title="Unit Price"
+                      name="unit_price"
+                      control={control}
+                      values={initialValues?.unit_price?.toString()}
+                      onInputChange={handleMrpChange}
+                      edit
+                    />
+                  </View>
                   <View style={styles.infoHalf}>
                     <CurrencyInput
                       title="Net Amount"
                       name="net_amount"
                       control={control}
                       values={initialValues?.net_amount?.toString()}
-                      onInputChange={handleAmountChange}
-                      edit
+                      noEditable={true}
                     />
                   </View>
                 </View>
               </Card.Content>
             </Card>
-            <Card style={{ marginBottom: 10 }}>
-              <Card.Content>
-                <CurrencyInput
-                  title="Unit Price"
-                  name="unit_price"
-                  control={control}
-                  values={initialValues?.unit_price?.toString()}
-                  noEditable={true}
-                  onInputChange={handleMrpChange}
-                  edit
-                />
-                <VerticalSpace10 />
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <View style={styles.infoHalf}>
-                    <CurrencyInput
-                      title="Margin %"
-                      name="margin_percentage"
-                      control={control}
-                      noEditable={true}
-                      placeholder="Margin"
-                      percentage
-                      values={initialValues?.margin_percentage?.toString()}
-                      edit
-                    />
-                  </View>
-                  <View style={styles.infoHalf}>
-                    <CurrencyInput
-                      title="Unit Margin Amount"
-                      name="unit_margin_amount"
-                      noEditable={true}
-                      control={control}
-                      placeholder="Unit Margin"
-                      values={initialValues?.unit_margin_amount?.toString()}
-                      edit
-                    />
-                  </View>
-                </View>
-              </Card.Content>
-            </Card>
             <VerticalSpace10 />
 
             <Card style={{ marginBottom: 10 }}>
