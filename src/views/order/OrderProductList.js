@@ -695,27 +695,12 @@ const Billing = (props) => {
       if (!isProductAdding) {
         setIsProductAdding(true);
 
-        const updatedPriceProductList =
-          await ProductService.getProductUpdatedPrice(
-            null,
-            selectedProduct.product_id
-          );
+        validateProductInOrderProduct(selectedProduct);
 
-        if (updatedPriceProductList && updatedPriceProductList.length == 1) {
-          validateProductInOrderProduct(updatedPriceProductList[0]);
-        } else if (
-          updatedPriceProductList &&
-          updatedPriceProductList.length > 1
-        ) {
-          //set store product list
-          setScannedProductList(updatedPriceProductList);
+        setScannedProductList(selectedProduct);
+        setProductSelectModalOpen(true);
 
-          setProductSelectModalOpen(true);
-        } else {
-          productNotFoundToggle();
-
-          setIsProductAdding(false);
-        }
+        setIsProductAdding(false);
       }
     } catch (err) {
       console.log(err);
@@ -1064,25 +1049,6 @@ const Billing = (props) => {
   const getActionItems = async () => {
     let actionItems = new Array();
 
-    const cancelPermission = await PermissionService.hasPermission(
-      Permission.ORDER_CANCEL
-    );
-
-    if (
-      cancelPermission &&
-      !(params?.status === Order.STATUS_COMPLETED) &&
-      !(params?.status === Order.STATUS_CANCEL)
-    ) {
-      actionItems.push(
-        <MenuItem
-          onPress={() => {
-            setOrderCancelModal(true), setVisible(true);
-          }}
-        >
-          Cancel Order
-        </MenuItem>
-      );
-    }
     if (params?.isNewOrder) {
       actionItems.push(
         <MenuItem
@@ -1099,42 +1065,6 @@ const Billing = (props) => {
           Save as Draft
         </MenuItem>
       );
-    }
-
-    if (params.isNewOrder) {
-      null;
-    } else {
-      actionItems.push(
-        <MenuItem
-          onPress={() => {
-            navigation.navigate("Order/Invoice", {
-              item: {
-                id: orderId ? orderId : id,
-                order_number: orderNumber ? orderNumber : params.orderNumber,
-                total_amount: params?.totalAmount,
-                date: params?.date,
-              },
-            });
-            setVisible(true);
-          }}
-        >
-          View Invoice
-        </MenuItem>
-      );
-
-      if (params?.status === Order.STATUS_COMPLETED) {
-        actionItems.push(
-          <MenuItem
-            onPress={() => {
-              createRefundRequest(orderId);
-
-              setVisible(true);
-            }}
-          >
-            Refund Request
-          </MenuItem>
-        );
-      }
     }
 
     setActionList(actionItems);
@@ -1235,7 +1165,6 @@ const Billing = (props) => {
     },
   ];
 
-  
   if (orderHistoryViewPermission && !params?.isNewOrder) {
     title.push({
       title: TabName.HISTORY,
@@ -1346,7 +1275,7 @@ const Billing = (props) => {
             onPress={() => setProductCompleteModalOpen(true)}
           />
         )}
-        
+
         {productCompleteModalOpen && (
           <ProductModal
             modalVisible={productCompleteModalOpen}
@@ -1558,17 +1487,6 @@ const Billing = (props) => {
                   />
                 )}
             </View>
-
-            {productNotFoundModalOpen && (
-              <ConfirmationModal
-                toggle={productNotFoundToggle}
-                modalVisible={productNotFoundModalOpen}
-                title={AlertMessage.PRODUCT_PRICE_NOT_FOUND}
-                description={`BarCode ID ${scannedCode} not found please scan different code or add the product`}
-                confirmLabel={"Ok"}
-                ConfirmationAction={productNotFoundToggle}
-              />
-            )}
 
             {productExistModalOpen && (
               <ConfirmationModal
