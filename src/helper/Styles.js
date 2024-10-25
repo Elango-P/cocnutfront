@@ -80,7 +80,7 @@ containerGrey: {
 },
 footerText: {
   fontWeight: "bold",
-  fontSize: 18,
+  fontSize: 16,
   color: Color.WHITE,
 },
 amountText: {

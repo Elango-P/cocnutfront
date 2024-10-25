@@ -25,7 +25,6 @@ import { getFullName } from "../../lib/Format";
 import User from "../../helper/User";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import productService from "../../services/ProductService";
 import Refresh from "../../components/Refresh";
@@ -215,7 +214,7 @@ const Dashboard = (props) => {
     >
       <View style={styles.container}>
         <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
-          <Text style={styles.welcomeText}>Welcome, {Name}!</Text>
+          <Text style={styles.welcomeText}>Welcome {Name}!</Text>
 
           <View style={{ backgroundColor: "green", height: 1 }} />
           {loading ? (

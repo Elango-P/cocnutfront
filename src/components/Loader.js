@@ -2,33 +2,12 @@
 import React, { useRef, useEffect } from "react";
 import { Animated, View, StyleSheet } from "react-native";
 import { Color } from "../helper/Color";
+import ContentLoader, { Bullets } from "react-native-easy-content-loader";
 
 const Loader = () => {
-  const opacity = useRef(new Animated.Value(0.3)).current;
-
-  // Create a looping animation to fade in and out
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.3,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [opacity]);
-
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.loaderBox, { opacity }]} />
-      <Animated.View style={[styles.loaderBox, { opacity, width: 180 }]} />
-      <Animated.View style={[styles.loaderBox, { opacity, width: 160 }]} />
+      <ContentLoader active />
     </View>
   );
 };
@@ -37,6 +16,8 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
     alignItems: "center",
+    marginHorizontal: "10%",
+    width: "100%",
   },
   loaderBox: {
     height: 20,
