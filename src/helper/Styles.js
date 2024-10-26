@@ -776,14 +776,14 @@ viewInvoiceButton: {
     fontWeight: 'bold',
     textAlign: 'center',
     color: Color.WHITE,
-    backgroundColor:"#43C6AC"
+    backgroundColor:Color.WHITE
   },
   margin: {
     marginRight: 20,
   },
   marginAlign: {
     alignItems: "center",
-    backgroundColor: "#43C6AC"
+    backgroundColor: Color.WHITE
 
   },
   bottomToolBar: {

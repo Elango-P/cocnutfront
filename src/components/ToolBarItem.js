@@ -21,7 +21,7 @@ const ToolBarItem = (props) => {
                     
                     <Image
                         source={icon} // Use the icon from assets
-                        style={{ width: 40, height: 40,backgroundColor:"#43C6AC"}} // Adjust size as needed
+                        style={{ width: 40, height: 40,backgroundColor:Color.WHITE}} // Adjust size as needed
                     />
                 )}
                 <Text style={styles.iconName}>{label}</Text>

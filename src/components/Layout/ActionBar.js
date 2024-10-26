@@ -69,8 +69,8 @@ const ActionBar = ({
 
   const [addVisible, setAddVisible] = useState(false);
   const [portalName, setPortalName] = useState("");
-  const [themeColor, setThemeColor] = useState('#43C6AC');
-  const [textColor, setTextColor] = useState(Color.WHITE)
+  const [themeColor, setThemeColor] = useState(Color.WHITE);
+  const [textColor, setTextColor] = useState(Color.BLACK)
   const isFocused = useIsFocused();
 
   const hideAddMenu = () => setAddVisible(false);
@@ -99,7 +99,7 @@ const ActionBar = ({
           //   setStatusBar(response)
           // })
           await settingService.getByName(Setting.PORTAL_HEADER_TEXT_COLOR,(err,response)=>{
-            setTextColor(response)
+            setTextColor(Color.BLACK)
           })
           await settingService.getByName(Setting.PORTAL_NAME,(err,response)=>{
             setPortalName(response)
@@ -145,7 +145,7 @@ const ActionBar = ({
                 <Ionicons
                   name="chevron-back"
                   size={35}
-                  color={Color.WHITE}
+                  color={Color.BLACK}
                 />
               </TouchableOpacity>
 
@@ -170,7 +170,7 @@ const ActionBar = ({
 
           {title && (
             <View style={{ flex: 1, alignItems: showStatusDropDown && 'center', paddingTop: showStatusDropDown && 12 , marginLeft : showBackIcon == false ? 35 : 0}}>
-              <Text style={[styles.layoutTitle, { color: textColor, textTransform: "capitalize" }]} numberOfLines={1}>{title}</Text>
+              <Text style={[styles.layoutTitle, { color: "black", textTransform: "capitalize" }]} numberOfLines={1}>{title}</Text>
             </View>
           )}
 
@@ -212,7 +212,7 @@ const ActionBar = ({
           {addButton && (
             <View style={[styles.layoutButton]} >
               <TouchableOpacity onPress={(e) => onPress(e)}  disabled={isAddButtonDisabled} activeOpacity={isAddButtonDisabled ? 1 : 0.7}>
-              <MaterialIcons name="add" size={30}  color={isAddButtonDisabled ? 'white' : 'white'} />
+              <MaterialIcons name="add" size={30}  color={isAddButtonDisabled ? textColor : textColor} />
               </TouchableOpacity>
             </View>
           )}
@@ -231,7 +231,7 @@ const ActionBar = ({
               <Ionicons
                 name={"ellipsis-vertical"}
                 size={24}
-                color={Color.ACTIONBAR_TEXT}
+                color={textColor}
                 style={{ paddingTop: 5 }}
               />
             </TouchableOpacity>
@@ -242,7 +242,7 @@ const ActionBar = ({
             visible={addVisible}
             anchor={Add &&
               <TouchableOpacity onPress={showAddMenu} style={{ paddingHorizontal: 5 }}>
-                <View style={{ flexDirection: 'row', color: '#FFF', backgroundColor: "#FFF", justifyContent: 'center', alignItems: 'center', borderRadius: 10, padding: 7 }}>
+                <View style={{ flexDirection: 'row', color: textColor, backgroundColor: "#FFF", justifyContent: 'center', alignItems: 'center', borderRadius: 10, padding: 7 }}>
                   <Text>
                     Add
                   </Text>

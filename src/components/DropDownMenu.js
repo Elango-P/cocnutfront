@@ -37,11 +37,11 @@ const DropDownMenu = ({ MenuItems, onPress, icon, label, color, menuStyle, iconS
             <Ionicons
               name={icon ? icon : "ellipsis-vertical"}
               size={iconSize ? iconSize : 24}
-              color={color ? color :Color.WHITE}
+              color={color ? color :Color.BLACK}
               style={{paddingTop: 3 }}
             />
             {label && (
-              <Text style={{ color: Color.WHITE, fontSize:12 ,paddingBottom : 5}}>{label}</Text>)}
+              <Text style={{ color: Color.BLACK, fontSize:12 ,paddingBottom : 5}}>{label}</Text>)}
           </TouchableOpacity>
         }
         onRequestClose={hideMenu}

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
-import AsyncStorage from "../../lib/AsyncStorage";
-
 import Permission from "../../helper/Permission";
 
 import {
@@ -34,27 +32,19 @@ const saleIcon = require("../../assets/sale.png");
 const purchaseIcon = require("../../assets/online-shop.png");
 const locationIcon = require("../../assets/location.png");
 
-const menuIcon = require("../../assets/menus.png");
 const Menu = (props) => {
   useEffect(() => {
     getPermission();
     getThemeColor();
   }, []);
-  const navigation = useNavigation();
   const route = useRoute();
   const routeNameArray = route.name.split("/");
-  const [themeColor, setThemeColor] = useState('#43C6AC');
-  const [textColor, setTextColor] = useState(Color.WHITE);
+  const [themeColor, setThemeColor] = useState(Color.WHITE);
+  const [textColor, setTextColor] = useState(Color.BLACK);
   const [devicePendingStatus, setDevicePendingStatus] = useState(false);
   const [permission, setPermission] = useState({});
   const isFocused = useIsFocused();
   const [otpNotification, setOtpNotification] = useState(false);
-
-  const Logout = async (setSideMenuOpen) => {
-    await AsyncStorage.clearAll();
-    navigation.navigate("Login");
-    setSideMenuOpen && setSideMenuOpen(false);
-  };
 
   let navigator = props?.route?.params?.navigator;
 
@@ -85,18 +75,11 @@ const Menu = (props) => {
   };
 
   const getPermission = async () => {
-    const enableSales = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_SALE_SETTLEMENT,
-      Permission.SALE_SETTLEMENT_VIEW
-    );
     const enablePurchase = await PermissionService.getFeaturePermission(
       Feature.ENABLE_PURCHASE,
       Permission.PURCHASE_VIEW
     );
-    const enableAttendance = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ATTENDANCE,
-      Permission.ATTENDANCE_VIEW
-    );
+
     const enableProducts = await PermissionService.getFeaturePermission(
       Feature.ENABLE_PRODUCT,
       Permission.PRODUCT_VIEW
@@ -105,43 +88,7 @@ const Menu = (props) => {
       Feature.ENABLE_ORDER,
       Permission.ORDER_VIEW
     );
-    const enableTransfer = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_TRANSFER,
-      Permission.TRANSFER_VIEW
-    );
-    const enableStock = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_STOCK_ENTRY,
-      Permission.STOCK_ENTRY_VIEW
-    );
 
-    const enableActivity = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ACTIVITY,
-      Permission.ACTIVITY_VIEW
-    );
-    const enableTicket = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_TICKET,
-      Permission.TICKET_VIEW
-    );
-    const enableFine = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_FINE,
-      Permission.FINE_VIEW
-    );
-    const enableLocation = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_LOCATION,
-      Permission.LOCATION_VIEW
-    );
-    const enableCandidate = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_CANDIDATE,
-      Permission.CANDIDATE_VIEW
-    );
-    const enableVisitor = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_VISITOR,
-      Permission.VISITOR_VIEW
-    );
-    const enableReplenish = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_REPLENISHMENT,
-      Permission.REPLENISH_VIEW
-    );
     const enablePayment = await PermissionService.getFeaturePermission(
       Feature.ENABLE_PAYMENT,
       Permission.PAYMENT_VIEW
@@ -151,14 +98,7 @@ const Menu = (props) => {
       Feature.ENABLE_USER,
       Permission.USER_VIEW
     );
-    const enableBills = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_BILL,
-      Permission.BILL_VIEW
-    );
-    const enableLeads = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_LEAD,
-      Permission.LEADS_VIEW
-    );
+
     const enableAccounts = await PermissionService.getFeaturePermission(
       Feature.ENABLE_ACCOUNT,
       Permission.ACCOUNT_VIEW
@@ -169,58 +109,18 @@ const Menu = (props) => {
       Permission.CUSTOMER_VIEW
     );
 
-    const enableSalary = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_SALARY,
-      Permission.SALARY_VIEW
-    );
-
-    const enableDistribution = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_DISTRIBUTION,
-      Permission.DISTRIBUTION_VIEW
-    );
-    const enableSettings = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_SETTING,
-      Permission.SETTINGS_VIEW
-    );
-    const enableSync = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_SYNC,
-      Permission.SYNC_VIEW
-    );
-
-    const enableBulkOrder = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_BULK_ORDER,
-      Permission.BULK_ORDER_VIEW
-    );
     const enableContact = await PermissionService.getFeaturePermission(
       Feature.ENABLE_CONTACT,
       Permission.CONTACT_VIEW
     );
     setPermission({
-      enableSales: enableSales,
       enablePurchase: enablePurchase,
-      enableAttendance: enableAttendance,
       enableProducts: enableProducts,
       enableOrders: enableOrders,
-      enableTransfer: enableTransfer,
-      enableStock: enableStock,
-      enableActivity: enableActivity,
-      enableTicket: enableTicket,
-      enableFine: enableFine,
-      enableLocation: enableLocation,
-      enableCandidate: enableCandidate,
-      enableVisitor: enableVisitor,
-      enableReplenish: enableReplenish,
       enablePayment: enablePayment,
       enableUser: enableUser,
-      enableBills: enableBills,
-      enableLeads: enableLeads,
       enableAccounts: enableAccounts,
       enableCustomer: enableCustomer,
-      enableSalary: enableSalary,
-      enableDistribution: enableDistribution,
-      enableSettings: enableSettings,
-      enableSync: enableSync,
-      enableBulkOrder: enableBulkOrder,
       enableContact: enableContact,
     });
 
@@ -297,8 +197,6 @@ const Menu = (props) => {
     );
   };
 
-  // Render Dashboard
-
   // Render Bill Entry
   const _renderBillEntry = () => {
     const { setSideMenuOpen } = props;
@@ -329,19 +227,6 @@ const Menu = (props) => {
     );
   };
 
-  const _renderBills = () => {
-    const { setSideMenuOpen } = props;
-    return (
-      <SideMenuCard
-        onPress={() => {
-          navigator.navigate("Bills");
-          setSideMenuOpen && setSideMenuOpen(false);
-        }}
-        name={"Bills"}
-        imageSource="money-bill-wave-alt"
-      />
-    );
-  };
   // Render Bill
   const _renderPurchase = () => {
     const { setSideMenuOpen } = props;
@@ -403,8 +288,7 @@ const Menu = (props) => {
           {permission?.enableContact &&
             renderContactScreen &&
             renderContactScreen()}
-{_renderStore &&
-            _renderStore()}
+          {_renderStore && _renderStore()}
           {permission?.enableProducts &&
             !devicePendingStatus &&
             _renderProducts &&

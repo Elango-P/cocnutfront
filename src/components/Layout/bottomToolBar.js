@@ -363,7 +363,7 @@ const style = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingBottom: Platform.OS === "ios" ? "7%" : 10,
-    backgroundColor: "#43C6AC",
+    backgroundColor: Color.WHITE,
     padding:5
   },
 });
