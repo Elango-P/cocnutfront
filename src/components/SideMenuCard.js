@@ -9,7 +9,7 @@ const IconCard = (props) => {
     Icon,
     name,
     MaterialCommunityIcon,
-    backgroundColor = Color.WHITE, // Default background color
+    backgroundColor = "#e5e5e5", // Default background color
     imageSource,
   } = props;
 

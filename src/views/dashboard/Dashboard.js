@@ -34,6 +34,7 @@ import { Color } from "../../helper/Color";
 import AsyncStorageConstants from "../../helper/AsyncStorage";
 import ObjectName from "../../helper/ObjectName";
 import User from "../../helper/User";
+import ListCustomLoader from "../../components/ListCustomLoader";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -50,7 +51,6 @@ const Dashboard = (props) => {
   const [userDetail, setUserDetail] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [productLists, setProductList] = useState([]);
-  console.debug("productLists--------------->>>", productLists)
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -160,7 +160,7 @@ const Dashboard = (props) => {
       <View style={styles.productCardContent}>
         <Text style={styles.productName}>{item.name}</Text>
         <View style={styles.quantityContainer}>
-          <Text style={styles.productMinQty}>Quantity:</Text>
+          <Text style={styles.productMinQty}>Stock:</Text>
           <Text style={styles.quantityText}>{item.min_quantity || 0}</Text>
           <Text style={styles.productUnit}>{item.unit || ""}</Text>
         </View>
@@ -202,7 +202,7 @@ const Dashboard = (props) => {
             {getFullName(userDetail?.first_name, userDetail?.last_name || "")}!
           </Text>
           {loading ? (
-            <Loader />
+            <ListCustomLoader count={3} height={30} />
           ) : (
             <Carousel
               data={productLists}
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 15,
-    backgroundColor: "#dfd7f6",
+    backgroundColor: "#e5e5e5",
   },
   productCardContent: { flexDirection: "column", alignItems: "center" },
   productName: {

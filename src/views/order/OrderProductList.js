@@ -1,711 +1,162 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import Layout from "../../components/Layout";
 import {
-  BackHandler,
-  Platform,
-  ScrollView,
+  StyleSheet,
+  View,
   Text,
   TouchableOpacity,
-  View,
+  ScrollView,
 } from "react-native";
-
-import Layout from "../../components/Layout";
-
-import { useNavigation } from "@react-navigation/native";
-
-import { useIsFocused } from "@react-navigation/native";
-
-import Spinner from "react-native-loading-spinner-overlay";
-
-import AlertMessage from "../../helper/AlertMessage";
-
-import ConfirmationModal from "../../components/Modal/ConfirmationModal";
-
+import Currency from "../../components/Currency";
+import AccountService from "../../services/AccountService";
+import DatePicker from "../../components/DatePicker";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import purchaseService from "../../services/PurchaseService";
+import ObjectName from "../../helper/ObjectName";
+import Tab from "../../components/Tab";
+import TabName from "../../helper/Tab";
 import ProductCard from "../../components/ProductCard";
-
 import { SwipeListView } from "react-native-swipe-list-view";
-
-import ProductEditModal from "../../components/Modal/ProductEditModal";
-
+import DeleteModal from "../../components/Modal/DeleteModal";
+import ConfirmationModal from "../../components/Modal/ConfirmationModal";
+import ProductSelectModal from "../../components/Modal/ProductSelectModal";
+import AlertMessage from "../../helper/AlertMessage";
+import purchaseProductService from "../../services/PurchaseProductService";
+import NoRecordFound from "../../components/NoRecordFound";
+import Search from "./Search";
+import { Color } from "../../helper/Color";
+import SaveButton from "../../components/SaveButton";
+import mediaService from "../../services/MediaService";
+import VerticalSpace10 from "../../components/VerticleSpace10";
+import LocationSelect from "../../components/LocationSelect";
+import AccountSelect from "../../components/AccountSelect";
+import TextInput from "../../components/TextInput";
+import { MenuItem } from "react-native-material-menu";
+import PermissionService from "../../services/PermissionService";
+import Permission from "../../helper/Permission";
+import HistoryList from "../../components/HistoryList";
+import UserSelect from "../../components/UserSelect";
+import PurchaseProductModel from "./ProductModel";
+import Number from "../../lib/Number";
+import OrderProductService from "../../services/OrderProductService";
 import OrderService from "../../services/OrderService";
 
-import ProductSelectModal from "../../components/Modal/ProductSelectModal";
-
-import Order from "../../helper/Order";
-
-import OrderProduct from "../../helper/OrderProduct";
-
-import orderService from "../../services/OrderService";
-
-import FooterContent from "./components/FooterContent";
-
-import Tab from "../../components/Tab";
-
-import General from "./General";
-
-import TabName from "../../helper/Tab";
-
-import productService from "../../services/ProductService";
-
-import Permission from "../../helper/Permission";
-
-import AsyncStorageService from "../../services/AsyncStorageService";
-
-import StatusService from "../../services/StatusServices";
-
-import ObjectName from "../../helper/ObjectName";
-
-import ProductService from "../../services/ProductService";
-
-import ProductModal from "../../components/Modal/GeneralModal";
-
-import { MenuItem } from "react-native-material-menu";
-
-import { FontAwesome5 } from "@expo/vector-icons";
-
-import { Color } from "../../helper/Color";
-
-import CurrencyFormat from "../../lib/Currency";
-
-import ProductSearch from "../../components/ProductSearch";
-
-import SearchBar from "../../components/SearchBar";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import { useForm } from "react-hook-form";
-import AlternativeColor from "../../components/AlternativeBackground";
-import LabelText from "../../components/Label";
-import PermissionService from "../../services/PermissionService";
-
-import SyncService from "../../services/SyncService";
-
-import AlertModal from "../../components/Alert";
-import CustomButton from "../../components/Button";
-import DropDownMenu from "../../components/DropDownMenu";
-import HistoryList from "../../components/HistoryList";
-import MediaList from "../../components/MediaList";
-import Media from "../../helper/Media";
-import { PaymentType } from "../../helper/PaymentType";
-import Status from "../../helper/Status";
-import styles from "../../helper/Styles";
-import Number from "../../lib/Number";
-import addressServices from "../../services/AddressService";
-import mediaService from "../../services/MediaService";
-import OrderProductService from "../../services/OrderProductService";
-import CustomerInfo from "./components/CustomerInfo";
-import OrderAmountCard from "./components/OrderAmountCard";
-import OrderProductCancelModel from "./components/OrderProductCancelModel";
-import PriceUpdateModal from "./components/PriceUpdateModel";
-import accountService from "../../services/AccountService";
-import { Account } from "../../helper/Account";
-import Alert from "../../lib/Alert";
-import CustomAlertModal from "../../components/CustomAlertModal";
-import { Label } from "../../helper/Label";
-import asyncStorageService from "../../services/AsyncStorageService";
-
 const Billing = (props) => {
-  const id = props?.route?.params?.id;
   const params = props?.route?.params;
+  const param = props?.route?.params;
+  const [vendorList, setVendorList] = useState();
+  const [storeId, setStoreId] = useState();
+  const [vendorName, setVendorName] = useState();
+  const [netAmount, setNetAmount] = useState(params?.net_amount);
+  const [selectedDate, setSelectedDate] = useState();
+  const [manufactureDate, setManufactureDate] = useState();
+  const [status, setStatus] = useState();
+  const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
+  const [purchaseProductList, setPurchaseProductList] = useState([]);
 
-  let type = params?.type;
-
-  let isDeliveryOrder =
-    params?.type && params?.type?.allow_delivery == true ? true : false;
-
-  const [scannedCode, setScannedCode] = useState("");
-  const [modalVisible, setScanModalVisible] = useState(false);
-  const [quantityUpdateObject, setQuantityUpdateObject] = useState({});
-  const [totalAmount, setTotalAmount] = useState("");
-  const [productModalOpen, setProductModalOpen] = useState(false);
-  const [priceModalOpen, setPriceModalOpen] = useState(false);
-  const [productCompleteModalOpen, setProductCompleteModalOpen] =
-    useState(false);
-  const [orderCancelModal, setOrderCancelModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
-  const [productExistModalOpen, setProductExistModalOpen] = useState("");
   const [productDeleteModalOpen, setProductDeleteModalOpen] = useState(false);
-  const [scanProduct, setScanProduct] = useState("");
+  const [productEditModalOpen, setProductEditModalOpen] = useState(false);
+  const [scannedCode, setScannedCode] = useState("");
+  const [scannedProductList, setScannedProductList] = useState("");
+  const [productExistModalOpen, setProductExistModalOpen] = useState(false);
+  const [quantityUpdateObject, setQuantityUpdateObject] = useState({});
   const [productNotFoundModalOpen, setProductNotFoundModalOpen] =
     useState(false);
-  const [orderProducts, setOrderProducts] = useState([]);
   const [productSelectModalOpen, setProductSelectModalOpen] = useState(false);
-  const [scannedProductList, setScannedProductList] = useState([]);
-  const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
-  const [manageOther, setManageOther] = useState(false);
-  const [cancelStatus, setCancelStatus] = useState("");
-  const [orderId, setOrderId] = useState(id ? id : params?.orderId);
-  const [orderDate, setOrderDate] = useState(
-    params && params.orderDetail ? params.orderDetail.date : new Date()
-  );
-  const [orderDraftStatusId, setOrderDraftStatusId] = useState("");
+  const [clicked, setClicked] = useState("");
+  const [mrp, setMrp] = useState("");
+  const [newPurchase, setNewPurchase] = useState(param?.isNewOrder);
   const [searchPhrase, setSearchPhrase] = useState("");
-  const [clicked, setClicked] = useState(false);
-  const [storeProductList, setStoreProductList] = useState([]);
-  const [filteredList, setFilteredList] = useState(0);
-  const [orderNumber, setOrderNumber] = useState(
-    params && params.orderDetail ? params.orderDetail.order_number : null
+  const [totalCount, setTotalCount] = useState(0);
+  const [storeList, setStoreList] = useState([]);
+  const [disableEdit, setDisableEdit] = useState(!param?.isNewOrder && true);
+  const [editPermission, setEditPermission] = useState(false);
+  const [visible, setIsVisible] = useState(false);
+  const [invoiceDate, setInvoiceDate] = useState(
+    params?.vendorInvoiceDate || ""
   );
-  const [isProductAdding, setIsProductAdding] = useState(false);
-  const [permission, setPermission] = useState("");
-  const [selectedDate, setSelectedDate] = useState(params?.date);
-  const [selectedShift, setSelectedShift] = useState(params?.shiftId || "");
-  const [selectedStore, setSelectedStore] = useState(
-    params?.storeId ? parseInt(params?.storeId) : ""
-  );
-  const [selectedUser, setSelectedUser] = useState(params?.owner || "");
-  const [status, setStatus] = useState(
-    params?.status_id ? parseInt(params?.status_id) : ""
-  );
-  const [actionList, setActionList] = useState([]);
-  const [list, setList] = useState([]);
-  const [allowEdit, setEdit] = useState(true);
-  const [selectedPayment, setSelectedPayment] = useState(
-    PaymentType.VALIDATION
-  );
-  const [cashAmount, setCashAmount] = useState("");
-  const [upiAmount, setUpiAmount] = useState("");
-  const [orderProductCancelPermission, setOrderProductCancelPermission] =
-    useState(false);
-  const [accountList, setAccountList] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const [MediaData, setMediaData] = useState([]);
-  const [allowCancel, setAllowCancel] = useState("");
-  const [allowProductEdit, setAllowEdit] = useState("");
-  const [items, setItems] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
-  const [orderProductCancelStatusId, setOrderProductCancelStatusId] =
-    useState("");
-  const [images, setImages] = useState([]);
-  const [manualPrice, setManualPrice] = useState(true);
-  const [enableManualPrice, setEnableManualPrice] = useState(false);
-  const [reason, setReason] = useState("");
-  const [orderHistoryViewPermission, setOrderHistoryViewPermission] =
-    useState("");
-  const [accountId, setAccountId] = useState("");
-  const [enableButton, setEnableButton] = useState(false);
+  const [dueDate, setDueDate] = useState(params?.due_date || "");
+  const [owner, setSelectedOwner] = useState(params?.owner_id);
+  const [invoiceAmount, setInvoiceAmount] = useState(params?.totalAmount);
+
+  const [reviewer, setSelectedReviewer] = useState(params?.reviewer_id);
+  const [purchaseHistoryViewPermission, setPurchaseHistoryViewPermission] =
+    useState();
   const [isSubmit, setIsSubmit] = useState(false);
-  const [deliveryStatus, setDeliveryStatus] = useState([]);
-
-  const searchQuery = "...";
-  // Remove special characters from the search query using a regular expression
-  const sanitizedSearchQuery = searchQuery.replace(/[^\w\s]/gi, "");
-  // Filter the list based on the sanitized search query
-  const storeProductsList = Array.isArray(storeProductList)
-    ? storeProductList.filter((item) =>
-        item.product_display_name
-          .toLowerCase()
-          .includes(sanitizedSearchQuery.toLowerCase())
-      )
-    : [];
-  // Check if the filtered list has any items or not
-
-  const IsFocused = useIsFocused();
-
-  const stateRef = useRef();
-
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
-  useEffect(() => {
-    if (params.group == Status.GROUP_DRAFT || params?.isNewOrder) {
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        () => {
-          return true;
-        }
-      );
-      return () => backHandler.remove();
-    }
-  }, []);
-
-  useEffect(() => {
-    //get order products
-    getOrderProducts();
-    getStatusId();
-    getAction();
-    getTotalAmount();
-    getOrderProductTotalAmount();
-    getDetails();
-    getDeliveryStatusList();
-  }, [IsFocused, props]);
-  useEffect(() => {
-    getAccountList();
-  }, [refreshing, activeTab === TabName.CUSTOMER]);
-
-  useEffect(() => {
-    getActionItems();
-  }, [IsFocused, props, params?.isNewOrder]);
-  useEffect(() => {
-    getActionItems();
-  }, [IsFocused, deliveryStatus]);
+  const stateRef = useRef(null);
+  const purchaseRef = useRef({
+    netAmount: params?.net_amount || "",
+    invoiceAmount: params?.totalAmount | "",
+  });
 
   useEffect(() => {
     let mount = true;
-    //get permission
-    mount && getPermission(), editPermission();
+
+    mount &&
+      AccountService.GetList(null, (callback) => {
+        setVendorList(callback);
+      });
+
+    getPermission();
+
+    //cleanup function
     return () => {
       mount = false;
     };
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
-    if (activeTab == TabName.ATTACHMENTS) {
-      getMediaList();
+    if (isFocused) {
+      getProducts();
     }
-  }, [activeTab == TabName.ATTACHMENTS]);
+  }, [isFocused]);
+
+  const calculatedData = () => {
+    let value =
+      purchaseRef && purchaseRef.current && purchaseRef.current.invoiceAmount;
+    setNetAmount(value);
+  };
+
+  const preloadedValues = {
+    vendor_invoice_number: params?.vendorInvoiceNumber || "",
+    Purchase_number: params?.purchaseNumber || "",
+    description: params?.description || "",
+    net_amount: params?.net_amount || "",
+    purchaseDate: params?.date,
+    mrp: selectedItem?.mrp,
+    vendor: param?.vendor_id ? param?.vendor_id : params?.vendor_id,
+    invoice_amount: invoiceAmount,
+    reviewer: reviewer,
+    due_date: dueDate,
+    owner: owner,
+  };
 
   const {
     control,
-    reset,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm({});
+  } = useForm({
+    defaultValues: preloadedValues,
+  });
 
-  function getOrderTotalAmount(orderProductList) {
-    let totalAmount = 0;
-    for (let i = 0; i < orderProductList.length; i++) {
-      if (orderProductList[i].cancelledAt == null) {
-        totalAmount +=
-          Number.GetFloat(
-            orderProductList[i].manual_price
-              ? orderProductList[i].manual_price
-              : orderProductList[i].sale_price,
-            0
-          ) * Number.Get(orderProductList[i].quantity, 0);
-      }
-    }
-    return totalAmount;
-  }
+  useEffect(() => {
+    updateDateValues();
+  }, [selectedItem]);
 
-  const editPermission = async () => {
-    const editPermission = await PermissionService.hasPermission(
-      Permission.ORDER_EDIT
+  const getPermission = async () => {
+    let editPermission = await PermissionService.hasPermission(
+      Permission.PURCHASE_EDIT
     );
-    setPermission(editPermission);
-    const orderHistoryViewPermission = await PermissionService.hasPermission(
-      Permission.ORDER_HISTORY_VIEW
+    setEditPermission(editPermission);
+    let purchaseHistoryViewPermission = await PermissionService.hasPermission(
+      Permission.PURCHASE_HISTORY_VIEW
     );
-    setOrderHistoryViewPermission(orderHistoryViewPermission);
-  };
-
-  const getDeliveryStatusList = async () => {
-    let deliveryStatus = [];
-    const roleId = await asyncStorageService.getRoleId();
-
-    let response = await StatusService.getNextStatus(
-      params?.status_id,
-      null,
-      (currentStatus) => {
-        deliveryStatus.push({
-          label: currentStatus[0].name,
-          value: currentStatus[0].status_id,
-          id: currentStatus[0].status_id,
-        });
-      }
-    );
-
-    response &&
-      response.forEach((statusList) => {
-        if (
-          statusList.allowed_role_id &&
-          statusList.allowed_role_id.split(",").includes(roleId)
-        ) {
-          deliveryStatus.push({
-            label: statusList.name,
-            value: statusList.status_id,
-            id: statusList.status_id,
-          });
-        }
-      });
-    setDeliveryStatus(deliveryStatus);
-  };
-
-  const getStatusId = async () => {
-    let cancelledStatusId = await StatusService.getStatusIdByName(
-      ObjectName.ORDER_TYPE,
-      Status.GROUP_CANCELLED
-    );
-
-    let orderProductFirstStatusId = await StatusService.getFirstStatus(
-      ObjectName.ORDER_PRODUCT
-    );
-
-    let OrderProductCancelledStatusId = await StatusService.getStatusIdByName(
-      ObjectName.ORDER_PRODUCT,
-      Status.GROUP_CANCELLED
-    );
-
-    setCancelStatus(cancelledStatusId);
-
-    setOrderDraftStatusId(orderProductFirstStatusId);
-
-    setOrderProductCancelStatusId(OrderProductCancelledStatusId);
-  };
-
-  const clearStackNavigate = () => {
-    setProductCompleteModalOpen(false);
-    setOrderProducts("");
-    setOrderId("");
-    setCancelStatus("");
-    setOrderDraftStatusId("");
-    setOrderProductCancelStatusId("");
-    setMediaData("");
-    setSelectedPayment("");
-    setImages("");
-    setCashAmount("");
-    setUpiAmount("");
-    setTotalAmount("");
-    {
-      navigation.navigate("Order");
-    }
-  };
-
-  const getAccountList = () => {
-    addressServices.searchAddress(
-      { objectName: ObjectName.CUSTOMER, object_id: params?.customerId },
-      (error, response) => {
-        setAccountList(response && response.data && response.data.data);
-      }
-    );
-  };
-
-  const getDetails = () => {
-    if (id) {
-      OrderService.searchOrder({ orderId: id }, (error, response) => {
-        let orders = response && response?.data && response?.data?.data;
-        setItems(orders[0]);
-      });
-    }
-  };
-
-  const handlePaymentChange = (value) => {
-    if (value === PaymentType.UPI_VALUE) {
-      setImages([]);
-      takePicture();
-      setSelectedPayment(value);
-    } else if (value === PaymentType.MIXED_VALUE) {
-      setImages([]);
-      takePicture();
-      setSelectedPayment(value);
-    } else {
-      setSelectedPayment(value);
-    }
-  };
-
-  const handleSearchOnChange = async (e) => {
-    const products = await productService.SearchFromLocalDB(e);
-    setStoreProductList(products);
-  };
-
-  const OnCancel = () => {
-    let data = {
-      status: cancelStatus,
-      customer_account: accountId,
-    };
-    if (!orderId || !id) {
-      clearStackNavigate();
-    }
-    OrderService.updateOrder(orderId ? orderId : id, data, () => {
-      clearStackNavigate();
-      setOrderCancelModal(false);
-    });
-  };
-
-  const getTotalAmount = async (orderId) => {
-    orderId = orderId ? orderId : id;
-    let params = { orderId: orderId };
-    if (orderId !== undefined) {
-      await orderService.searchOrder(params, (error, response) => {
-        setCashAmount(response.data.data[0].cash_amount);
-        setUpiAmount(response.data.data[0].upi_amount);
-        setTotalAmount(response.data.data[0].total_amount);
-      });
-    }
-  };
-
-  const getOrderProducts = async (UpdatedOrderId, callback) => {
-    try {
-      let orderIdValue = orderId ? orderId : id ? id : UpdatedOrderId;
-
-      let params = { orderId: orderIdValue, pagination: false };
-
-      if (orderIdValue) {
-        //ge order products
-        await OrderService.getOrderProducts(
-          params,
-          (error, orderProducts, amount, totalQuantity) => {
-            let filteredOrderProdcts = orderProducts.filter(
-              (product) => product.status !== Order.STATUS_CANCEL
-            );
-            callback && callback(orderProducts);
-
-            //set order products
-            setOrderProducts(orderProducts);
-
-            const totalAmount = getOrderTotalAmount(orderProducts);
-
-            setTotalAmount(totalAmount);
-
-            // set non cancelled Products
-            setFilteredList(filteredOrderProdcts);
-          }
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const getOrderProductTotalAmount = async () => {
-    let params = {
-      orderId: orderId ? orderId : id,
-    };
-    await OrderProductService.getTotalAmount(params, (res) => {
-      const totalAmount = res && res?.data && res?.data?.totalAmount;
-      setTotalAmount(totalAmount > 0 ? Number.GetFloat(totalAmount) : 0);
-    });
-  };
-
-  const addNew = () => {
-    //set scan modal open
-    setScanModalVisible(true);
-  };
-
-  const onReasonInput = (value) => {
-    try {
-      setReason(value);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //delete order product
-  const cancelOrderProduct = async () => {
-    if (selectedItem && reason.trim() !== "") {
-      OrderService.cancel(
-        selectedItem.orderProductId,
-        { reason: reason },
-        async (error, response) => {
-          setReason("");
-          reset({});
-          //close product select modal
-          setProductDeleteModalOpen(false);
-          //get store products
-          getOrderProducts();
-        }
-      );
-    } else {
-      setProductDeleteModalOpen(true);
-      return AlertModal("Reason Is Required");
-    }
-  };
-
-  const updateOrderProduct = (orderproductId) => {
-    try {
-      let orderIDValue = orderId ? orderId : id;
-
-      if (
-        orderIDValue &&
-        orderDraftStatusId &&
-        orderDraftStatusId.status_id &&
-        orderproductId
-      ) {
-        let bodyDaya = {
-          orderId: orderIDValue,
-          quantity: 1,
-          status: orderDraftStatusId.status_id,
-          orderProductId: orderproductId,
-        };
-
-        OrderService.updateOrderProduct(orderproductId, bodyDaya, () => {
-          getOrderProducts();
-          setIsProductAdding(false);
-          setSearchPhrase("");
-          setClicked("");
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      setIsProductAdding(false);
-    }
-  };
-
-  const addOrderProduct = async (quantity, scannedProduct, callback) => {
-    try {
-      await OrderService.addOrderProduct(
-        {
-          orderId: orderId ? orderId : id,
-          productId: scannedProduct.product_id,
-          quantity: quantity,
-          productPriceId: scannedProduct.productPriceId,
-        },
-        async (error, res) => {
-          if (!error && res.data) {
-            if (orderProducts != undefined) {
-              let statusDetail = await StatusService.get(res.data.statusId);
-              orderProducts.splice(0, 0, {
-                image: scannedProduct.featured_media_url,
-                product_display_name: scannedProduct.product_display_name,
-                name: scannedProduct.product_name,
-                id: scannedProduct.product_id,
-                orderId: orderId ? orderId : id,
-                orderProductId: res.data.orderProductId,
-                product_id: scannedProduct.product_id,
-                brand_name: scannedProduct.brand_name,
-                sale_price: scannedProduct.sale_price,
-                mrp: scannedProduct.mrp,
-                status: statusDetail ? statusDetail.name : "",
-                statusId: statusDetail ? statusDetail.status_id : "",
-                allowEdit: statusDetail ? statusDetail?.allow_edit : "",
-                allowCancel: statusDetail ? statusDetail?.allow_cancel : "",
-                quantity: quantity,
-              });
-
-              setOrderProducts(orderProducts);
-
-              const totalAmount = getOrderTotalAmount(orderProducts);
-
-              setTotalAmount(
-                totalAmount > 0 ? Number.GetFloat(totalAmount) : 0
-              );
-
-              setFilteredList(orderProducts);
-            }
-
-            setSearchPhrase("");
-            setStoreProductList("");
-            setClicked("");
-          }
-
-          return callback();
-        }
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const updateOrderProductQuantity = async (quantity, orderProductId) => {
-    try {
-      //validate quantity exist or not
-      if (orderProductId) {
-        //create body data
-        let BodyData = {
-          orderId: orderId ? orderId : id,
-          quantity: quantity,
-          orderProductId: orderProductId,
-          product_id: selectedItem?.product_id,
-          orderDate: params?.date ? params?.date : orderDate,
-        };
-
-        if (
-          selectedItem &&
-          selectedItem.status == OrderProduct.STATUS_CANCEL &&
-          orderDraftStatusId &&
-          orderDraftStatusId.status_id
-        ) {
-          BodyData.status = orderDraftStatusId.status_id;
-        }
-
-        await OrderService.updateOrderProduct(
-          orderProductId,
-          BodyData,
-          async (error, response) => {
-            if (response && response.data) {
-              //close product select modal
-              setProductExistModalOpen(false);
-              getOrderProducts();
-
-              setSearchPhrase("");
-
-              setClicked("");
-
-              setStoreProductList("");
-
-              setIsProductAdding(false);
-            }
-          }
-        );
-      }
-    } catch (err) {
-      setIsProductAdding(false);
-    }
-  };
-
-  const createOrderAddOrderProduct = async (quantity, scannedProduct) => {
-    try {
-      if (orderId) {
-        addOrderProduct(quantity, scannedProduct, () => {
-          setIsProductAdding(false);
-        });
-      }
-    } catch (err) {
-      setIsProductAdding(false);
-    }
-  };
-
-  const validateProductInOrderProduct = async (selectedProduct) => {
-    //validate already added product list
-    if (orderProducts && orderProducts.length > 0) {
-      //find if a product with the same product_id already exists
-      let productDetail = orderProducts.find(
-        (data) =>
-          data.product_id == selectedProduct.product_id &&
-          data.sale_price == selectedProduct.sale_price
-      );
-
-      if (productDetail) {
-        if (productDetail.status != OrderProduct.STATUS_CANCEL) {
-          //get the updated quantity
-          let updatedQuantity = productDetail?.quantity
-            ? productDetail?.quantity + 1
-            : 1;
-
-          //create return object
-          let returnObject = {
-            updatedQuantity: updatedQuantity,
-            product: productDetail,
-            orderProductId: productDetail?.orderProductId,
-            product_id: selectedProduct?.product_id,
-          };
-
-          //update quantity update object
-          setQuantityUpdateObject(returnObject);
-
-          setScanProduct(returnObject.product);
-          setSelectedItem(returnObject.product);
-
-          //set moda visiblity
-          setProductExistModalOpen(true);
-        } else {
-          // add order product since the barcode is different
-          updateOrderProduct(productDetail.orderProductId);
-        }
-      } else {
-        // add order product since the barcode is different
-        createOrderAddOrderProduct(1, selectedProduct);
-      }
-    } else {
-      // add inventory product since there are no products in the list
-      createOrderAddOrderProduct(1, selectedProduct);
-    }
-  };
-
-  //Product search click product handler
-  const productOnClick = async (selectedProduct) => {
-    try {
-      if (!isProductAdding) {
-        setIsProductAdding(true);
-
-        validateProductInOrderProduct(selectedProduct);
-
-        setScannedProductList(selectedProduct);
-        setProductSelectModalOpen(true);
-
-        setIsProductAdding(false);
-      }
-    } catch (err) {
-      console.log(err);
-      setIsProductAdding(false);
-    }
+    setPurchaseHistoryViewPermission(purchaseHistoryViewPermission);
   };
 
   const closeRow = (rowMap, rowKey) => {
@@ -719,818 +170,782 @@ const Billing = (props) => {
       const selectedItem = stateRef.selectedItem;
       const selectedRowMap = stateRef.selecredRowMap;
       if (selectedItem && selectedRowMap) {
-        closeRow(selectedRowMap, selectedItem.inventoryTransferProductId);
-        if (!productDeleteModalOpen) {
-          setSelectedItem("");
-        }
+        closeRow(selectedRowMap, selectedItem.id);
+        setSelectedItem("");
         stateRef.selectedItem = "";
         stateRef.selecredRowMap = "";
       }
     }
   };
 
-  const getPermission = async () => {
-    let permissionList = await AsyncStorageService.getPermissions();
-    if (permissionList) {
-      permissionList = JSON.parse(permissionList);
-      if (permissionList && permissionList.length > 0) {
-        let manageOther =
-          permissionList &&
-          permissionList.find(
-            (option) =>
-              option.role_permission === Permission.ORDER_MANAGE_OTHERS
-          )
-            ? true
-            : false;
-
-        let orderProductCancel =
-          permissionList &&
-          permissionList.find(
-            (option) =>
-              option.role_permission === Permission.ORDER_PRODUCT_CANCEL
-          )
-            ? true
-            : false;
-        let enableManualPrice =
-          permissionList &&
-          permissionList.find(
-            (option) =>
-              option.role_permission === Permission.ORDER_MANUAL_PRICE_UPDATE
-          )
-            ? true
-            : false;
-        setManageOther(manageOther);
-        setOrderProductCancelPermission(orderProductCancel);
-        setEnableManualPrice(enableManualPrice);
-      }
-    }
-  };
-
-  const productModalToggle = () => {
-    setProductModalOpen(!productModalOpen);
+  const productEditModalToggle = () => {
+    setProductEditModalOpen(!productEditModalOpen);
     clearRowDetail();
-  };
-  const priceModalToggle = () => {
-    try {
-      setPriceModalOpen(!priceModalOpen);
-      clearRowDetail();
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const productCompleteModalToggle = () => {
-    if (images && images.length > 0) {
-      setSelectedPayment(PaymentType.UPI_VALUE);
-      setProductCompleteModalOpen(!productCompleteModalOpen);
-    } else {
-      setProductCompleteModalOpen(!productCompleteModalOpen);
-      setIsSubmit(false);
-      setEnableButton(false);
-      setSelectedPayment(PaymentType.VALIDATION);
-    }
+    setManufactureDate("");
+    setMrp("");
   };
 
   const productDeleteModalToggle = () => {
     setProductDeleteModalOpen(!productDeleteModalOpen);
-    clearRowDetail();
   };
 
-  const productNotFoundToggle = () => {
-    setProductNotFoundModalOpen(!productNotFoundModalOpen);
-  };
+  const addOrderProduct = async (values, scannedProduct, productDetails) => {
+    try {
+      let dataObject = {};
 
-  const productSelectModalToggle = () => {
-    setProductSelectModalOpen(!productSelectModalOpen);
-    setIsProductAdding(false);
-  };
+      dataObject.orderId = params?.orderId ? v : params?.id;
+      dataObject.productId = values?.product_id;
+      dataObject.cgst_percentage = values && values.cgst_percentage;
+      dataObject.sgst_percentage = values && values.sgst_percentage;
+      dataObject.cess_percentage = values && values.cess_percentage;
+      dataObject.cess_amount = values && values.cess_amount;
+      dataObject.sgst_amount = values && values.sgst_amount;
+      dataObject.cgst_amount = values && values.cgst_amount;
+      dataObject.igst_amount = values && values.igst_amount;
+      dataObject.igst_percentage = values && values.igst_percentage;
+      dataObject.discount_percentage = values && values.discount_percentage;
+      (dataObject.storeId = params?.location
+        ? params?.location
+        : param.location),
+        (dataObject.company_id = scannedProduct.company_id),
+        (dataObject.taxable_amount =
+          values && values.taxable_amount ? values.taxable_amount : null);
+      (dataObject.barcode = scannedProduct?.barcode),
+        (dataObject.mrp = values && values.mrp);
+      dataObject.discount_amount =
+        values && Number.GetFloat(values.discount_amount);
 
-  const productExistModalToggle = () => {
-    setProductExistModalOpen(!productExistModalOpen);
-    setIsProductAdding(false);
-  };
+      dataObject.tax_amount = values && Number.GetFloat(values.tax_amount);
 
-  const cashPaid = (value) => {
-    setIsSubmit(true);
-    let data = {
-      payment_type: selectedPayment,
-      customer_account: params?.customerId ? params?.customerId : accountId,
-      type: type?.id,
-    };
-    if (selectedPayment === PaymentType.CASH_VALUE) {
-      data.cash = totalAmount;
-    }
-    if (selectedPayment === PaymentType.UPI_VALUE) {
-      data.upi = totalAmount;
-    }
+      dataObject.net_amount = values && values.net_amount;
 
-    setEnableButton(true);
-    setIsSubmit(false);
-    OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
-      if (res) {
-        setIsSubmit(false);
-        clearStackNavigate();
-      } else {
-        setEnableButton(false);
-      }
-    });
+      dataObject.tax_percentage = values && Number.GetFloat(values.tax);
 
-    if (selectedPayment === PaymentType.MIXED_VALUE) {
-      if (value?.cash == 0 || value?.upi == 0) {
-        return alert("Enter a valid amount");
-      }
-      let amount = Number.GetFloat(value?.cash) + Number.GetFloat(value?.upi);
+      dataObject.quantity = values && values.quantity;
 
-      if (Number.GetFloat(amount) !== Number.GetFloat(totalAmount)) {
-        return alert("Amount not matched");
-      }
+      dataObject.sale_price = values && values.unit_price;
+      dataObject.cost_price = values && values.unit_price;
+      dataObject.margin_percentage = values && values.margin_percentage;
+      dataObject.unit_margin_amount = values && values.unit_margin_amount;
+      dataObject.status = values && values.status && values.status;
+      dataObject.manufactured_date =
+        values && values.manufactured_date && values.manufactured_date;
 
-      (data.cash = value?.cash), (data.upi = value?.upi);
-      setEnableButton(true);
+      dataObject.purchaseId = params?.id;
+      dataObject.productId = values?.product_id;
 
-      OrderService.completeOrder(orderId ? orderId : id, data, (err, res) => {
-        if (err) {
-          setEnableButton(false);
+      await OrderService.addOrderProduct(dataObject, async (error, res) => {
+        if (res && res.data) {
+          getProducts();
+
+          setClicked("");
+          setManufactureDate("");
+          productEditModalToggle();
+          reset();
         }
       });
-    }
-  };
-
-  const productExistOnclick = () => {
-    if (quantityUpdateObject) {
-      updateOrderProductQuantity(
-        quantityUpdateObject.updatedQuantity,
-        quantityUpdateObject.orderProductId
-      );
-    }
-  };
-
-  const updateQuantity = (quantity) => {
-    let quantityValue = quantity > 0 ? quantity : selectedItem?.quantity;
-    if (selectedItem && quantityValue > 0) {
-      updateOrderProductQuantity(quantityValue, selectedItem.orderProductId);
-    }
-  };
-  const handleUpdate = async (value) => {
-    try {
-      if (selectedItem && value > 0) {
-        setManualPrice(true);
-        if (selectedItem?.orderProductId) {
-          //create body data
-          let BodyData = {
-            orderId: orderId ? orderId : id,
-            orderProductId: selectedItem?.orderProductId,
-            product_id: selectedItem?.product_id,
-            orderDate: params?.date ? params?.date : orderDate,
-            manual_price: value,
-            quantity: selectedItem?.quantity,
-          };
-
-          if (
-            selectedItem &&
-            selectedItem?.status == OrderProduct.STATUS_CANCEL &&
-            orderDraftStatusId &&
-            orderDraftStatusId.status_id
-          ) {
-            BodyData.status = orderDraftStatusId.status_id;
-          }
-
-          await OrderService.updateOrderProduct(
-            selectedItem?.orderProductId,
-            BodyData,
-            async (error, response) => {
-              if (response && response.data) {
-                //close product select modal
-                setProductExistModalOpen(false);
-                getOrderProducts();
-                setSearchPhrase("");
-                setClicked("");
-                setStoreProductList("");
-                setIsProductAdding(false);
-                setManualPrice(false);
-              }
-            }
-          );
-        }
-      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const getMediaList = async () => {
-    if (id || orderId) {
-      await mediaService.search(
-        id ? id : orderId,
-        ObjectName.ORDER,
-        (callback) => setMediaData(callback.data.data)
-      );
-    }
-  };
+  const onScanAction = async (selectedProduct) => {
+    try {
+      const purchaseProductList = stateRef?.purchaseProductList;
 
-  const renderHiddenItem = (data, rowMap) => {
-    let item = data?.item;
-    setAllowEdit(item.allowEdit);
-    setAllowCancel(item.allowCancel);
-    return (
-      <View style={{ flex: 1, alignItems: "flex-end" }}>
-        {
-          <>
-            {(item.allowEdit || !params?.isNewOrder) && (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity
-                  style={[
-                    styles.orderProductEdit,
-                    {
-                      marginRight: enableManualPrice ? 2 : "",
-                      width: !enableManualPrice ? "35%" : "",
-                    },
-                  ]}
-                  onPress={() => {
-                    productModalToggle();
-                    setSelectedItem(data?.item);
-                    stateRef.selectedItem = data?.item;
-                    stateRef.selecredRowMap = rowMap;
-                    closeRow(rowMap, data?.item.orderProductId);
-                  }}
-                >
-                  <Text style={styles.btnText}>Edit</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
+      let AddProduct = {
+        image: selectedProduct?.featured_media_url,
+        brand: selectedProduct?.brand_name,
+        product_name: selectedProduct?.product_name,
+        size: selectedProduct?.size,
+        unit_price: selectedProduct?.unit,
+        sale_price: selectedProduct?.sale_price,
+        mrp: selectedProduct?.mrp,
+        product_id: selectedProduct?.product_id,
+        barcode: selectedProduct?.barcode,
+        isAdding: true,
+      };
+
+      //validate already added product list
+      if (purchaseProductList && purchaseProductList.length > 0) {
+        //find the product already exist or not
+        let productExist = purchaseProductList.find(
+          (data) => data.product_id == selectedProduct.product_id
+        );
+
+        //validate product exist or not
+        if (productExist) {
+          //get the updated quantity
+          let updatedQuantity = productExist?.quantity
+            ? productExist?.quantity + 1
+            : 1;
+
+          //create return object
+          let returnObject = {
+            updatedQuantity: updatedQuantity,
+            product: productExist,
+            product_id: selectedProduct?.product_id,
+          };
+
+          //set moda visiblity
+          setProductExistModalOpen(true);
+
+          setSelectedItem(returnObject.product);
+
+          //update quantity update object
+          setQuantityUpdateObject(returnObject);
+          setSearchPhrase("");
+          setManufactureDate("");
+        } else {
+          productEditModalToggle();
+          reset();
+          setSelectedItem(AddProduct);
+          stateRef.selectedItem = selectedProduct;
+          setSearchPhrase("");
         }
-      </View>
-    );
+      } else {
+        //add invenotry product
+        productEditModalToggle();
+        reset();
+        setSelectedItem(AddProduct);
+        stateRef.selectedItem = selectedProduct;
+        setSearchPhrase("");
+      }
+    } catch (err) {
+      setSearchPhrase("");
+    }
   };
 
-  const updateValue = async () => {
-    setIsSubmit(true);
+  const productOnClick = async (selectedProduct) => {
+    setScannedProductList(selectedProduct);
+    onScanAction(selectedProduct);
+  };
 
-    let updateData = new Object();
-    if (selectedUser) {
-      updateData.owner = parseInt(selectedUser);
-    }
-    if (selectedStore) {
-      updateData.storeId = selectedStore;
-    }
-    if (selectedShift) {
-      updateData.shift = selectedShift;
-    }
-    if (status) {
-      updateData.status = parseInt(status);
-    }
-    await orderService.updateOrder(id, updateData, (err, response) => {
-      if (response) {
-        getDetails();
-        setEdit(false);
-        setIsSubmit(false);
+  const onDateSelect = (value) => {
+    setSelectedDate(value);
+  };
+  const onManufactureDateSelect = (value) => {
+    setManufactureDate(value);
+  };
+
+  const onInvoiceDateSelect = (value) => {
+    setInvoiceDate(value);
+  };
+
+  const onDueDateSelect = (value) => {
+    setDueDate(value);
+  };
+
+  const getProducts = async () => {
+    let props = {
+      sort: "createdAt",
+      sortDir: "DESC",
+      orderId: params?.orderId ? params?.orderId : param.id,
+      pagination: false,
+    };
+    await OrderService.getOrderProducts(
+      props,
+      (error, orderProducts, totalCount) => {
+        setTotalCount(orderProducts?.length);
+        let list = orderProducts && orderProducts ? orderProducts : [];
+        stateRef.purchaseProductList = list;
+
+        setPurchaseProductList(list);
       }
-      setIsSubmit(false);
-    });
+    );
   };
 
   const renderItem = (data) => {
     let item = data?.item;
-    let index = data?.index;
-
-    const containerStyle = AlternativeColor.getBackgroundColor(index);
     return (
       <View style={styles.container}>
-        {item && (
-          <ProductCard
-            size={item.size}
-            unit={item.unit}
-            name={item.name}
-            image={item.image}
-            brand={item.brand_name}
-            sale_price={
-              item?.manual_price ? item?.manual_price : item.sale_price
-            }
-            mrp={item.mrp}
-            id={item.id}
-            item={item}
-            quantity={item.quantity}
-            status={item.status}
-            QuantityField
-            editable
-            alternative={containerStyle}
-          />
-        )}
+        <View>
+          {item && (
+            <ProductCard
+              size={item.size}
+              unit={item.unit}
+              name={item.name}
+              image={item.image}
+              brand={item.brand_name}
+              sale_price={item.sale_price}
+              mrp={item.mrp}
+              id={item.id}
+              status={item.status}
+              item={item}
+              quantity={item.quantity}
+              QuantityField
+              editable
+            />
+          )}
+        </View>
       </View>
     );
   };
-  const updateCustomerAccount = async () => {
-    let data = {
-      customer_account: accountId,
-    };
-    if (!orderId || !id) {
-      clearStackNavigate();
-    }
-    OrderService.updateOrder(orderId ? orderId : id, data, () => {});
-  };
 
-  const createRefundRequest = async (id) => {
-    setVisible(false);
-    navigation.navigate("Invoice/invoiceProductList", {
-      orderId: id,
-      status: params?.status,
-      type: type?.id,
-    });
-    setVisible(true);
-  };
-
-  const getActionItems = async () => {
-    let actionItems = new Array();
-
-    if (params?.isNewOrder) {
-      actionItems.push(
-        <MenuItem
+  const renderHiddenItem = (data, rowMap) => {
+    return (
+      <View style={styles.swipeStyle}>
+        <TouchableOpacity
+          style={[styles.productDelete]}
           onPress={() => {
-            if (images && images.length > 0) {
-              updateCustomerAccount();
-              uploadImages();
-            } else {
-              updateCustomerAccount();
-              clearStackNavigate();
-            }
+            setSelectedItem(data?.item);
+            stateRef.selectedItem = data?.item;
+            stateRef.selecredRowMap = rowMap;
+            setProductDeleteModalOpen(true);
           }}
         >
-          Save as Draft
-        </MenuItem>
-      );
-    }
+          <Text style={styles.btnText}>Delete</Text>
+        </TouchableOpacity>
 
-    setActionList(actionItems);
-  };
-  const getAction = async () => {
-    let actionItems = new Array();
-
-    const editPermission = await PermissionService.hasPermission(
-      Permission.ORDER_EDIT
+        <TouchableOpacity
+          style={[styles.productEdit]}
+          onPress={() => {
+            setProductEditModalOpen(!productEditModalOpen);
+            setSelectedItem(data?.item);
+            setMrp(null);
+            stateRef.selectedItem = data?.item;
+            stateRef.selecredRowMap = rowMap;
+          }}
+        >
+          <Text style={styles.btnText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
     );
+  };
 
-    if (editPermission && params?.allow_edit === Status.ALLOW_EDIT_ENABLED) {
-      actionItems.push(
-        <MenuItem
-          onPress={() => {
-            setEdit(true), setVisible(true);
-          }}
-        >
-          Edit
-        </MenuItem>
+  const updatedQuantity = async (values, id) => {
+    if (selectedItem.isAdding) {
+      await addOrderProduct(values, selectedItem);
+    } else {
+      await updateOrderProduct(values, id);
+    }
+  };
+
+  const updateProduct = async () => {
+    if (quantityUpdateObject) {
+      // update the quantity
+      await updateOrderProduct(
+        quantityUpdateObject.updatedQuantity,
+        quantityUpdateObject.id,
+        quantityUpdateObject.unit_price
       );
     }
-
-    setList(actionItems);
   };
 
-  const takePicture = async (e) => {
+  const updateOrderProduct = async (values, id) => {
     try {
-      const image = await Media.getImage();
-      if (image && image.assets && image.assets.length > 0) {
-        const imageUrl = image.assets[0];
-        setImages((prevImages) => [...prevImages, imageUrl]);
-      }
-    } catch (error) {
-      console.error("Error taking picture:", error);
-    }
-  };
+      //validate quantity exist or not
+      //create update quantity object
 
-  const handleUploadMedia = async (e) => {
-    const image = await Media.getImage();
-    if (image && image.assets) {
-      const response = await fetch(image.assets[0].uri);
-      const blob = await response.blob();
-      await Media.uploadImage(
-        id ? id : orderId,
-        blob,
-        image.assets[0].uri,
-        ObjectName.ORDER,
-        null,
-        null,
-        async (response) => {
-          if (response) {
-            getMediaList();
+      let dataObject = {};
+
+      dataObject.orderId = params?.orderId ? v : params?.id;
+      dataObject.productId = values?.product_id;
+      dataObject.orderProductId = id;
+      dataObject.cgst_percentage = values && values.cgst_percentage;
+      dataObject.sgst_percentage = values && values.sgst_percentage;
+      dataObject.cess_percentage = values && values.cess_percentage;
+      dataObject.cess_amount = values && values.cess_amount;
+      dataObject.sgst_amount = values && values.sgst_amount;
+      dataObject.cgst_amount = values && values.cgst_amount;
+      dataObject.igst_amount = values && values.igst_amount;
+      dataObject.igst_percentage = values && values.igst_percentage;
+      dataObject.discount_percentage = values && values.discount_percentage;
+      dataObject.taxable_amount =
+        values && values.taxable_amount ? values.taxable_amount : null;
+
+      dataObject.mrp = values && values.mrp;
+      dataObject.discount_amount =
+        values && Number.GetFloat(values.discount_amount);
+
+      dataObject.tax_amount = values && Number.GetFloat(values.tax_amount);
+
+      dataObject.net_amount = values && values.net_amount;
+
+      dataObject.tax_percentage = values && Number.GetFloat(values.tax);
+
+      dataObject.quantity = values && values.quantity;
+
+      dataObject.unit_price = values && values.unit_price;
+      dataObject.sale_price = values && values.unit_price;
+      dataObject.margin_percentage = values && values.margin_percentage;
+      dataObject.unit_margin_amount = values && values.unit_margin_amount;
+      dataObject.status = values && values.status && values.status;
+      dataObject.manufactured_date =
+        values && values.manufactured_date && values.manufactured_date;
+
+      dataObject.purchaseId = params?.id;
+      dataObject.productId = values?.product_id;
+
+      OrderService.updateOrderProduct(id, dataObject, (error, response) => {
+        setProductExistModalOpen(false);
+
+        if (purchaseProductList != undefined) {
+          let purchaseProducts = [...purchaseProductList];
+
+          let purchaseProductIndex = purchaseProducts.findIndex(
+            (data) => data.id == selectedItem?.id
+          );
+
+          if (purchaseProductIndex > -1) {
+            purchaseProducts[purchaseProductIndex].quantity = values
+              ? values?.quantity
+              : selectedItem.quantity;
+
+            purchaseProducts[purchaseProductIndex].manufactured_date =
+              manufactureDate;
+
+            setPurchaseProductList(purchaseProducts);
           }
         }
-      );
-    }
-  };
-  const handleDelete = (index) => {
-    try {
-      setImages((prevImages) => {
-        // Filter out the image at the specified index
-        return prevImages.filter((_, i) => i !== index);
+        productEditModalToggle();
+        reset();
+        getProducts();
+        setClicked("");
       });
     } catch (err) {
       console.log(err);
     }
   };
-  const uploadImages = async () => {
-    if (images && images.length > 0) {
-      for (const image of images) {
-        const response = await fetch(image.uri);
-        const blob = await response.blob();
-        await Media.uploadImage(
-          id ? id : orderId,
-          blob,
-          image.uri,
-          ObjectName.ORDER,
-          null,
-          null,
-          async (response) => {}
-        );
-      }
-      clearStackNavigate();
+
+  const deleteOrderProduct = async (item) => {
+    if (item && item.id) {
+      OrderService.deleteOrderProduct(item.id, async () => {
+        await getProducts();
+        clearRowDetail();
+      });
     }
   };
 
-  let title = [
+  const updateDateValues = () => {
+    let date = params?.date;
+    if (date) {
+      setSelectedDate(date);
+    }
+    let manufactured_date = selectedItem.manufactured_date;
+    if (manufactured_date) {
+      setManufactureDate(manufactured_date);
+    }
+  };
+
+  const updateOrder = async (values) => {
+    setIsSubmit(true);
+    const updateData = {
+      date: selectedDate,
+      vendor_invoice_number: values?.vendor_invoice_number,
+      description: values.description,
+      location: storeId
+        ? storeId
+        : params?.location
+        ? params?.location
+        : param.location,
+      vendor_id: vendorName
+        ? vendorName.value
+        : params?.vendor_id
+        ? params?.vendor_id
+        : param?.vendor_id,
+      status: status,
+      net_amount: netAmount ? netAmount : params?.net_amount,
+      due_date: dueDate ? dueDate : params?.due_date,
+      invoice_amount: invoiceAmount,
+      invoice_amount: invoiceAmount,
+      returnedItemAmount: returnAmount,
+      reviewer: reviewer,
+      due_date: dueDate,
+      owner: owner,
+      vendor_invoice_date: invoiceDate,
+    };
+
+    await OrderService.updateOrder(
+      params?.id ? params?.id : param.id,
+      updateData,
+      (response) => {
+        if (response) {
+          if (params) {
+            setActiveTab(TabName.SUMMARY);
+            setDisableEdit(true);
+            setIsSubmit(false);
+          } else {
+            setIsSubmit(false);
+            navigation.navigate("Purchase");
+          }
+        } else {
+          setIsSubmit(false);
+        }
+      }
+    );
+  };
+
+  const productExistModalToggle = () => {
+    setProductExistModalOpen(!productExistModalOpen);
+    setClicked("");
+  };
+
+  const productNotFoundToggle = () => {
+    setProductNotFoundModalOpen(!productNotFoundModalOpen);
+    setClicked("");
+  };
+
+  const productSelectModalToggle = () => {
+    setProductSelectModalOpen(!productSelectModalOpen);
+    setClicked("");
+  };
+
+  const onInvoiceAmountChange = (value) => {
+    setInvoiceAmount(value);
+    purchaseRef.current.invoiceAmount = value;
+
+    calculatedData();
+  };
+
+  const Products = () => (
+    <>
+      <DeleteModal
+        modalVisible={productDeleteModalOpen}
+        toggle={productDeleteModalToggle}
+        item={selectedItem}
+        updateAction={deleteOrderProduct}
+      />
+      <ConfirmationModal
+        toggle={productExistModalToggle}
+        modalVisible={productExistModalOpen}
+        title={AlertMessage.PRODUCT_ALREADY_EXIST}
+        description={AlertMessage.QUANTITY_INCREASE_MESSSAGE}
+        confirmLabel={"Confirm"}
+        cancelLabel={"Cancel"}
+        scanProduct={selectedItem}
+        ConfirmationAction={updateProduct}
+        CancelAction={productExistModalToggle}
+      />
+      <ConfirmationModal
+        toggle={productNotFoundToggle}
+        modalVisible={productNotFoundModalOpen}
+        title={AlertMessage.PRODUCT_NOT_FOUND}
+        description={`BarCode ID ${scannedCode} not found please scan different code or add the product`}
+        confirmLabel={"Cancel"}
+        ConfirmationAction={productNotFoundToggle}
+      />
+      <ProductSelectModal
+        modalVisible={productSelectModalOpen}
+        toggle={productSelectModalToggle}
+        items={scannedProductList}
+      />
+
+      {!searchPhrase &&
+        purchaseProductList &&
+        purchaseProductList.length == 0 && (
+          <NoRecordFound
+            iconName={"receipt"}
+            styles={{ paddingVertical: 250, alignItems: "center" }}
+          />
+        )}
+    </>
+  );
+  const FooterContent = (
+    <SaveButton
+      onPress={handleSubmit((values) => {
+        updateOrder(values);
+      })}
+      isSubmit={isSubmit}
+    />
+  );
+
+  let title = [];
+
+  title.push(
     {
       title: TabName.SUMMARY,
       tabName: TabName.SUMMARY,
     },
     {
-      title: `${TabName.PRODUCTS} (${
-        (orderProducts && orderProducts.length) || 0
-      })`,
+      title: `${TabName.PRODUCTS} (${totalCount || 0})`,
       tabName: TabName.PRODUCTS,
-    },
-  ];
+    }
+  );
 
-  if (orderHistoryViewPermission && !params?.isNewOrder) {
-    title.push({
-      title: TabName.HISTORY,
-      tabName: TabName.HISTORY,
-    });
-  }
+  title.push({
+    title: TabName.HISTORY,
+    tabName: TabName.HISTORY,
+  });
 
   return (
-    <>
-      <Layout
-        title={
-          orderNumber || params.orderNumber
-            ? `Sale# ${orderNumber ? orderNumber : params.orderNumber}`
-            : "Sale"
-        }
-        closeModal={visible}
-        showActionMenu={true}
-        isSubmit={isSubmit}
-        buttonLabel={
-          activeTab === TabName.SUMMARY
-            ? "Save"
-            : activeTab === TabName.ATTACHMENTS && allowEdit
-            ? "Upload"
-            : ""
-        }
-        buttonOnPress={
-          activeTab === TabName.ATTACHMENTS
-            ? (e) => handleUploadMedia(e)
-            : handleSubmit((values) => {
-                updateValue(values);
-              })
-        }
-        actionItems={activeTab === TabName.PRODUCTS ? actionList : list}
-        showBackIcon={true}
-        defaultFooter={
-          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
-            ? true
-            : false
-        }
-        emptyMenu={
-          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
-            ? true
-            : false
-        }
-        backButtonNavigationUrl="Order"
-        HideSideMenu={
-          params?.group == Status.GROUP_DRAFT || params?.isNewOrder
-            ? true
-            : false
-        }
-        FooterContent={
-          activeTab === TabName.SUMMARY
-            ? ""
-            : searchPhrase &&
-              storeProductList &&
-              storeProductsList.lengthr > 0 && (
-                <CustomButton
-                  title={"CANCEL"}
-                  backgroundColor={Color.CANCEL_BUTTON}
-                  show={permission ? true : false}
-                  onPress={() => setSearchPhrase("")}
-                />
-              )
-        }
-      >
-        {orderCancelModal && (
-          <CustomAlertModal
-            visible={orderCancelModal}
-            title="Cancel Order"
-            message={
-              orderProducts.length > 0
-                ? `Are you sure, you want to cancel this order?`
-                : `No Products Added. Are you sure, you want to cancel this order?`
-            }
-            buttonOptions={[
-              { label: Label.TEXT_YES, onPress: () => OnCancel() },
-              {
-                label: Label.TEXT_NO,
-                onPress: () => setOrderCancelModal(false),
-              },
-            ]}
-          />
-        )}
-
+    <Layout
+      title={
+        params || param
+          ? `Sale# ${
+              params?.orderNumber ? params?.orderNumber : param?.orderNumber
+            }`
+          : "Add Sale"
+      }
+      FooterContent={
+        activeTab === TabName.SUMMARY && FooterContent
+          ? activeTab === TabName.SUMMARY && FooterContent
+          : newPurchase
+      }
+      showBackIcon
+      backButtonNavigationUrl="Order"
+      buttonLabel={
+        activeTab === TabName.ATTACHMENTS && editPermission ? "Upload" : ""
+      }
+      buttonLabel2={activeTab === TabName.SUMMARY ? "Save" : ""}
+      button2OnPress={handleSubmit((values) => {
+        updateOrder(values);
+      })}
+      onPressCancel={() => {
+        !newPurchase && navigation.navigate("Purchase");
+      }}
+      showActionMenu={
+        !newPurchase && editPermission && activeTab === TabName.SUMMARY
+          ? true
+          : false
+      }
+      actionItems={[
+        <MenuItem
+          onPress={() => {
+            setDisableEdit(false);
+            setIsVisible(true);
+          }}
+        >
+          Edit
+        </MenuItem>,
+      ]}
+      closeModal={visible}
+      isSubmit={isSubmit}
+    >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.tabBar}>
-          <>
-            <Tab
-              title={title}
-              setActiveTab={setActiveTab}
-              defaultTab={activeTab}
-            />
-          </>
+          <Tab
+            title={title}
+            setActiveTab={setActiveTab}
+            defaultTab={activeTab}
+          />
         </View>
-
         {activeTab === TabName.SUMMARY && (
-          <General
-            permission={permission}
-            param={params}
-            setSelectedDate={setSelectedDate}
-            setSelectedShift={setSelectedShift}
-            setSelectedStore={setSelectedStore}
-            setSelectedUser={setSelectedUser}
-            selectedUser={selectedUser ? selectedUser : params && params?.owner}
-            selectedDate={selectedDate}
-            setStatus={setStatus}
-            status={status}
-            allowEdit={allowEdit}
-            onPress={() => setProductCompleteModalOpen(true)}
-          />
-        )}
+          <View>
+            <VerticalSpace10 paddingTop={5} />
 
-        {productCompleteModalOpen && (
-          <ProductModal
-            modalVisible={productCompleteModalOpen}
-            button1Press={(value) =>
-              selectedPayment === PaymentType.VALIDATION ||
-              selectedPayment === PaymentType.INITIAL
-                ? setSelectedPayment(PaymentType.INITIAL)
-                : cashPaid(value)
-            }
-            content={`Total Amount  `}
-            content2={`${CurrencyFormat.IndianFormat(
-              Number.GetFloat(totalAmount)
-            )}`}
-            toggle={productCompleteModalToggle}
-            button1Label="PAID"
-            title="Complete"
-            handlePaymentChange={handlePaymentChange}
-            selectedPayment={selectedPayment}
-            MediaData={images ? images : MediaData}
-            takePicture={() => takePicture()}
-            handleDelete={handleDelete}
-            enableButton={enableButton}
-            isSubmit={isSubmit}
-          />
-        )}
+            <DatePicker
+              title=" Date"
+              onDateSelect={onDateSelect}
+              selectedDate={selectedDate ? selectedDate : params?.date}
+              style={styles.input}
+              divider
+            />
+            <VerticalSpace10 paddingTop={5} />
+            <AccountSelect
+              label="Vendor"
+              name="vendor"
+              options={vendorList}
+              control={control}
+              showBorder={false}
+              divider
+              getDetails={(value) => setVendorName(value)}
+              placeholder="Select Account"
+            />
 
-        {productDeleteModalOpen && (
-          <OrderProductCancelModel
-            modalVisible={productDeleteModalOpen}
-            toggle={productDeleteModalToggle}
-            item={selectedItem}
-            updateAction={cancelOrderProduct}
-            heading={AlertMessage.CANCEL_MODAL_TITLE}
-            description={AlertMessage.CANCEL_MODAL_DESCRIPTION}
-            control={control}
-            onReasonInput={onReasonInput}
-            showReasonField
-            reason={reason}
-          />
-        )}
+            <VerticalSpace10 paddingTop={5} />
 
-        {productModalOpen && (
-          <ProductEditModal
-            modalVisible={productModalOpen}
-            toggle={productModalToggle}
-            item={selectedItem}
-            updateAction={updateQuantity}
-            control={control}
-          />
-        )}
-        {priceModalOpen && (
-          <PriceUpdateModal
-            modalVisible={priceModalOpen}
-            toggle={priceModalToggle}
-            item={selectedItem}
-            handleUpdate={handleUpdate}
-            control={control}
-            price={manualPrice}
-          />
+            <TextInput
+              title="Vendor Invoice Number# "
+              name="vendor_invoice_number"
+              control={control}
+              showBorder={true}
+              divider
+            />
+            <VerticalSpace10 paddingTop={5} />
+            <DatePicker
+              title="Vendor Invoice Date"
+              name="vendor_invoice_date"
+              onDateSelect={onInvoiceDateSelect}
+              selectedDate={
+                invoiceDate ? invoiceDate : params?.vendor_invoice_date
+              }
+              style={styles.input}
+              divider
+            />
+
+            <VerticalSpace10 paddingTop={5} />
+            <LocationSelect
+              label="Location"
+              name="location"
+              onChange={(value) => {
+                setStoreId(value);
+              }}
+              options={storeList}
+              showBorder={true}
+              divider
+              data={params?.location ? params?.location : param?.location}
+              control={control}
+              placeholder="Select Location"
+            />
+            <VerticalSpace10 paddingTop={5} />
+
+            <Currency
+              title="Invoice Amount"
+              name="invoice_amount"
+              control={control}
+              showBorder={true}
+              noEditable
+              divider
+              onInputChange={onInvoiceAmountChange}
+              values={invoiceAmount ? invoiceAmount.toString() : ""}
+            />
+            <VerticalSpace10 paddingTop={5} />
+
+            <View>
+              <View>
+                <UserSelect
+                  label="Owner"
+                  selectedUserId={params?.owner_id}
+                  name={"owner_id"}
+                  onChange={(value) => setSelectedOwner(value.value)}
+                  control={control}
+                  placeholder="Select Owner"
+                />
+              </View>
+              <VerticalSpace10 />
+
+              <UserSelect
+                label="Reviewer"
+                selectedUserId={params?.reviewer_id}
+                name={"reviewer_id"}
+                onChange={(value) => setSelectedReviewer(value.value)}
+                control={control}
+                placeholder="Select Reviewer"
+              />
+            </View>
+            <VerticalSpace10 />
+            <DatePicker
+              title="Due Date"
+              onDateSelect={onDueDateSelect}
+              selectedDate={dueDate ? dueDate : params?.due_date}
+              style={styles.input}
+              divider
+            />
+          </View>
         )}
 
         {activeTab === TabName.PRODUCTS && (
-          <View style={{ flex: 1 }}>
-            {
-              <View style={{ width: searchPhrase ? "100%" : "85%" }}>
-                <SearchBar
-                  searchPhrase={searchPhrase}
-                  setSearchPhrase={setSearchPhrase}
-                  setClicked={setClicked}
-                  clicked={clicked}
-                  handleChange={handleSearchOnChange}
-                  noScanner
-                />
-              </View>
-            }
-
-            {searchPhrase &&
-              storeProductList &&
-              storeProductsList.length > 0 && (
-                <View>
-                  <ProductSearch
-                    searchResult={storeProductList}
-                    productOnClick={productOnClick}
-                  />
-                </View>
-              )}
-            <View
-              style={
-                orderProducts && orderProducts.length > 0
-                  ? { flex: 0.8 }
-                  : {
-                      flex: 0.8,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }
-              }
-            >
-              {!searchPhrase && orderProducts && orderProducts.length > 0 ? (
-                <>
-                  <ScrollView>
-                    <SwipeListView
-                      data={orderProducts}
-                      renderItem={renderItem}
-                      renderHiddenItem={renderHiddenItem}
-                      rightOpenValue={
-                        params?.group == Status.GROUP_DRAFT ||
-                        params?.isNewOrder
-                          ? -150
-                          : allowCancel || allowProductEdit
-                          ? -150
-                          : -80
-                      }
-                      previewOpenValue={-40}
-                      previewOpenDelay={3000}
-                      closeOnRowOpen={true}
-                      keyExtractor={(item) => String(item.orderProductId)}
-                      disableLeftSwipe={
-                        allowCancel || allowProductEdit ? false : true
-                      }
-                      disableRightSwipe={true}
-                    />
-                  </ScrollView>
-                </>
-              ) : storeProductsList.length == 0 &&
-                orderProducts &&
-                orderProducts.length == 0 ? (
-                <View style={{ alignItems: "center" }}>
-                  <FontAwesome5
-                    name="box-open"
-                    size={20}
-                    color={Color.PRIMARY}
-                  />
-                  <LabelText text="No Products Added Yet" bold={true} />
-                </View>
-              ) : (
-                <Spinner />
-              )}
-            </View>
-
-            <View style={{ flex: 0.2 }}>
-              {!params?.isNewOrder && (
-                <View style={styles.cashAmount}>
-                  {cashAmount > 0 && (
-                    <View style={styles.align}>
-                      <Text style={styles.letter}>
-                        Cash:&nbsp;&nbsp;
-                        <Text style={styles.letterColor}>
-                          {CurrencyFormat.IndianFormat(
-                            cashAmount ? cashAmount : ""
-                          )}
-                        </Text>
-                      </Text>
-                    </View>
-                  )}
-                  {upiAmount > 0 && (
-                    <View style={styles.align}>
-                      <Text style={styles.letterText}>
-                        Upi:&nbsp;&nbsp;
-                        <Text style={styles.letterColor}>
-                          {CurrencyFormat.IndianFormat(
-                            upiAmount ? upiAmount : ""
-                          )}
-                        </Text>
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              )}
-              {!clicked && (
-                <View style={styles.totalAmount}>
-                  <View style={styles.align}>
-                    <Text style={styles.letter}>
-                      Total Amount:&nbsp;&nbsp;
-                      <Text style={styles.letterColor}>
-                        {!params?.isNewOrder
-                          ? CurrencyFormat.IndianFormat(
-                              Number.GetFloat(totalAmount)
-                            )
-                          : CurrencyFormat.IndianFormat(
-                              Number.GetFloat(totalAmount)
-                            )}
-                      </Text>
-                    </Text>
-                  </View>
-                </View>
-              )}
-              {!clicked &&
-                ((!productExistModalOpen &&
-                  !productNotFoundModalOpen &&
-                  params?.group == Status.GROUP_DRAFT) ||
-                  params?.group == Status.GROUP_NEW ||
-                  params?.isNewOrder) && (
-                  <FooterContent
-                    id={orderId ? orderId : id}
-                    storeId={params.storeId}
-                    locationName={params?.locationName}
-                    shift={params?.shift}
-                    date={params?.date ? params?.date : orderDate}
-                    addNew={addNew}
-                    onPress={() =>
-                      orderProducts.length > 0
-                        ? setProductCompleteModalOpen(true)
-                        : setOrderCancelModal(true)
-                    }
-                    orderProducts={orderProducts}
-                    totalAmount={Number.GetFloat(totalAmount)}
-                    cashPaid={cashPaid}
-                    delivery={isDeliveryOrder}
-                  />
-                )}
-            </View>
-
-            {productExistModalOpen && (
-              <ConfirmationModal
-                toggle={productExistModalToggle}
-                scanProduct={scanProduct}
-                modalVisible={productExistModalOpen}
-                title={AlertMessage.PRODUCT_ALREADY_EXIST}
-                description={AlertMessage.QUANTITY_INCREASE_MESSSAGE}
-                confirmLabel={"Yes"}
-                cancelLabel={"No"}
-                ConfirmationAction={productExistOnclick}
-                CancelAction={() => productExistModalToggle()}
-              />
-            )}
-
-            {productSelectModalOpen && (
-              <ProductSelectModal
-                modalVisible={productSelectModalOpen}
-                toggle={productSelectModalToggle}
-                items={scannedProductList}
-                updateAction={validateProductInOrderProduct}
-              />
-            )}
-          </View>
-        )}
-        {activeTab === TabName.HISTORY && (
-          <ScrollView>
-            <HistoryList
-              objectName={ObjectName.ORDER}
-              objectId={id ? id : params?.orderId}
+          <>
+            <Search
+              productOnClick={productOnClick}
+              setClicked={setClicked}
+              clicked={clicked}
+              searchPhrase={searchPhrase}
+              setSearchPhrase={setSearchPhrase}
             />
-          </ScrollView>
+            {!searchPhrase && (
+              <SwipeListView
+                data={purchaseProductList}
+                renderItem={renderItem}
+                renderHiddenItem={renderHiddenItem}
+                rightOpenValue={-150}
+                previewOpenValue={-40}
+                previewOpenDelay={3000}
+                disableRightSwipe={true}
+                disableLeftSwipe={editPermission ? false : true}
+                closeOnRowOpen={true}
+                keyExtractor={(item) => String(item.id)}
+              />
+            )}
+            <Products />
+            {productEditModalOpen && (
+              <PurchaseProductModel
+                modalVisible={productEditModalOpen}
+                toggle={() => {
+                  productEditModalToggle();
+                  reset();
+                }}
+                item={selectedItem}
+                title={selectedItem?.isAdding ? "Add Product" : "Edit Product"}
+                BottonLabel1={selectedItem?.isAdding ? "Add" : "Save"}
+                updateAction={updatedQuantity}
+                control={control}
+                mrpField
+                TextBoxQuantityField
+                setSelectedItem={setSelectedItem}
+                quantityOnChange={updatedQuantity}
+              />
+            )}
+          </>
         )}
-
-        {activeTab === TabName.SUMMARY && !params?.isNewOrder && (
-          <OrderAmountCard
-            padding={Platform.OS === "ios" ? 20 : 0}
-            totalCash={cashAmount > 0 && cashAmount ? cashAmount : ""}
-            totalUpi={upiAmount > 0 ? upiAmount && upiAmount : ""}
-            totalAmount={totalAmount ? totalAmount : ""}
-          />
-        )}
-      </Layout>
-    </>
+      </ScrollView>
+      {activeTab === TabName.HISTORY && (
+        <ScrollView>
+          <HistoryList objectName={ObjectName.PURCHASE} objectId={params?.id} />
+        </ScrollView>
+      )}
+    </Layout>
   );
 };
 export default Billing;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    overflow: "scroll",
+    backgroundColor: "#fff",
+  },
+  productImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  productImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 5,
+    borderWidth: 2,
+  },
+  swipeStyle: {
+    flex: 1,
+  },
+  actionDeleteButton: {
+    alignItems: "center",
+    bottom: 10,
+    justifyContent: "center",
+    position: "absolute",
+    top: 16,
+    width: 70,
+    backgroundColor: "#D11A2A",
+    right: 7,
+  },
+  btnText: {
+    color: Color.WHITE,
+  },
+  productEdit: {
+    alignItems: "center",
+    bottom: 10,
+    justifyContent: "center",
+    position: "absolute",
+    top: 10,
+    width: 70,
+    backgroundColor: "grey",
+    right: 0,
+  },
+  tabBar: {
+    flexDirection: "row",
+    height: 50,
+    backgroundColor: Color.WHITE,
+    borderBottomWidth: 1,
+    borderBottomColor: Color.LIGHT_GRAY,
+  },
+  productDelete: {
+    alignItems: "center",
+    bottom: 10,
+    justifyContent: "center",
+    position: "absolute",
+    top: 10,
+    width: 70,
+    backgroundColor: "#D11A2A",
+    right: 70,
+  },
+  input: {
+    color: "black",
+    height: 50,
+    width: "100%",
+    padding: 10,
+    borderColor: "#dadae8",
+  },
+});

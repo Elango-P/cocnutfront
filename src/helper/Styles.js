@@ -775,7 +775,6 @@ viewInvoiceButton: {
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: Color.WHITE,
     backgroundColor:Color.WHITE
   },
   margin: {
