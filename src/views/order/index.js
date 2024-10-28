@@ -148,6 +148,7 @@ const Products = (props) => {
                       isNewOrder: true,
                       collectCustomerInfo: false,
                       type: orderTypeData,
+                      orderNumber: response?.data?.orderDetail?.order_number,
                     },
                   },
                 ],
@@ -182,6 +183,8 @@ const Products = (props) => {
       orderNumber: item.order_number,
       type: item?.type,
       paymentType: item?.paymentType,
+      customer_account: item?.customer_account?.id,
+      
     });
   };
 

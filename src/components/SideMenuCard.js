@@ -53,7 +53,7 @@ export default IconCard;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10, // Spacing between cards
+    marginVertical: 5, // Spacing between cards
     marginHorizontal: 15, // Horizontal spacing for aesthetics
     borderRadius: 12, // More rounded corners
     overflow: "hidden", // Ensure rounded corners are respected
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold", // Bold text
     color: Color.BLACK, // Change to black for better contrast
     flex: 1, // Allow text to grow
+    padding:4
   },
   sheetContainer: {
     flexDirection: "row",

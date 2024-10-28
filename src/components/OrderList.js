@@ -355,35 +355,20 @@ if (type && type?.isDeliveryOrder === OrderType.IS_DELIVERY_ORDER) {
     const renderItem = ({ item, index }) => {
         return (
             <View style={styles.container}>
-                {type && type?.isDeliveryOrder == OrderType.IS_DELIVERY_ORDER ? (
-                    <OrderCard
-                        order_number={item.order_number !== null ? item.order_number : ""}
-                        date={item.date}
-                        customerName={item.customerName}
-                        status={item.statusDetail?.name}
-                        statusColor={item?.statusDetail?.color_code}
-                        firstName = {item?.owner_firstName}
-                        lastName = {item?.owner_lastName}
-                        mediaUrl = {item?.owner_media_url}
-                        payment_type={item.payment_type}
-                        total_amount={item.total_amount}
-                        index={index}
-                        onPress={() => onPress && onPress(item)}
-                        data={item}
-                    />
-                ) : <OrderCard
+               <OrderCard
                     order_number={item.order_number !== null ? item.order_number : ""}
                     date={item.date}
                     locationName={item.locationName}
+                    customerName={item.customerName}
+
                     status={item.status}
                     statusColor={item?.statusDetail?.color_code}
                     payment_type={item.payment_type}
                     total_amount={item.total_amount}
-                    shift={item.shift}
                     index={index}
                     onPress={() => onPress && onPress(item)}
                     data={item}
-                />}
+                />
 
             </View>
         );
@@ -593,13 +578,7 @@ if (type && type?.isDeliveryOrder === OrderType.IS_DELIVERY_ORDER) {
         onFilterPress={closeDrawer}
         showBackIcon={true}
         closeModal={visible}
-        filter={
-            <DateFilter
-              handleDateFilterChange={handleDateFilterChange}
-              control={control}
-              data={values?.selectedDate}
-              showCloseIcon={false}
-            />}
+       
       >
 
         <FilterDrawer

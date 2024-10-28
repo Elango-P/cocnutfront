@@ -250,10 +250,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Color.BLACK,
     marginBottom: 25,
-    textAlign: "center",
+    textAlign: "center", 
   },
-  featuresCard: { padding: 5, backgroundColor: "#e5e5e5" },
-  featuresContainer: {
+  featuresCard: {
+    right: 5,
+    left: 5,
+    backgroundColor: '#f8f8f8', // Lighter background for a softer look
+    borderRadius: 10, // Rounded corners
+    width: '97%', // Adjust width to fit in row nicely
+    padding: 15, // More padding for a better touchable area
+    borderWidth: 1, // Width of the border
+    borderColor: '#ddd', // Softer border color
+    shadowColor: 'blue',  // Shadow color
+    shadowOffset: {
+      width: 4,  
+      height: 8, // Increased vertical offset for a deeper shadow
+    },
+    shadowOpacity: 0.2, // Slightly increased opacity for more prominent shadow
+    shadowRadius: 6, // Increased blur radius for a softer shadow
+    elevation: 5, // For Android shadow
+    marginVertical: 8, // Spacing between cards
+  }, 
+  featuresContainer: {   
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",

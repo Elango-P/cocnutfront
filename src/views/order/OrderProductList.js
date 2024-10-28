@@ -44,11 +44,10 @@ import OrderService from "../../services/OrderService";
 
 const Billing = (props) => {
   const params = props?.route?.params;
-  const param = props?.route?.params;
   const [vendorList, setVendorList] = useState();
   const [storeId, setStoreId] = useState();
   const [vendorName, setVendorName] = useState();
-  const [netAmount, setNetAmount] = useState(params?.net_amount);
+  const [totalAmount, setNetAmount] = useState(params?.totalAmount);
   const [selectedDate, setSelectedDate] = useState();
   const [manufactureDate, setManufactureDate] = useState();
   const [status, setStatus] = useState();
@@ -67,18 +66,18 @@ const Billing = (props) => {
   const [productSelectModalOpen, setProductSelectModalOpen] = useState(false);
   const [clicked, setClicked] = useState("");
   const [mrp, setMrp] = useState("");
-  const [newPurchase, setNewPurchase] = useState(param?.isNewOrder);
+  const [newPurchase, setNewPurchase] = useState(params?.isNewOrder);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const [storeList, setStoreList] = useState([]);
-  const [disableEdit, setDisableEdit] = useState(!param?.isNewOrder && true);
+  const [disableEdit, setDisableEdit] = useState(!params?.isNewOrder && true);
   const [editPermission, setEditPermission] = useState(false);
   const [visible, setIsVisible] = useState(false);
   const [invoiceDate, setInvoiceDate] = useState(
     params?.vendorInvoiceDate || ""
   );
   const [dueDate, setDueDate] = useState(params?.due_date || "");
-  const [owner, setSelectedOwner] = useState(params?.owner_id);
+  const [owner, setSelectedOwner] = useState(params?.owner);
   const [invoiceAmount, setInvoiceAmount] = useState(params?.totalAmount);
 
   const [reviewer, setSelectedReviewer] = useState(params?.reviewer_id);
@@ -89,8 +88,8 @@ const Billing = (props) => {
   const navigation = useNavigation();
   const stateRef = useRef(null);
   const purchaseRef = useRef({
-    netAmount: params?.net_amount || "",
-    invoiceAmount: params?.totalAmount | "",
+    totalAmount: params?.totalAmount || "",
+    f: params?.totalAmount | "",
   });
 
   useEffect(() => {
@@ -116,19 +115,16 @@ const Billing = (props) => {
   }, [isFocused]);
 
   const calculatedData = () => {
-    let value =
-      purchaseRef && purchaseRef.current && purchaseRef.current.invoiceAmount;
+    let value = purchaseRef && purchaseRef.current && purchaseRef.current.f;
     setNetAmount(value);
   };
 
   const preloadedValues = {
-    vendor_invoice_number: params?.vendorInvoiceNumber || "",
-    Purchase_number: params?.purchaseNumber || "",
+    order_number: params?.orderNumber || "",
     description: params?.description || "",
-    net_amount: params?.net_amount || "",
     purchaseDate: params?.date,
     mrp: selectedItem?.mrp,
-    vendor: param?.vendor_id ? param?.vendor_id : params?.vendor_id,
+    customer_account: params?.vendor_id ? params?.vendor_id : params?.vendor_id,
     invoice_amount: invoiceAmount,
     reviewer: reviewer,
     due_date: dueDate,
@@ -206,7 +202,7 @@ const Billing = (props) => {
       dataObject.discount_percentage = values && values.discount_percentage;
       (dataObject.storeId = params?.location
         ? params?.location
-        : param.location),
+        : params.location),
         (dataObject.company_id = scannedProduct.company_id),
         (dataObject.taxable_amount =
           values && values.taxable_amount ? values.taxable_amount : null);
@@ -217,7 +213,7 @@ const Billing = (props) => {
 
       dataObject.tax_amount = values && Number.GetFloat(values.tax_amount);
 
-      dataObject.net_amount = values && values.net_amount;
+      dataObject.price = values && values.price;
 
       dataObject.tax_percentage = values && Number.GetFloat(values.tax);
 
@@ -324,13 +320,6 @@ const Billing = (props) => {
   const onDateSelect = (value) => {
     setSelectedDate(value);
   };
-  const onManufactureDateSelect = (value) => {
-    setManufactureDate(value);
-  };
-
-  const onInvoiceDateSelect = (value) => {
-    setInvoiceDate(value);
-  };
 
   const onDueDateSelect = (value) => {
     setDueDate(value);
@@ -340,7 +329,7 @@ const Billing = (props) => {
     let props = {
       sort: "createdAt",
       sortDir: "DESC",
-      orderId: params?.orderId ? params?.orderId : param.id,
+      orderId: params?.orderId ? params?.orderId : params.id,
       pagination: false,
     };
     await OrderService.getOrderProducts(
@@ -460,7 +449,7 @@ const Billing = (props) => {
 
       dataObject.tax_amount = values && Number.GetFloat(values.tax_amount);
 
-      dataObject.net_amount = values && values.net_amount;
+      dataObject.price = values && values.price;
 
       dataObject.tax_percentage = values && Number.GetFloat(values.tax);
 
@@ -522,34 +511,34 @@ const Billing = (props) => {
     if (date) {
       setSelectedDate(date);
     }
-    let manufactured_date = selectedItem.manufactured_date;
-    if (manufactured_date) {
-      setManufactureDate(manufactured_date);
-    }
   };
 
   const updateOrder = async (values) => {
     setIsSubmit(true);
     const updateData = {
       date: selectedDate,
-      vendor_invoice_number: values?.vendor_invoice_number,
-      description: values.description,
-      location: storeId
+      order_number: params?.orderNumber,
+      storeId: values?.location?.id
+        ? values?.location?.id
+        : storeId
         ? storeId
-        : params?.location
-        ? params?.location
-        : param.location,
-      vendor_id: vendorName
+        : params?.storeId
+        ? params?.storeId
+        : params.storeId,
+      customer_account: values?.customer_account
+        ? values?.customer_account?.value
+        : vendorName
         ? vendorName.value
-        : params?.vendor_id
-        ? params?.vendor_id
-        : param?.vendor_id,
+        : params?.customer_account
+        ? params?.customer_account
+        : params?.customer_account,
       status: status,
-      net_amount: netAmount ? netAmount : params?.net_amount,
-      due_date: dueDate ? dueDate : params?.due_date,
+      price: values?.invoice_amount
+        ? values?.invoice_amount
+        : totalAmount
+        ? totalAmount
+        : params?.totalAmount,
       invoice_amount: invoiceAmount,
-      invoice_amount: invoiceAmount,
-      returnedItemAmount: returnAmount,
       reviewer: reviewer,
       due_date: dueDate,
       owner: owner,
@@ -557,7 +546,7 @@ const Billing = (props) => {
     };
 
     await OrderService.updateOrder(
-      params?.id ? params?.id : param.id,
+      params?.id ? params?.id : params.id,
       updateData,
       (response) => {
         if (response) {
@@ -671,16 +660,11 @@ const Billing = (props) => {
   return (
     <Layout
       title={
-        params || param
+        params || params
           ? `Sale# ${
-              params?.orderNumber ? params?.orderNumber : param?.orderNumber
+              params?.orderNumber ? params?.orderNumber : params?.orderNumber
             }`
           : "Add Sale"
-      }
-      FooterContent={
-        activeTab === TabName.SUMMARY && FooterContent
-          ? activeTab === TabName.SUMMARY && FooterContent
-          : newPurchase
       }
       showBackIcon
       backButtonNavigationUrl="Order"
@@ -734,11 +718,12 @@ const Billing = (props) => {
             <VerticalSpace10 paddingTop={5} />
             <AccountSelect
               label="Vendor"
-              name="vendor"
+              name="customer_account"
               options={vendorList}
               control={control}
               showBorder={false}
               divider
+              data={params?.customer_account}
               getDetails={(value) => setVendorName(value)}
               placeholder="Select Account"
             />
@@ -747,20 +732,14 @@ const Billing = (props) => {
 
             <TextInput
               title="Vendor Invoice Number# "
-              name="vendor_invoice_number"
+              name="order_number"
               control={control}
               showBorder={true}
-              divider
-            />
-            <VerticalSpace10 paddingTop={5} />
-            <DatePicker
-              title="Vendor Invoice Date"
-              name="vendor_invoice_date"
-              onDateSelect={onInvoiceDateSelect}
-              selectedDate={
-                invoiceDate ? invoiceDate : params?.vendor_invoice_date
+              values={
+                params && params?.orderNumber
+                  ? params?.orderNumber.toString()
+                  : ""
               }
-              style={styles.input}
               divider
             />
 
@@ -774,7 +753,7 @@ const Billing = (props) => {
               options={storeList}
               showBorder={true}
               divider
-              data={params?.location ? params?.location : param?.location}
+              data={params?.storeId}
               control={control}
               placeholder="Select Location"
             />
@@ -796,7 +775,7 @@ const Billing = (props) => {
               <View>
                 <UserSelect
                   label="Owner"
-                  selectedUserId={params?.owner_id}
+                  selectedUserId={params?.owner}
                   name={"owner_id"}
                   onChange={(value) => setSelectedOwner(value.value)}
                   control={control}
@@ -804,24 +783,7 @@ const Billing = (props) => {
                 />
               </View>
               <VerticalSpace10 />
-
-              <UserSelect
-                label="Reviewer"
-                selectedUserId={params?.reviewer_id}
-                name={"reviewer_id"}
-                onChange={(value) => setSelectedReviewer(value.value)}
-                control={control}
-                placeholder="Select Reviewer"
-              />
             </View>
-            <VerticalSpace10 />
-            <DatePicker
-              title="Due Date"
-              onDateSelect={onDueDateSelect}
-              selectedDate={dueDate ? dueDate : params?.due_date}
-              style={styles.input}
-              divider
-            />
           </View>
         )}
 
@@ -872,7 +834,7 @@ const Billing = (props) => {
       </ScrollView>
       {activeTab === TabName.HISTORY && (
         <ScrollView>
-          <HistoryList objectName={ObjectName.PURCHASE} objectId={params?.id} />
+          <HistoryList objectName={ObjectName.ORDER} objectId={params?.id} />
         </ScrollView>
       )}
     </Layout>
