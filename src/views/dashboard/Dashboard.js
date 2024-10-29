@@ -8,6 +8,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
@@ -18,7 +19,6 @@ import Carousel from "react-native-snap-carousel";
 import Layout from "../../components/Layout";
 import MultiAlert from "../../components/Modal/MultiAlert";
 import Refresh from "../../components/Refresh";
-import Loader from "../../components/Loader";
 
 import AsyncStorage from "../../lib/AsyncStorage";
 import Setting from "../../lib/Setting";
@@ -156,16 +156,48 @@ const Dashboard = (props) => {
   };
 
   const renderProductCard = ({ item }) => (
-    <Card style={styles.productCard}>
-      <View style={styles.productCardContent}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <View style={styles.quantityContainer}>
-          <Text style={styles.productMinQty}>Stock:</Text>
-          <Text style={styles.quantityText}>{item.min_quantity || 0}</Text>
-          <Text style={styles.productUnit}>{item.unit || ""}</Text>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate("Products/Details", {
+          productId: item.id,
+          name: item.name,
+          product_name: item.product_name,
+          quantity: item.quantity,
+          brand: item.brand,
+          status: item.status,
+          brand_id: item.brand_id,
+          image: item.image,
+          category_id: item.category_id,
+          category: item.category,
+          size: item.size,
+          unit: item.unit,
+          mrp: item.mrp,
+          sale_price: item.sale_price,
+          barcode: item.barcode,
+          printName: item.print_name,
+          rack_number: item.rack_number,
+        });
+      }}
+    >
+      <LinearGradient
+        colors={["#00ceff", "#fe19ff"]} 
+        style={styles.productCard}
+      >
+        <View style={styles.productCardContent}>
+          <Image
+            source={{ uri: item?.image }}
+            style={styles.source}
+            alt="no image"
+          />
+          <Text style={styles.productName}>{item.name}</Text>
+          <View style={styles.quantityContainer}>
+            <Text style={styles.productMinQty}>Stock:</Text>
+            <Text style={styles.quantityText}>{item.min_quantity || 0}</Text>
+            <Text style={styles.productUnit}>{item.unit || ""}</Text>
+          </View>
         </View>
-      </View>
-    </Card>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 
   const getGradientColors = (index) => {
@@ -250,37 +282,42 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Color.BLACK,
     marginBottom: 25,
-    textAlign: "center", 
+    textAlign: "center",
   },
   featuresCard: {
     right: 5,
     left: 5,
-    backgroundColor: '#f8f8f8', // Lighter background for a softer look
+    backgroundColor: "#f8f8f8", // Lighter background for a softer look
     borderRadius: 10, // Rounded corners
-    width: '97%', // Adjust width to fit in row nicely
+    width: "97%", // Adjust width to fit in row nicely
     padding: 15, // More padding for a better touchable area
     borderWidth: 1, // Width of the border
-    borderColor: '#ddd', // Softer border color
-    shadowColor: 'blue',  // Shadow color
+    borderColor: "#ddd", // Softer border color
+    shadowColor: "blue", // Shadow color
     shadowOffset: {
-      width: 4,  
+      width: 4,
       height: 8, // Increased vertical offset for a deeper shadow
     },
     shadowOpacity: 0.2, // Slightly increased opacity for more prominent shadow
     shadowRadius: 6, // Increased blur radius for a softer shadow
     elevation: 5, // For Android shadow
     marginVertical: 8, // Spacing between cards
-  }, 
-  featuresContainer: {   
+  },
+  featuresContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     padding: 10,
   },
+  source: {
+    width: 70,
+    height: 70,
+    borderRadius: 30, 
+  },
   touchableOpacityWrapper: { width: "48%", marginBottom: 10 },
   featureButton: {
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 18,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -291,7 +328,7 @@ const styles = StyleSheet.create({
   },
   featureButtonText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
   productCard: {
-    padding: 10,
+    padding: 25,
     marginBottom: 10,
     borderRadius: 15,
     backgroundColor: "#e5e5e5",
@@ -300,7 +337,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
     flexDirection: "column",
     justifyContent: "center",
   },
@@ -309,14 +346,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 5,
   },
-  productMinQty: { fontSize: 16, color: "green" },
+  productMinQty: { fontSize: 18, color: "white" },
   quantityText: {
     backgroundColor: "#FF6347",
     color: "white",
     paddingHorizontal: 5,
     borderRadius: 30,
+    fontSize: 18,
   },
-  productUnit: { marginLeft: 5, fontSize: 16, color: "#666" },
+  productUnit: { marginLeft: 5, fontSize: 18, color: "white" },
 });
 
 export default Dashboard;

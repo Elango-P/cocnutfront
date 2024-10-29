@@ -112,7 +112,6 @@ const ProductDetails = (props) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [allowEdit, setEdit] = useState(false);
-  console.debug("allowEdit--------------->>>", allowEdit);
   const [permission, setPermission] = useState("");
   const [priceList, setPriceList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
