@@ -273,30 +273,27 @@ const Menu = (props) => {
   return (
     <View style={{ flex: 1, backgroundColor: Color.NAVIGATION_BAR_BACKGROUND }}>
       {_renderUserProfile()}
-      <View style={{ flex: 1 }}>
-        <ScrollView style={{ height: "100%" }}>
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+        
+        {/* First Sidebar */}
+        <ScrollView style={{ flex: 1, height: "100%" }}>
           {permission?.enableAccounts && _renderAccounts()}
           {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
-
-          {permission?.enableOrders &&
-            !devicePendingStatus &&
-            _renderBillEntry &&
-            _renderBillEntry()}
-          {permission?.enablePayment && _renderPayments() && _renderPayments()}
-
+          {permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
+          {permission?.enablePayment && _renderPayments && _renderPayments()}
+        </ScrollView>
+        
+        {/* Second Sidebar */}
+        <ScrollView style={{ flex: 1, height: "100%" }}>
           {permission?.enableCustomer && _customer && _customer()}
-          {permission?.enableContact &&
-            renderContactScreen &&
-            renderContactScreen()}
+          {permission?.enableContact && renderContactScreen && renderContactScreen()}
           {_renderStore && _renderStore()}
-          {permission?.enableProducts &&
-            !devicePendingStatus &&
-            _renderProducts &&
-            _renderProducts()}
+          {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
           {permission?.enableUser && _renderUser && _renderUser()}
         </ScrollView>
-        <VerticalSpace10 />
+  
       </View>
+      <VerticalSpace10 />
     </View>
   );
 };

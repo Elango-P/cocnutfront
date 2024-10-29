@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { Color } from "../helper/Color"; // Ensure you have an appropriate Color module
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import RightArrow from "./RightArrow"; // Ensure this is correctly imported
+
 const IconCard = (props) => {
   const {
     onPress,
@@ -14,13 +15,13 @@ const IconCard = (props) => {
   } = props;
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={onPress}
-        style={[styles.sheetContainer, { backgroundColor }]}
-        accessibilityLabel={name}
-        activeOpacity={0.8} // Feedback on press
-      >
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.container, { backgroundColor }]}
+      accessibilityLabel={name}
+      activeOpacity={0.8} // Feedback on press
+    >
+      <View style={styles.contentContainer}>
         {imageSource ? (
           <Image source={imageSource} style={styles.iconImage} />
         ) : (
@@ -42,10 +43,8 @@ const IconCard = (props) => {
         )}
 
         <Text style={styles.textStyles}>{name}</Text>
-        <RightArrow />
-      </TouchableOpacity>
-      
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -53,47 +52,38 @@ export default IconCard;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 5, // Spacing between cards
-    marginHorizontal: 15, // Horizontal spacing for aesthetics
-    borderRadius: 12, // More rounded corners
-    overflow: "hidden", // Ensure rounded corners are respected
-    elevation: 4, // Enhanced shadow
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: Color.WHITE,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4, // Deeper shadow effect
-    },
-    shadowOpacity: 0.3, // Increased shadow opacity
-    shadowRadius: 5, // Softer shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  contentContainer: {
+    alignItems: "center",
+    padding: 16,
   },
   iconContainer: {
-    borderRadius: 10,
-    padding: 10,
+    width: 50,
+    height: 50,
+    backgroundColor: Color.PRIMARY,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Color.PRIMARY, // Use primary color for contrast
-    marginRight: 15, // Space between icon and text
   },
   iconImage: {
     width: 50,
     height: 50,
     resizeMode: "contain",
+    borderRadius: 8,
   },
   textStyles: {
-    fontSize: 20, // Larger text for better readability
-    fontWeight: "bold", // Bold text
-    color: Color.BLACK, // Change to black for better contrast
-    flex: 1, // Allow text to grow
-    padding:4
-  },
-  sheetContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15, // Increased padding
-    borderRadius: 12, // Match the container's border radius
-    backgroundColor: Color.WHITE,
-    borderWidth: 1, // Added border for definition
-    borderColor: Color.LIGHT_GRAY, // Light border color for subtle definition
-    position: "relative", // For potential overlay effects
+    fontSize: 18,
+    fontWeight: "600",
+    color: Color.BLACK,
+    flex: 1,
   },
 });

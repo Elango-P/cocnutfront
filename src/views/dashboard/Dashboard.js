@@ -180,15 +180,15 @@ const Dashboard = (props) => {
       }}
     >
       <LinearGradient
-        colors={["#00ceff", "#fe19ff"]} 
+        colors={["#00ceff", "#fe19ff"]}
         style={styles.productCard}
       >
+        <Image
+          source={{ uri: item?.image }}
+          style={styles.source}
+          alt="no image"
+        />
         <View style={styles.productCardContent}>
-          <Image
-            source={{ uri: item?.image }}
-            style={styles.source}
-            alt="no image"
-          />
           <Text style={styles.productName}>{item.name}</Text>
           <View style={styles.quantityContainer}>
             <Text style={styles.productMinQty}>Stock:</Text>
@@ -227,50 +227,53 @@ const Dashboard = (props) => {
       backButtonNavigationOnPress={() => handleBackPress()}
       showLogo
     >
-      <View style={styles.container}>
-        <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
-          <Text style={styles.welcomeText}>
-            Welcome{" "}
-            {getFullName(userDetail?.first_name, userDetail?.last_name || "")}!
-          </Text>
-          {loading ? (
-            <ListCustomLoader count={3} height={30} />
-          ) : (
-            <Carousel
-              data={productLists}
-              renderItem={renderProductCard}
-              sliderWidth={viewportWidth}
-              itemWidth={viewportWidth * 0.75}
-              layout={"default"}
-              loop
-              autoplay
-              autoplayInterval={4000}
-            />
-          )}
-          <Card style={styles.featuresCard}>
-            <View style={styles.featuresContainer}>
-              {Object.keys(featureNavigationMap).map((feature, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.touchableOpacityWrapper}
-                  onPress={() =>
-                    navigation.navigate(featureNavigationMap[feature])
-                  }
-                >
-                  <LinearGradient
-                    colors={getGradientColors(index)}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.featureButton}
+      <ScrollView>
+        <View style={styles.container}>
+          <Refresh refreshing={refreshing} setRefreshing={setRefreshing}>
+            <Text style={styles.welcomeText}>
+              Welcome{" "}
+              {getFullName(userDetail?.first_name, userDetail?.last_name || "")}
+              !
+            </Text>
+            {loading ? (
+              <ListCustomLoader count={3} height={30} />
+            ) : (
+              <Carousel
+                data={productLists}
+                renderItem={renderProductCard}
+                sliderWidth={viewportWidth}
+                itemWidth={viewportWidth * 0.75}
+                layout={"default"}
+                loop
+                autoplay
+                autoplayInterval={4000}
+              />
+            )}
+            <Card style={styles.featuresCard}>
+              <View style={styles.featuresContainer}>
+                {Object.keys(featureNavigationMap).map((feature, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.touchableOpacityWrapper}
+                    onPress={() =>
+                      navigation.navigate(featureNavigationMap[feature])
+                    }
                   >
-                    <Text style={styles.featureButtonText}>{feature}</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </Card>
-        </Refresh>
-      </View>
+                    <LinearGradient
+                      colors={getGradientColors(index)}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.featureButton}
+                    >
+                      <Text style={styles.featureButtonText}>{feature}</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </Card>
+          </Refresh>
+        </View>
+      </ScrollView>
     </Layout>
   );
 };
@@ -288,9 +291,9 @@ const styles = StyleSheet.create({
     right: 5,
     left: 5,
     backgroundColor: "#f8f8f8", // Lighter background for a softer look
-    borderRadius: 10, // Rounded corners
-    width: "97%", // Adjust width to fit in row nicely
-    padding: 15, // More padding for a better touchable area
+    borderRadius: 15, // Rounded corners
+    width: "97%",  // Adjust width to fit in row nicely
+    padding: 10,  // More padding for a better touchable area
     borderWidth: 1, // Width of the border
     borderColor: "#ddd", // Softer border color
     shadowColor: "blue", // Shadow color
@@ -310,11 +313,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   source: {
-    width: 70,
-    height: 70,
-    borderRadius: 30, 
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
   },
-  touchableOpacityWrapper: { width: "48%", marginBottom: 10 },
+  touchableOpacityWrapper: { width: "45%", marginBottom: 10 },
   featureButton: {
     padding: 10,
     borderRadius: 18,
@@ -328,10 +331,16 @@ const styles = StyleSheet.create({
   },
   featureButtonText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
   productCard: {
-    padding: 25,
     marginBottom: 10,
-    borderRadius: 15,
+    borderRadius: 18,
     backgroundColor: "#e5e5e5",
+    paddingBottom: 20,
+    shadowColor: "blue",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
   },
   productCardContent: { flexDirection: "column", alignItems: "center" },
   productName: {
