@@ -26,6 +26,8 @@ import accountService from "../../services/AccountService";
 import asyncStorageService from "../../services/AsyncStorageService";
 import Alert from "../../lib/Alert";
 import styles from "../../helper/Styles";
+import { MenuItem } from "react-native-material-menu";
+import DropDownMenu from "../../components/DropDownMenu";
 
 const Purchase = () => {
 
@@ -47,6 +49,8 @@ const Purchase = () => {
     const [statusList, setStatusList] = useState();
     const [accountList, setAccountList] = useState();
     const [locationId, setLocationId] = useState();
+    const [visible, setVisible] = useState(false);
+    const [loadingStates, setLoadingStates] = useState({});
 
 
   
@@ -141,7 +145,7 @@ const Purchase = () => {
             setIsLoading(false);
             setRefreshing(false)
             setPage(2);
-        
+            setLoadingStates(false)
           }
     
           
@@ -289,24 +293,68 @@ const Purchase = () => {
 
     const renderHiddenItem = (data, rowMap) => {
         return (
-            <View style={styles.swipeStyle}>
-                <TouchableOpacity
-                    style={styles.actionDeleteButton}
-                    onPress={() => {
-                        purchaseDeleteModalToggle()
-                        setSelectedItem(data?.item);
-                        stateRef.selectedItem = data?.item;
-                        stateRef.selecredRowMap = rowMap;
-                        closeRow(rowMap, data?.item.id);
-                    }}
-                >
-                    <Text style={styles.btnText}>Delete</Text>
-                </TouchableOpacity>
+          <View
+          style={{
+            alignItems: "center",
+            bottom: 10,
+            justifyContent: "center",
+            position: "absolute",
+            top: 10,
+            width: 70,
+            backgroundColor: Color.SECONDARY,
+            right: 10,
+          }}
+        >
+          <DropDownMenu
+          label="More"
+          color={Color.WHITE}
+          icon="ellipsis-horizontal"
+          menuStyle={{ position: "absolute" }}
+          MenuItems={[
+            ...statusList.map((status) => (
+              <MenuItem
+                key={status.id}
+                onPress={() => {
+                  handleChangeStatus(data?.item?.id, status.id);
+                  closeRow(rowMap, data?.item.id);
+                  setVisible(true);
+                }}
+              >
+                {status.label}
+              </MenuItem>
+            )),
+            <MenuItem
+              key="delete"
+              onPress={() => {
+                setVisible(true);
+                purchaseDeleteModalToggle();
+                setSelectedItem(data?.item);
+                stateRef.selectedItem = data?.item;
+                stateRef.selectedRowMap = rowMap;
+                closeRow(rowMap, data?.item.id);
+              }}
+            >
+              DELETE
+            </MenuItem>,
+          ]}
+          onPress={visible}
+        />
             </View>
 
         )
     };
 
+    // Define the function to handle status changes
+  const handleChangeStatus = (itemId, status) => {
+    let data = { status: status };
+    setLoadingStates((prev) => ({ ...prev, [itemId]: true }));
+    purchaseService.updatePurchase(itemId, data, (res) => {
+      if (res) {
+        setVisible(false);
+        GetPurchaseList();
+      }
+    });
+  };
     const renderItem = data => {
         let item = data?.item;
         let index = data?.index;
@@ -316,6 +364,7 @@ const Purchase = () => {
                 navigation={navigation}
                 item={item}
                 alternative={containerStyle}
+                statusLoading={loadingStates[item?.id] || false}
 
             />
 

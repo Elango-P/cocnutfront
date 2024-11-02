@@ -44,13 +44,14 @@ import OrderService from "../../services/OrderService";
 
 const Billing = (props) => {
   const params = props?.route?.params;
+  let date = params?.date?params?.date:params?.orderDetail?.date
   const [vendorList, setVendorList] = useState();
   const [storeId, setStoreId] = useState();
   const [vendorName, setVendorName] = useState();
   const [totalAmount, setNetAmount] = useState(params?.totalAmount);
   const [selectedDate, setSelectedDate] = useState();
   const [manufactureDate, setManufactureDate] = useState();
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState(params?.orderDetail?.status);
   const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
   const [purchaseProductList, setPurchaseProductList] = useState([]);
 
@@ -189,7 +190,7 @@ const Billing = (props) => {
     try {
       let dataObject = {};
 
-      dataObject.orderId = params?.orderId ? v : params?.id;
+      dataObject.orderId = params?.orderId ? params?.orderId : params?.id;
       dataObject.productId = values?.product_id;
       dataObject.cgst_percentage = values && values.cgst_percentage;
       dataObject.sgst_percentage = values && values.sgst_percentage;
@@ -202,7 +203,7 @@ const Billing = (props) => {
       dataObject.discount_percentage = values && values.discount_percentage;
       (dataObject.storeId = params?.location
         ? params?.location
-        : params.location),
+        : params?.location),
         (dataObject.company_id = scannedProduct.company_id),
         (dataObject.taxable_amount =
           values && values.taxable_amount ? values.taxable_amount : null);
@@ -227,7 +228,7 @@ const Billing = (props) => {
       dataObject.manufactured_date =
         values && values.manufactured_date && values.manufactured_date;
 
-      dataObject.purchaseId = params?.id;
+      dataObject.purchaseId = params?.orderId ?params?.orderId:params?.id;
       dataObject.productId = values?.product_id;
 
       await OrderService.addOrderProduct(dataObject, async (error, res) => {
@@ -329,7 +330,7 @@ const Billing = (props) => {
     let props = {
       sort: "createdAt",
       sortDir: "DESC",
-      orderId: params?.orderId ? params?.orderId : params.id,
+      orderId: params?.orderId ? params?.orderId : params?.id,
       pagination: false,
     };
     await OrderService.getOrderProducts(
@@ -428,7 +429,7 @@ const Billing = (props) => {
 
       let dataObject = {};
 
-      dataObject.orderId = params?.orderId ? v : params?.id;
+      dataObject.orderId = params?.orderId ? params?.orderId : params?.id;
       dataObject.productId = values?.product_id;
       dataObject.orderProductId = id;
       dataObject.cgst_percentage = values && values.cgst_percentage;
@@ -463,7 +464,7 @@ const Billing = (props) => {
       dataObject.manufactured_date =
         values && values.manufactured_date && values.manufactured_date;
 
-      dataObject.purchaseId = params?.id;
+      dataObject.purchaseId = params?.orderId?params?.orderId:params?.id;
       dataObject.productId = values?.product_id;
 
       OrderService.updateOrderProduct(id, dataObject, (error, response) => {
@@ -524,7 +525,7 @@ const Billing = (props) => {
         ? storeId
         : params?.storeId
         ? params?.storeId
-        : params.storeId,
+        : params?.storeId,
       customer_account: values?.customer_account
         ? values?.customer_account?.value
         : vendorName
@@ -546,7 +547,7 @@ const Billing = (props) => {
     };
 
     await OrderService.updateOrder(
-      params?.id ? params?.id : params.id,
+      params?.id ? params?.id : params?.orderId,
       updateData,
       (response) => {
         if (response) {
@@ -709,9 +710,9 @@ const Billing = (props) => {
             <VerticalSpace10 paddingTop={5} />
 
             <DatePicker
-              title=" Date"
+              title="Date"
               onDateSelect={onDateSelect}
-              selectedDate={selectedDate ? selectedDate : params?.date}
+              selectedDate={selectedDate ? selectedDate : date}
               style={styles.input}
               divider
             />
@@ -834,7 +835,7 @@ const Billing = (props) => {
       </ScrollView>
       {activeTab === TabName.HISTORY && (
         <ScrollView>
-          <HistoryList objectName={ObjectName.ORDER} objectId={params?.id} />
+          <HistoryList objectName={ObjectName.ORDER} objectId={params?.id?params?.id:params?.orderId} />
         </ScrollView>
       )}
     </Layout>

@@ -13,9 +13,10 @@ import CustomerCard from "../../../components/CustomerCard";
 import { PaymentType } from "../../../helper/PaymentType";
 import Currency from "../../../lib/Currency";
 import Number from "../../../lib/Number";
+import { ActivityIndicator } from "react-native";
 
 const OrderCard = (props) => {
-  const { order_number, shift,status,customerName,firstName,lastName,mediaUrl, locationName,statusColor, total_amount,payment_type, date, onPress, index,text,data } = props;
+  const { order_number, shift,status,customerName,firstName,lastName,mediaUrl, locationName,statusColor, total_amount,payment_type, date, onPress, index,text,data ,statusLoading} = props;
 
   const containerStyle = AlternativeColor.getBackgroundColor(index)
   return (
@@ -65,9 +66,12 @@ const OrderCard = (props) => {
         )}
 
         </View>
+        {!statusLoading ? (
         <Status
           status={status} backgroundColor={statusColor}
-        />
+        />):(
+          <ActivityIndicator size="small" color="red"/>
+        )}
     </TouchableOpacity>
   );
 };

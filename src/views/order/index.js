@@ -1,4 +1,4 @@
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import OrderList from "../../components/OrderList";
 import AsyncStorageConstants from "../../helper/AsyncStorage";
@@ -12,6 +12,8 @@ import orderService from "../../services/OrderService";
 import OrderType from "../../helper/OrderType";
 import OrderTypeService from "../../services/orderTypeService";
 import Response from "../../lib/NetworkStatus";
+import StatusService from "../../services/StatusServices";
+import ObjectName from "../../helper/ObjectName";
 
 const Products = (props) => {
   const [selectedUser, setSelectedUser] = useState("");
@@ -22,18 +24,38 @@ const Products = (props) => {
   const [locationId, setLocationId] = useState();
   const [orderTypes, setOrderTypes] = useState([]);
   const [enableOrderIcon, setOrderIconEnable] = useState(true);
+  const [statusList, setStatusList] = useState([]);
+  const isFocused = useIsFocused();
 
   const navigation = useNavigation();
   useEffect(() => {
     saveStore();
     getRequiredValues();
   }, []);
+
+  useEffect(() => {
+    getStatusList()
+}, [isFocused]);
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({});
 
+  const getStatusList = async () => {
+    let status = [];
+    const response = await StatusService.list(ObjectName.ORDER_TYPE,1);
+
+    response && response.forEach((statusList) => {
+        status.push({
+            label: statusList?.name,
+            value: statusList?.status_id,
+            id: statusList?.status_id
+        });
+    });
+
+    setStatusList(status);
+}
   const getRequiredValues = async () => {
     shiftService.getShiftList(null, (error, response) => {
       let shiftList = response?.data?.data;
@@ -93,6 +115,7 @@ const Products = (props) => {
         selectedShift: selectedShift,
         isNewOrder: true,
         collectCustomerInfo: true,
+        statusList:statusList
       });
     } else {
       let orderTypeData =
@@ -115,6 +138,7 @@ const Products = (props) => {
                   isNewOrder: true,
                   collectCustomerInfo: true,
                   type: orderTypeData,
+                  statusList:statusList
                 },
               },
             ],
@@ -149,6 +173,7 @@ const Products = (props) => {
                       collectCustomerInfo: false,
                       type: orderTypeData,
                       orderNumber: response?.data?.orderDetail?.order_number,
+                      statusList:statusList
                     },
                   },
                 ],
@@ -184,6 +209,7 @@ const Products = (props) => {
       type: item?.type,
       paymentType: item?.paymentType,
       customer_account: item?.customer_account?.id,
+      statusList:statusList
       
     });
   };
@@ -197,6 +223,7 @@ const Products = (props) => {
         onPress={onPress}
         showFilter={true}
         enableOrderIcon={enableOrderIcon}
+        statusList={statusList}
       />
     </>
   );
