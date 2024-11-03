@@ -49,7 +49,7 @@ const Products = (props) => {
   return (
     <Layout
       title={"Products"}
-      addButton ={addPermission ? true : false}
+      addButton ={!addPermission ? true : false}
       buttonOnPress={AddNew}
       isLoading={isLoading}
       refreshing={refreshing}

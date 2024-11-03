@@ -41,7 +41,7 @@ const Purchase = () => {
     const [purchaseDeleteModalOpen, setPurchaseDeleteModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
     const [permission, setPermission] = useState("")
-    const [addPermission, setAddPermission] = useState(false)
+    const [addPermission, setAddPermission] = useState(true)
     const [openFilter, setOpenFilter] = useState(false);
     const [values,setValues] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
@@ -99,7 +99,7 @@ const Purchase = () => {
         const deletePermission = await PermissionService.hasPermission(Permission.PURCHASE_DELETE);
         setPermission(deletePermission);
         const addPermission = await PermissionService.hasPermission(Permission.PURCHASE_ADD)
-        setAddPermission(addPermission)
+        setAddPermission(true)
     }
      const getStatusList = async () => {
         let status = [];

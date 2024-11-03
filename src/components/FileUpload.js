@@ -6,7 +6,6 @@ import { Color } from "../helper/Color";
 import Spinner from "../components/Spinner";
 import { Text } from "react-native";
 
-
 const FileUpload = (props) => {
   const {
     image,
@@ -28,7 +27,7 @@ const FileUpload = (props) => {
 
   let timeoutId;
 
-  //convert bast64 inti binary
+  // Convert base64 to binary
   async function dataURItoBlob(data) {
     const response = await fetch(data);
     const blob = await response.blob();
@@ -38,19 +37,18 @@ const FileUpload = (props) => {
     }
   }
 
-
-  const takePicture = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+  // Select image from device storage
+  const selectImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
 
     if (!result.canceled) {
       setImage && setImage(result.assets[0].uri);
+      dataURItoBlob(result.assets[0].uri);
     }
-
-    dataURItoBlob(result.assets[0].uri);
-  }
+  };
 
   const handlePressIn = () => {
     timeoutId = setTimeout(() => {
@@ -62,17 +60,10 @@ const FileUpload = (props) => {
     clearTimeout(timeoutId);
   };
 
-
   return (
-    <View
-      style={{
-        paddingVertical: 20,
-        flexDirection: "row",
-        justifyContent: "center",
-      }}
-    >
+    <View style={{ paddingVertical: 20, flexDirection: "row", justifyContent: "center" }}>
       <View>
-        <TouchableOpacity onPress={takePicture}>
+        <TouchableOpacity onPress={selectImage}>
           {image || prefillImage ? (
             <>
               {profileImage ? (
@@ -82,19 +73,17 @@ const FileUpload = (props) => {
                 />
               ) : (
                 <View style={styles.container}>
-                  
                   <TouchableWithoutFeedback onPressIn={handlePressIn} onPressOut={handlePressOut}>
-                  <View style={styles.container}>
-                 {showDelete && (
-                   <TouchableOpacity onPress = {()=>deleteImage()} style={styles.deleteIcon}> 
-                    <Ionicons name="trash" size={24} color="red"  />
-                   </TouchableOpacity>
-                  )}
-                  <Image source={{ uri: image ? image : prefillImage }} style={styles.image} />
-                  </View>
-                 </TouchableWithoutFeedback>
+                    <View style={styles.container}>
+                      {showDelete && (
+                        <TouchableOpacity onPress={() => deleteImage()} style={styles.deleteIcon}>
+                          <Ionicons name="trash" size={24} color="red" />
+                        </TouchableOpacity>
+                      )}
+                      <Image source={{ uri: image ? image : prefillImage }} style={styles.image} />
+                    </View>
+                  </TouchableWithoutFeedback>
                 </View>
-                
               )}
             </>
           ) : (
@@ -105,9 +94,9 @@ const FileUpload = (props) => {
                     <Spinner />
                   ) : (
                     <Button
-                      title={"Take Photo"}
+                      title={"Select Image"}
                       color={Color.BLACK}
-                      onPress={() => takePicture()}
+                      onPress={selectImage}
                     />
                   )}
                 </>
@@ -124,13 +113,12 @@ const FileUpload = (props) => {
                 >
                   <View style={{ marginTop: 20 }}>
                     <Ionicons
-                      name="camera-outline"
+                      name="image-outline"
                       size={customCameraIconWith ? customCameraIconWith : 100}
                       borderRadius={5}
                       color="white"
                     />
                   </View>
-
                 </View>
               )}
             </>
@@ -140,21 +128,16 @@ const FileUpload = (props) => {
     </View>
   );
 };
-export default FileUpload;
 
+export default FileUpload;
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
   },
   image: {
-    width: 350, // Adjust the size as needed
-    height: 250, // Adjust the size as needed
-  },
-  closeIconContainer: {
-    position: 'absolute',
-    top: 1, // Adjust the distance from the top as needed
-    right: 1, // Adjust the distance from the right as needed
+    width: 350,
+    height: 250,
   },
   deleteIcon: {
     position: 'absolute',
@@ -163,4 +146,3 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
-

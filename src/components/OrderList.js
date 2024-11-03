@@ -185,7 +185,7 @@ const OrderList = ({
       Permission.ORDER_MANAGE_OTHERS
     );
 
-    setPermission({ orderAdd: addOrder, manageOthers: manageOthers });
+    setPermission({ orderAdd: true, manageOthers: manageOthers });
   };
 
   const getAllList = async (values) => {

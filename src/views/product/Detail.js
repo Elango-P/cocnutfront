@@ -100,6 +100,7 @@ const ProductDetails = (props) => {
   const [unit, setUnit] = useState();
   const [status, setStatus] = useState();
   const [image, setImage] = useState(null);
+  console.log("------------------------>>>>>>>> ~ image:", image)
   const [file, setFile] = useState(null);
   const [overlayLoader, setOverlayLoader] = useState(null);
   const [openCopySelectModal, setShowNumberOfCopySelectModal] = useState(false);

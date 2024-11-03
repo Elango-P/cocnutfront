@@ -21,7 +21,7 @@ const BrandAndCategoryList = (props) => {
   );
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
-  const [addPermission, setAddPermission] = useState(false);
+  const [addPermission, setAddPermission] = useState(true);
   const [openFilter, setOpenFilter] = useState(false);
 
   const navigation = useNavigation();

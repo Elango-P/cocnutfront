@@ -48,7 +48,7 @@ const Payments = (props) => {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedEndDate, setSelectedEndDate] = useState("");
     const [openFilter, setOpenFilter] = useState(false);
-    const [addPermission, setAddPermission] = useState(false);
+    const [addPermission, setAddPermission] = useState(true);
 
 
     //setting tha initial page
