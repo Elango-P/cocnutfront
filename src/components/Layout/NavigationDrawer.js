@@ -277,19 +277,19 @@ const Menu = (props) => {
         
         {/* First Sidebar */}
         <ScrollView style={{ flex: 1, height: "100%" }}>
-          {!permission?.enableAccounts && _renderAccounts()}
-          {!permission?.enablePurchase && _renderPurchase && _renderPurchase()}
-          {!permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
-          {!permission?.enablePayment && _renderPayments && _renderPayments()}
+          {permission?.enableAccounts && _renderAccounts()}
+          {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
+          {permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
+          {permission?.enablePayment && _renderPayments && _renderPayments()}
         </ScrollView>
         
         {/* Second Sidebar */}
         <ScrollView style={{ flex: 1, height: "100%" }}>
-          {!permission?.enableCustomer && _customer && _customer()}
-          {!permission?.enableContact && renderContactScreen && renderContactScreen()}
+          {permission?.enableCustomer && _customer && _customer()}
+          {permission?.enableContact && renderContactScreen && renderContactScreen()}
           {_renderStore && _renderStore()}
-          {!permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
-          {!permission?.enableUser && _renderUser && _renderUser()}
+          {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
+          {permission?.enableUser && _renderUser && _renderUser()}
         </ScrollView>
   
       </View>
