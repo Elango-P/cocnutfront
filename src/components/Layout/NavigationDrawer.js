@@ -75,42 +75,42 @@ const Menu = (props) => {
   };
 
   const getPermission = async () => {
-    const enablePurchase = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_PURCHASE,
+    const enablePurchase = await PermissionService.hasPermission(
+      // Feature.ENABLE_PURCHASE,
       Permission.PURCHASE_VIEW
     );
 
-    const enableProducts = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_PRODUCT,
+    const enableProducts = await PermissionService.hasPermission(
+      // Feature.ENABLE_PRODUCT,
       Permission.PRODUCT_VIEW
     );
-    const enableOrders = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ORDER,
+    const enableOrders = await PermissionService.hasPermission(
+      // Feature.ENABLE_ORDER,
       Permission.ORDER_VIEW
     );
 
-    const enablePayment = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_PAYMENT,
+    const enablePayment = await PermissionService.hasPermission(
+      // Feature.ENABLE_PAYMENT,
       Permission.PAYMENT_VIEW
     );
 
-    const enableUser = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_USER,
+    const enableUser = await PermissionService.hasPermission(
+      // Feature.ENABLE_USER,
       Permission.USER_VIEW
     );
 
-    const enableAccounts = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ACCOUNT,
+    const enableAccounts = await PermissionService.hasPermission(
+      // Feature.ENABLE_ACCOUNT,
       Permission.ACCOUNT_VIEW
     );
 
-    const enableCustomer = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_CUSTOMER,
+    const enableCustomer = await PermissionService.hasPermission(
+      // Feature.ENABLE_CUSTOMER,
       Permission.CUSTOMER_VIEW
     );
 
-    const enableContact = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_CONTACT,
+    const enableContact = await PermissionService.hasPermission(
+      // Feature.ENABLE_CONTACT,
       Permission.CONTACT_VIEW
     );
     setPermission({
@@ -271,29 +271,38 @@ const Menu = (props) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.NAVIGATION_BAR_BACKGROUND }}>
-      {_renderUserProfile()}
-      <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+    <View style={{flex:1}}>
+    {_renderUserProfile()}
+    <ScrollView style={{ flex: 1, backgroundColor: Color.NAVIGATION_BAR_BACKGROUND }}>
+      <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    flex:1
+                  }}
+                >
         
         {/* First Sidebar */}
-        <ScrollView style={{ flex: 1, height: "100%" }}>
+        <View style={{ width: "50%"}}>
           {permission?.enableAccounts && _renderAccounts()}
           {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
           {permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
           {permission?.enablePayment && _renderPayments && _renderPayments()}
-        </ScrollView>
+          {permission?.enableUser && _renderUser && _renderUser()}
+        </View>
         
         {/* Second Sidebar */}
-        <ScrollView style={{ flex: 1, height: "100%" }}>
+        <View style={{ width: "50%"}}>
+
           {permission?.enableCustomer && _customer && _customer()}
           {permission?.enableContact && renderContactScreen && renderContactScreen()}
           {_renderStore && _renderStore()}
           {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
-          {permission?.enableUser && _renderUser && _renderUser()}
-        </ScrollView>
+          </View>
+
   
       </View>
-      <VerticalSpace10 />
+    </ScrollView>
     </View>
   );
 };

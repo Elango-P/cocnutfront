@@ -79,48 +79,47 @@ const BottomToolBar = (props) => {
   };
 
   const getPermission = async () => {
-    const transferView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_TRANSFER,
+    const transferView = await PermissionService.hasPermission(
       Permission.MOBILEAPP_DASHBOARD_MENU_TRANSFER
     );
     setTransferViewPermission(transferView);
-    const productView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_PRODUCT,
+    const productView = await PermissionService.hasPermission(
+      // Feature.ENABLE_PRODUCT,
       Permission.MOBILEAPP_DASHBOARD_MENU_PRODUCT
     );
     setProductViewPermission(productView);
-    const ticketView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_TICKET,
+    const ticketView = await PermissionService.hasPermission(
+      // Feature.ENABLE_TICKET,
       Permission.MOBILEAPP_DASHBOARD_MENU_TICKET
     );
     setTicketViewPermission(ticketView);
-    const activitiesView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ACTIVITY,
+    const activitiesView = await PermissionService.hasPermission(
+      // Feature.ENABLE_ACTIVITY,
       Permission.MOBILEAPP_DASHBOARD_MENU_ACTIVITIES
     );
     setActivitiesViewPermission(activitiesView);
-    let replenishView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_REPLENISHMENT,
+    let replenishView = await PermissionService.hasPermission(
+      // Feature.ENABLE_REPLENISHMENT,
       Permission.MOBILEAPP_DASHBOARD_MENU_REPLENISH
     );
     setReplenishViewPermission(replenishView);
-    let orderView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_ORDER,
+    let orderView = await PermissionService.hasPermission(
+      // Feature.ENABLE_ORDER,
       Permission.MOBILEAPP_DASHBOARD_MENU_ORDER
     );
     setOrderViewPermission(orderView);
-    const deliveryView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_DELIVERY_ORDER,
+    const deliveryView = await PermissionService.hasPermission(
+      // Feature.ENABLE_DELIVERY_ORDER,
       Permission.MOBILEAPP_DASHBOARD_MENU_DELIVERY
     );
     setDeliveryPermission(deliveryView);
-    const reportView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_REPORT,
+    const reportView = await PermissionService.hasPermission(
+      // Feature.ENABLE_REPORT,
       Permission.MOBILEAPP_DASHBOARD_MENU_REPORTS
     );
     setReportViewPermission(reportView);
-    const distributionView = await PermissionService.getFeaturePermission(
-      Feature.ENABLE_DISTRIBUTION,
+    const distributionView = await PermissionService.hasPermission(
+      // Feature.ENABLE_DISTRIBUTION,
       Permission.MOBILEAPP_DASHBOARD_MENU_DISTRIBUTION
     );
     setDistributionViewPermission(distributionView);
