@@ -4,29 +4,29 @@ import { Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  backIcon : {marginLeft: 10,marginTop :  "15%" },
-  menuLayout : {
-    marginHorizontal : 10
+  backIcon: { marginLeft: 10, marginTop: "15%" },
+  menuLayout: {
+    marginHorizontal: 10,
   },
-  loginContainer : 
-  {
+  loginContainer: {
     flex: 1,
     padding: 20,
     flexDirection: "column",
   },
-  textFeildDivider : {
-    flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderBottomWidth: 1,
-                overflow: "hidden",
+  textFeildDivider: {
+    backgroundColor:"#a1f6f7",
+    borderRadius:25,
+    height:50,
+    marginBottom:20,
+    justifyContent:"center",
+    padding:20,
   },
-  flexEnd : {
-    flex: 1,
+  flexEnd: {
+    flex: 0.5,
     justifyContent: "flex-end",
   },
   versionText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: Color.GREY,
     fontSize: 14,
     marginTop: 20,
@@ -50,114 +50,114 @@ const styles = StyleSheet.create({
   },
   prefixPercentage: {
     paddingLeft: 5,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   prefixSymbol: {
     paddingRight: 5,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   plainWhite: {
-    backgroundColor: Color.WHITE
-},
-alternativeColorBackgroud: {
+    backgroundColor: Color.WHITE,
+  },
+  alternativeColorBackgroud: {
     backgroundColor: Color.ALTERNATIVE_BACKGROUND,
-},
-containerWhite: {
-  alignItems: "center",
-  flexDirection: "row",
-  flex: 1,
-  backgroundColor: Color.WHITE
-},
-containerGrey: {
-  backgroundColor: Color.ALTERNATIVE_BACKGROUND,
-  alignItems: "center",
-  flexDirection: "row",
-  flex: 1,
-},
-  listItemsText :{
+  },
+  containerWhite: {
+    alignItems: "center",
+    flexDirection: "row",
+    flex: 1,
+    backgroundColor: Color.WHITE,
+  },
+  containerGrey: {
+    backgroundColor: Color.ALTERNATIVE_BACKGROUND,
+    alignItems: "center",
+    flexDirection: "row",
+    flex: 1,
+  },
+  listItemsText: {
     fontSize: 14,
-   fontWeight: "bold"
-},
-footerText: {
-  fontWeight: "bold",
-  fontSize: 16,
-  color: Color.WHITE,
-},
-amountText: {
-  color: Color.WHITE,
-},
-FooterAmountCardContainer: {
-  justifyContent: "center",
-  backgroundColor: Color.BLACK,
-  paddingHorizontal : 10
-},
-  listContainers : {
+    fontWeight: "bold",
+  },
+  footerText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: Color.WHITE,
+  },
+  amountText: {
+    color: Color.WHITE,
+  },
+  FooterAmountCardContainer: {
+    justifyContent: "center",
+    backgroundColor: Color.BLACK,
+    paddingHorizontal: 10,
+  },
+  listContainers: {
     paddingHorizontal: 11,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: "10%"
+    paddingVertical: "10%",
   },
   userText: {
     marginBottom: 3,
   },
- modalStyle : {
-  position: 'absolute',
-  top: 10,
-  right: 10,
-  zIndex: 999, 
- },
- modalText : {
-  textDecorationLine: "line-through",
-  fontSize : 18 
- },
- priceText : {
-  paddingLeft: 10,
-   fontWeight: "bold",
-   fontSize : 18 
- },
- productModal : {
-  fontWeight: "700" ,
-  fontSize : 18
- },
- textWidth : {
-  width : "90%"
- },
- fontSize : {
-  fontSize : 18
- },
+  modalStyle: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 999,
+  },
+  modalText: {
+    textDecorationLine: "line-through",
+    fontSize: 18,
+  },
+  priceText: {
+    paddingLeft: 10,
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  productModal: {
+    fontWeight: "700",
+    fontSize: 18,
+  },
+  textWidth: {
+    width: "90%",
+  },
+  fontSize: {
+    fontSize: 18,
+  },
   commentCard: {
     backgroundColor: "#fff",
     borderColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "lightgrey",
-},
+  },
   commentContainer: {
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "lightgray",
-},
-commentUserInfo: {
+  },
+  commentUserInfo: {
     marginBottom: 10,
-    flexDirection: 'row'
-},
-userNameComment: {
+    flexDirection: "row",
+  },
+  userNameComment: {
     fontWeight: "bold",
     marginBottom: 5,
-    paddingHorizontal: 5
-},
-commentMessageContainer: {
+    paddingHorizontal: 5,
+  },
+  commentMessageContainer: {
     flex: 3,
-},
-commentMessage: {
+  },
+  commentMessage: {
     marginBottom: 5,
-},
-commentActionsContainer: {
+  },
+  commentActionsContainer: {
     flexDirection: "row",
-    justifyContent: 'flex-start',
-},
-commentActionIconContainer: {
+    justifyContent: "flex-start",
+  },
+  commentActionIconContainer: {
     marginHorizontal: 5,
-},
+  },
   ProductCard: {
     alignItems: "center",
     backgroundColor: "#fff",
@@ -168,10 +168,9 @@ commentActionIconContainer: {
     fontSize: 16,
     textTransform: "capitalize",
   },
-  userCardContainer : {
-    marginTop : 20,
+  userCardContainer: {
+    marginTop: 20,
   },
-  
 
   quantityBox: {
     flex: 0.3,
@@ -190,39 +189,39 @@ commentActionIconContainer: {
   buttonContainer: {
     flexDirection: "row",
     marginTop: 10,
-    alignContent: 'space-between'
+    alignContent: "space-between",
   },
 
-  lineAlign : {
-    textDecorationLine: "line-through" 
+  lineAlign: {
+    textDecorationLine: "line-through",
   },
-  imageCardAlign :{
-    paddingRight: 20, 
-    flex: 0.15
+  imageCardAlign: {
+    paddingRight: 20,
+    flex: 0.15,
   },
-  amountAlign : {
-    paddingLeft: 10, 
-    fontWeight: 'bold' 
+  amountAlign: {
+    paddingLeft: 10,
+    fontWeight: "bold",
   },
-  quantityAlign : {
-    justifyContent: "center", 
-    flex : 0.25,
-    alignItems: "flex-end"
+  quantityAlign: {
+    justifyContent: "center",
+    flex: 0.25,
+    alignItems: "flex-end",
   },
-  quantityAlignment : {
-    justifyContent: "center", 
-    flex : 0.5,
-    alignItems: "flex-end"
+  quantityAlignment: {
+    justifyContent: "center",
+    flex: 0.5,
+    alignItems: "flex-end",
   },
-  quantity : {
+  quantity: {
     fontWeight: "500",
-     fontSize: 16,
-      color: Color.GREY
+    fontSize: 16,
+    color: Color.GREY,
   },
-  quantity_order_product : {
+  quantity_order_product: {
     fontWeight: "500",
-     fontSize: 16,
-      color: Color.BLACK
+    fontSize: 16,
+    color: Color.BLACK,
   },
 
   listContainer: {
@@ -231,35 +230,36 @@ commentActionIconContainer: {
     paddingTop: 10,
   },
 
-  alingCount :{
-    flex: 1, alignItems: 'flex-end'
+  alingCount: {
+    flex: 1,
+    alignItems: "flex-end",
   },
 
   scrollView: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   cardFilter: {
     padding: 10,
     margin: 10,
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 10,
     maxWidth: "100%",
     maxHeight: "100%",
-    backgroundColor: Color.LIGHT_GREY
+    backgroundColor: Color.LIGHT_GREY,
   },
   cardFilterContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     marginRight: 5,
   },
   headline: {
     fontSize: 16,
   },
-  menuStyle : {
-    position: 'absolute',
-    top: '9%',
-    left: '95%',
+  menuStyle: {
+    position: "absolute",
+    top: "9%",
+    left: "95%",
   },
   countContainer: {
     justifyContent: "center",
@@ -268,20 +268,20 @@ commentActionIconContainer: {
     padding: 8,
     flex: 1,
   },
-  complete : {
-    backgroundColor : Color.COMPLETE
+  complete: {
+    backgroundColor: Color.COMPLETE,
   },
-  cancel : {
-    backgroundColor : Color.RED
+  cancel: {
+    backgroundColor: Color.RED,
   },
-  imageSize : {
+  imageSize: {
     width: "100%",
-     height: "100%" 
+    height: "100%",
   },
-  alignType : {
-    flexDirection: 'row', 
-    flexWrap: 'wrap' ,
-    marginLeft : 26
+  alignType: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginLeft: 26,
   },
   countContainer1: {
     justifyContent: "center",
@@ -319,34 +319,34 @@ commentActionIconContainer: {
     flex: 1,
   },
   totalCounts: {
-    position: 'absolute',
+    position: "absolute",
     top: -1,
     left: 16,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderRadius: 10,
     paddingHorizontal: 6,
   },
   circle: {
     width: 20,
     height: 20,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
     top: -10,
     right: -10,
   },
   assigneeRow: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   infoContainers: {
-    marginLeft: 7
+    marginLeft: 7,
   },
   nameText: {
     fontWeight: "bold",
-    marginBottom: 2
+    marginBottom: 2,
   },
   userName: {
     fontWeight: "bold",
@@ -354,60 +354,58 @@ commentActionIconContainer: {
     marginBottom: 2,
   },
   textName: {
-    marginBottom: 2
-
+    marginBottom: 2,
   },
   infoText: {
     marginBottom: 3,
     left: 40,
   },
   amountContainer: {
-    width: "35%"
+    width: "35%",
   },
   source: {
     width: 20,
     height: 20,
-    borderRadius: 30
+    borderRadius: 30,
   },
 
   imageIcon: {
     height: 150,
     width: 150,
-    borderRadius: 400 / 2
+    borderRadius: 400 / 2,
   },
   imageIconGatePass: {
     height: 200,
     width: 200,
   },
   orderContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: "flex-start",
   },
   cardBody: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
- },
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   label: {
     fontSize: 15,
     marginTop: 5,
     justifyContent: "flex-start",
-
   },
   orderAlign: {
     paddingTop: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   view: {
     flex: 0.1,
-    alignItems: "flex-end"
+    alignItems: "flex-end",
   },
   ListText: {
     fontSize: 16,
     flex: 0.9,
-    marginTop: 5
+    marginTop: 5,
   },
-  transferTitleText:{
+  transferTitleText: {
     fontWeight: "bold",
     fontSize: 14,
   },
@@ -415,7 +413,7 @@ commentActionIconContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
     flex: 2,
-    alignItems: "center"
+    alignItems: "center",
   },
   containers: {
     height: 60,
@@ -434,7 +432,7 @@ commentActionIconContainer: {
     width: 150,
   },
   font: {
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   containerVideo: {
     flex: 1,
@@ -444,16 +442,16 @@ commentActionIconContainer: {
   },
 
   video: {
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   videoOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   historyContainer: {
     flex: 1,
@@ -467,7 +465,6 @@ commentActionIconContainer: {
     flexDirection: "row",
     paddingBottom: 3,
     maxWidth: "100%",
-
   },
   fieldWidth: {
     width: "48%",
@@ -475,7 +472,7 @@ commentActionIconContainer: {
   modalImage: {
     width: "100%",
     aspectRatio: 1,
-    marginTop: 20
+    marginTop: 20,
   },
   infoContainer: {
     flex: 1,
@@ -508,8 +505,7 @@ commentActionIconContainer: {
     backgroundColor: Color.GREY,
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 40
-
+    marginHorizontal: 40,
   },
 
   productCountText: {
@@ -527,7 +523,7 @@ commentActionIconContainer: {
     alignItems: "flex-start",
     marginTop: 6,
     marginBottom: 6,
-    width: "100%"
+    width: "100%",
   },
   cardUser: {
     width: "100%",
@@ -538,7 +534,7 @@ commentActionIconContainer: {
     width: "35%",
   },
   cardAlign: {
-    width: "65%"
+    width: "65%",
   },
   cardDate: {
     paddingLeft: 26,
@@ -547,7 +543,7 @@ commentActionIconContainer: {
     flex: 1,
     overflow: "scroll",
     backgroundColor: "#fff",
-    maxHeight: "100%"
+    maxHeight: "100%",
   },
   portal: {
     fontWeight: "bold",
@@ -555,30 +551,30 @@ commentActionIconContainer: {
   },
   noRecordfound: {
     paddingVertical: 250,
-    alignItems: "center"
+    alignItems: "center",
   },
   item: {
-    width: '50%'
+    width: "50%",
   },
   container1: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start'
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
   },
   buttons: {
     flex: 1,
-    flexDirection: "row"
+    flexDirection: "row",
   },
   completeButton: {
     flex: 0.5,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   MainContainer: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 3
+    backgroundColor: "white",
+    paddingTop: 3,
   },
 
   inputDate: {
@@ -594,12 +590,14 @@ commentActionIconContainer: {
     fontSize: 20,
     paddingTop: 3,
   },
-  portalName : {
-    marginLeft: 10, fontSize: 18, fontWeight: 'bold'
+  portalName: {
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: "bold",
   },
   layoutFilter: {
     paddingRight: 10,
-    paddingBottom: 1
+    paddingBottom: 1,
   },
   layoutButton: {
     alignItems: "center",
@@ -626,24 +624,24 @@ commentActionIconContainer: {
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 20,
   },
   closeButton: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   applyButton: {
-    marginTop: 20
+    marginTop: 20,
   },
   filterButton: {
-    alignSelf: 'flex-end',
-    marginLeft: 50
+    alignSelf: "flex-end",
+    marginLeft: 50,
   },
   direction: {
     flexDirection: "row",
@@ -683,17 +681,17 @@ commentActionIconContainer: {
     width: 70,
     backgroundColor: Color.SECONDARY,
     right: 70,
-},
-viewInvoiceButton: {
-  alignItems: "center",
-  bottom: 10,
-  justifyContent: "center",
-  position: "absolute",
-  top: 10,
-  width: 70,
-  backgroundColor: Color.GREY,
-  right: 0,
-},
+  },
+  viewInvoiceButton: {
+    alignItems: "center",
+    bottom: 10,
+    justifyContent: "center",
+    position: "absolute",
+    top: 10,
+    width: 70,
+    backgroundColor: Color.GREY,
+    right: 0,
+  },
   actionDeleteButton: {
     alignItems: "center",
     bottom: 10,
@@ -748,7 +746,7 @@ viewInvoiceButton: {
   },
   align: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: "center",
   },
   letter: {
     fontWeight: "bold",
@@ -759,11 +757,10 @@ viewInvoiceButton: {
     fontWeight: "bold",
     fontSize: 19,
     letterSpacing: 1,
-
   },
   letterColor: {
     color: "red",
-    letterSpacing: 1
+    letterSpacing: 1,
   },
   totalAmount: {
     flex: 1,
@@ -773,36 +770,34 @@ viewInvoiceButton: {
   },
   iconName: {
     fontSize: 12,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    backgroundColor:Color.WHITE
+    fontWeight: "bold",
+    textAlign: "center",
+    backgroundColor: Color.WHITE,
   },
   margin: {
     marginRight: 20,
   },
   marginAlign: {
     alignItems: "center",
-    backgroundColor: Color.WHITE
-
+    backgroundColor: Color.WHITE,
   },
   bottomToolBar: {
     paddingHorizontal: 5,
     padding: 5,
-    backgroundColor: Color.TOOL_BAR_BACKGROUND
+    backgroundColor: Color.TOOL_BAR_BACKGROUND,
   },
   swipeStyle: {
     flex: 1,
-
   },
   actionDeleteButton: {
-    alignItems: 'center',
+    alignItems: "center",
     bottom: 10,
-    justifyContent: 'center',
-    position: 'absolute',
+    justifyContent: "center",
+    position: "absolute",
     top: 16,
     width: 70,
-    backgroundColor: '#D11A2A',
-    right: 7
+    backgroundColor: "#D11A2A",
+    right: 7,
   },
   btnText: {
     color: Color.WHITE,
@@ -813,7 +808,7 @@ viewInvoiceButton: {
     flexDirection: "column",
   },
   cameraColor: {
-    backgroundColor: Color.LIGHT_GRAY
+    backgroundColor: Color.LIGHT_GRAY,
   },
   productModalContainer: {
     flex: 1,
@@ -821,39 +816,39 @@ viewInvoiceButton: {
     alignItems: "center",
     backgroundColor: "white",
     fontSize: 20,
-    marginTop : height * 0.1
+    marginTop: height * 0.1,
   },
   productModalContent: {
     marginTop: 5,
     alignItems: "flex-start",
-    fontSize: 18
+    fontSize: 18,
   },
   productModalCloseButton: {
     padding: 10,
     backgroundColor: "red",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   ProductModelCloseButtonText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "white"
+    color: "white",
   },
   cartText: {
     fontSize: 18,
     textTransform: "capitalize",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
   },
   productModalImage: {
     height: 80,
-    width: 80
+    width: 80,
   },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
-    backgroundColor: Color.ACCORDION_HEADER
+    backgroundColor: Color.ACCORDION_HEADER,
   },
   headerText: {
     fontSize: 18,
@@ -863,7 +858,7 @@ viewInvoiceButton: {
   avatarStyle: {
     width: 60,
     height: 60,
-    borderRadius: 30
+    borderRadius: 30,
   },
   storeProductModalContainer: {
     flex: 1,
@@ -887,7 +882,6 @@ viewInvoiceButton: {
     padding: 10,
     borderBottomColor: "lightgray",
     borderBottomWidth: 1,
-
   },
   tableCellHeader: {
     flex: 1,
@@ -900,32 +894,32 @@ viewInvoiceButton: {
     borderTopWidth: 1,
     borderTopColor: "lightgray",
     marginTop: 20,
-    marginBottom: 20
+    marginBottom: 20,
   },
   tableCellHeaderText: {
     fontWeight: "bold",
-    color: "black"
+    color: "black",
   },
   orderProductEdit: {
     backgroundColor: Color.SECONDARY,
     padding: 10,
     borderRadius: 5,
-    rigth:0,
-    alignItems:"center" ,
-    justifyContent: "center",   
+    rigth: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
   orderProductCancel: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
     padding: 10,
     borderRadius: 5,
-    rigth:0,
-    width:"35%",
-    alignItems:"center"
+    rigth: 0,
+    width: "35%",
+    alignItems: "center",
   },
-  editButton:{
-    color:"blue"
+  editButton: {
+    color: "blue",
   },
-  //Home Screen 
+  //Home Screen
   listItemContainer: {
     flex: 1,
     flexDirection: "row",
@@ -961,23 +955,20 @@ viewInvoiceButton: {
 
   //TextField
   textContainer: {
-    backgroundColor: 'white',
-    width: '100%',
-    borderColor: 'gray',
+    backgroundColor: "white",
+    width: "100%",
+    borderColor: "gray",
     borderRadius: 8,
-    paddingVertical:10,
-    height : 50
-
-},
-textInputStyle : {
-  marginLeft : 10,
-  fontSize: 15,
-},
-placeholderStyle: {
-  color: Color.PLACEHOLDER_TEXT
-},
-
+    paddingVertical: 10,
+    height: 50,
+  },
+  textInputStyle: {
+    marginLeft: 10,
+    fontSize: 15,
+  },
+  placeholderStyle: {
+    color: Color.PLACEHOLDER_TEXT,
+  },
 });
-
 
 export default styles;
