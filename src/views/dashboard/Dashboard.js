@@ -182,7 +182,7 @@ const Dashboard = (props) => {
       <LinearGradient
         colors={["#00ceff", "#fe19ff"]}
         style={styles.productCard}
-      >
+      > 
         <Image
           source={{ uri: item?.image }}
           style={styles.source}
