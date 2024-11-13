@@ -180,7 +180,7 @@ const Dashboard = (props) => {
       }}
     >
       <LinearGradient
-        colors={["#00ceff", "#fe19ff"]}
+        colors={["#b3b0aa", "#b3b0aa"]}   
         style={styles.productCard}
       > 
         <Image
@@ -196,7 +196,7 @@ const Dashboard = (props) => {
             <Text style={styles.productUnit}>{item.unit || ""}</Text>
           </View>
         </View>
-      </LinearGradient>
+      </LinearGradient> 
     </TouchableOpacity>
   );
 
