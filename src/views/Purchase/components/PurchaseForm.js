@@ -23,16 +23,12 @@ import ConfirmationModal from "../../../components/Modal/ConfirmationModal";
 import ProductSelectModal from "../../../components/Modal/ProductSelectModal";
 import AlertMessage from "../../../helper/AlertMessage";
 import purchaseProductService from "../../../services/PurchaseProductService";
-import productService from "../../../services/ProductService";
 import NoRecordFound from "../../../components/NoRecordFound";
 import Search from "./Search";
 import { Color } from "../../../helper/Color";
-import SaveButton from "../../../components/SaveButton";
-import mediaService from "../../../services/MediaService";
 import VerticalSpace10 from "../../../components/VerticleSpace10";
 import LocationSelect from "../../../components/LocationSelect";
 import AccountSelect from "../../../components/AccountSelect";
-import TextArea from "../../../components/TextArea";
 import TextInput from "../../../components/TextInput";
 import { MenuItem } from "react-native-material-menu";
 import PermissionService from "../../../services/PermissionService";
@@ -51,13 +47,11 @@ const PurchaseForm = (props) => {
   const [netAmount, setNetAmount] = useState(params?.net_amount);
   const [selectedDate, setSelectedDate] = useState();
   const [manufactureDate, setManufactureDate] = useState();
-  const [status, setStatus] = useState();
   const [activeTab, setActiveTab] = useState(TabName.SUMMARY);
   const [purchaseProductList, setPurchaseProductList] = useState([]);
   const [selectedItem, setSelectedItem] = useState("");
   const [productDeleteModalOpen, setProductDeleteModalOpen] = useState(false);
   const [productEditModalOpen, setProductEditModalOpen] = useState(false);
-  const [scannedCode, setScannedCode] = useState("");
   const [scannedProductList, setScannedProductList] = useState("");
   const [productExistModalOpen, setProductExistModalOpen] = useState(false);
   const [quantityUpdateObject, setQuantityUpdateObject] = useState({});
@@ -65,13 +59,9 @@ const PurchaseForm = (props) => {
     useState(false);
   const [productSelectModalOpen, setProductSelectModalOpen] = useState(false);
   const [clicked, setClicked] = useState("");
-  const [mrp, setMrp] = useState("");
   const [newPurchase, setNewPurchase] = useState(param?.isNewPurchase);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [totalCount, setTotalCount] = useState(0);
-  const [storeList, setStoreList] = useState([]);
-  const [image, setImage] = useState(null);
-  const [file, setFile] = useState(null);
   const [disableEdit, setDisableEdit] = useState(!param?.isNewPurchase && true);
   const [editPermission, setEditPermission] = useState(false);
   const [visible, setIsVisible] = useState(false);
@@ -166,45 +156,7 @@ const PurchaseForm = (props) => {
     }
   };
 
-  const uploadImage = (productDetails, callback) => {
-    if (productDetails && file) {
-      const data = new FormData();
-
-      let mediaFile = {
-        type: file?._data?.type,
-        size: file?._data.size,
-        uri: image,
-        name: file?._data.name,
-      };
-
-      data.append("media_file", mediaFile);
-
-      data.append("image_name", file?._data.name);
-
-      data.append("name", file?._data.name);
-
-      data.append("media_name", file?._data.name);
-
-      data.append("object", ObjectName.PRODUCT);
-
-      data.append("object_id", productDetails?.id);
-
-      data.append("media_url", image);
-
-      data.append("media_visibility", 1);
-
-      data.append("feature", 1);
-
-      mediaService.uploadMedia(navigation, data, (error, response) => {
-        //reset the state
-        setFile("");
-        setImage("");
-        return callback();
-      });
-    } else {
-      return callback();
-    }
-  };
+ 
 
   const clearRowDetail = () => {
     if (stateRef) {
@@ -223,7 +175,6 @@ const PurchaseForm = (props) => {
     setProductEditModalOpen(!productEditModalOpen);
     clearRowDetail();
     setManufactureDate("");
-    setMrp("");
   };
 
   const productDeleteModalToggle = () => {
@@ -363,9 +314,7 @@ const PurchaseForm = (props) => {
   const onDateSelect = (value) => {
     setSelectedDate(value);
   };
-  const onManufactureDateSelect = (value) => {
-    setManufactureDate(value);
-  };
+
 
   const onInvoiceDateSelect = (value) => {
     setInvoiceDate(value);
@@ -441,7 +390,6 @@ const PurchaseForm = (props) => {
           onPress={() => {
             setProductEditModalOpen(!productEditModalOpen);
             setSelectedItem(data?.item);
-            setMrp(null);
             stateRef.selectedItem = data?.item;
             stateRef.selecredRowMap = rowMap;
           }}
@@ -570,6 +518,7 @@ const PurchaseForm = (props) => {
   };
 
   const updatePurchase = async (values) => {
+    try{
     setIsSubmit(true);
     const updateData = {
       date: selectedDate,
@@ -585,17 +534,14 @@ const PurchaseForm = (props) => {
         : params?.vendor_id
         ? params?.vendor_id
         : param?.vendor_id,
-      status: status,
       net_amount: netAmount ? netAmount : params?.net_amount,
       due_date: dueDate ? dueDate : params?.due_date,
       invoice_amount: invoiceAmount,
-      invoice_amount: invoiceAmount,
-      returnedItemAmount: returnAmount,
       reviewer: reviewer,
-      due_date: dueDate,
       owner: owner,
       vendor_invoice_date: invoiceDate,
     };
+    console.debug("updateData--------------->>>", updateData)
 
     await purchaseService.updatePurchase(
       params?.id ? params?.id : param.id,
@@ -615,6 +561,10 @@ const PurchaseForm = (props) => {
         }
       }
     );
+  }catch(err){
+    console.log(err);
+    
+  }
   };
 
   const productExistModalToggle = () => {
@@ -662,7 +612,7 @@ const PurchaseForm = (props) => {
         toggle={productNotFoundToggle}
         modalVisible={productNotFoundModalOpen}
         title={AlertMessage.PRODUCT_NOT_FOUND}
-        description={`BarCode ID ${scannedCode} not found please scan different code or add the product`}
+        description={`BarCode ID  not found please scan different code or add the product`}
         confirmLabel={"Cancel"}
         ConfirmationAction={productNotFoundToggle}
       />
@@ -682,14 +632,7 @@ const PurchaseForm = (props) => {
         )}
     </>
   );
-  const FooterContent = (
-    <SaveButton
-      onPress={handleSubmit((values) => {
-        updatePurchase(values);
-      })}
-      isSubmit={isSubmit}
-    />
-  );
+
 
   const updateValue = () => {
     activeTab === TabName.ATTACHMENTS
@@ -742,11 +685,7 @@ const PurchaseForm = (props) => {
             }`
           : "Add Purchase"
       }
-      FooterContent={
-        activeTab === TabName.SUMMARY && FooterContent
-          ? activeTab === TabName.SUMMARY && FooterContent
-          : newPurchase
-      }
+     
       showBackIcon
       backButtonNavigationUrl="Purchase"
       buttonLabel={
@@ -837,7 +776,6 @@ const PurchaseForm = (props) => {
               onChange={(value) => {
                 setStoreId(value);
               }}
-              options={storeList}
               showBorder={true}
               divider
               data={params?.location ? params?.location : param?.location}

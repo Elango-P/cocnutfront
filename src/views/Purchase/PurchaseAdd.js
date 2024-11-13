@@ -12,7 +12,6 @@ import purchaseService from "../../services/PurchaseService";
 import { MaterialIcons } from "@expo/vector-icons";
 import AlternativeColor from "../../components/AlternativeBackground";
 import SearchBar from "../../components/SearchBar";
-import { Account } from "../../helper/Account";
 import { StyleSheet } from "react-native";
 
 
@@ -46,7 +45,6 @@ const PurchaseAdd = (props) => {
 
 
   const createPurchase = (storeId, params) => {
-    if (storeId) {
       const createData = {
         date: new Date(),
         vendor_name: params.label,
@@ -55,19 +53,12 @@ const PurchaseAdd = (props) => {
       purchaseService.createPurchase(createData, (err, res) => {
         if(res && res?.data){
         let purchaseNumber = res?.data?.purchase?.purchase_number
-        let location = res?.data?.purchase?.store_id
-        let id = res?.data?.purchase?.id;
         navigation.navigate("PurchaseForm", { item:res?.data?.purchase, purchaseNumber: purchaseNumber, isNewPurchase: true })
         }
       })
-    }
   }
 
-  const onStoreSelect = (selectedStore, params) => {
-    if (selectedStore) {
-      createPurchase(selectedStore.id, params);
-    }
-  }
+
   const AddPurchase = (values) => {  
       createPurchase(locationId, values);
   }
