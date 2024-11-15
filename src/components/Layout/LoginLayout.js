@@ -26,7 +26,7 @@ const Layout = ({ children ,showBackIcon,backNavigationUrl}) => {
     }
   };
 
-  StatusBar.setBackgroundColor(!isInternetConnection ? Color.RED : Color.WHITE)
+  StatusBar.setBackgroundColor(!isInternetConnection ? Color.RED : Color.SKY_BLUE)
   StatusBar.setBarStyle("light-content")
 
   return (

@@ -21,7 +21,7 @@ const CustomButton = (props) => {
       mode="contained"
       uppercase={false}
       style={{
-        backgroundColor: backgroundColor ? backgroundColor : Color.BUTTON_BACKGROUND,
+        backgroundColor: backgroundColor ? backgroundColor : Color.GREEN,
         opacity: isSubmit ? 0.7 : 1,
         borderRadius : borderRadius,
         width : width,
