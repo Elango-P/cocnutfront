@@ -509,7 +509,7 @@ const Login = ({}) => {
               <Button
                 title="Log in"
                 onPress={() => LoginByEmail()}
-                borderRadius={10}
+                borderRadius={20}
                 isSubmit={isSubmit}
               />
 
