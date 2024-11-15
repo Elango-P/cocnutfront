@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import UserCard from '../UserCard';
 import { Color } from '../../helper/Color';
 import { Ionicons } from "@expo/vector-icons";
-import QRCode from 'react-native-qrcode-svg';
 import Card from "../../components/Card";
 import VerticalSpace10 from '../VerticleSpace10';
 import { version } from '../../../package.json';
@@ -108,17 +107,7 @@ const ProfileModal = ({ showModal, setShowModal, mobileNumber, accountId, profil
 
             <VerticalSpace10 />
            {syncViewPermission &&  <SyncCard />}
-            <VerticalSpace10 />
-            {accountId && 
-              <View style={styles.qrCodeContainer}>
-                <Card cardStyle={styles.qrCodeCard}>
-                  <QRCode
-                    value={accountId && accountId.toString()}
-                    size={230}
-                  />
-                </Card>
-              </View>
-            }
+           
           </View>
           <View style={styles.bottomContainer}>
           <CustomDivider style = {styles.divider}/> 

@@ -114,14 +114,14 @@ const Menu = (props) => {
       Permission.CONTACT_VIEW
     );
     setPermission({
-      enablePurchase: enablePurchase,
-      enableProducts: enableProducts,
-      enableOrders: enableOrders,
-      enablePayment: enablePayment,
-      enableUser: enableUser,
-      enableAccounts: enableAccounts,
-      enableCustomer: enableCustomer,
-      enableContact: enableContact,
+      enablePurchase: true,
+      enableProducts: true,
+      enableOrders: true,
+      enablePayment: true,
+      enableUser: true,
+      enableAccounts: true,
+      enableCustomer: true,
+      enableContact: true,
     });
 
     await Device.isStatusBlocked((devicePendingStatus) => {
@@ -271,7 +271,7 @@ const Menu = (props) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: Color.NAVIGATION_BAR_BACKGROUND }}>
+    <View style={{ flex: 1, backgroundColor: Color.WHITE }}>
       {_renderUserProfile()}
       <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
         
@@ -281,15 +281,13 @@ const Menu = (props) => {
           {permission?.enablePurchase && _renderPurchase && _renderPurchase()}
           {permission?.enableOrders && !devicePendingStatus && _renderBillEntry && _renderBillEntry()}
           {permission?.enablePayment && _renderPayments && _renderPayments()}
-        </ScrollView>
+          {permission?.enableUser && _renderUser && _renderUser()}
         
         {/* Second Sidebar */}
-        <ScrollView style={{ flex: 1, height: "100%" }}>
           {permission?.enableCustomer && _customer && _customer()}
           {permission?.enableContact && renderContactScreen && renderContactScreen()}
           {_renderStore && _renderStore()}
           {permission?.enableProducts && !devicePendingStatus && _renderProducts && _renderProducts()}
-          {permission?.enableUser && _renderUser && _renderUser()}
         </ScrollView>
   
       </View>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AppState,
   BackHandler,
@@ -9,6 +9,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  Animated
 } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
@@ -37,6 +38,7 @@ import User from "../../helper/User";
 import ListCustomLoader from "../../components/ListCustomLoader";
 
 const { width: viewportWidth } = Dimensions.get("window");
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 const Dashboard = (props) => {
   const navigation = useNavigation();
@@ -78,7 +80,6 @@ const Dashboard = (props) => {
     AppState.addEventListener("change", handleAppStateChange);
     return () => AppState.removeEventListener("change", handleAppStateChange);
   }, []);
-
   const getAsyncStorageItem = async () => {
     const userId = await AsyncStorageService.getUserId();
     setSelectedUser(userId);
@@ -155,6 +156,21 @@ const Dashboard = (props) => {
     User: "Users",
   };
 
+  const animations = featureNavigationMap && useRef(Object.keys(featureNavigationMap).map(() => new Animated.Value(1))).current; 
+
+  const handlePressIn = (index) => {
+    Animated.spring(animations[index], {
+      toValue: 0.9, // Shrinks to 90% of the original size
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = (index) => {
+    Animated.spring(animations[index], {
+      toValue: 1, // Restores to original size
+      useNativeDriver: true,
+    }).start();
+  };
   const renderProductCard = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
@@ -180,9 +196,9 @@ const Dashboard = (props) => {
       }}
     >
       <LinearGradient
-        colors={["#b3b0aa", "#b3b0aa"]}   
+        colors={["#76c7f5", "#76c7f5"]}
         style={styles.productCard}
-      > 
+      >  
         <Image
           source={{ uri: item?.image }}
           style={styles.source}
@@ -248,27 +264,30 @@ const Dashboard = (props) => {
                 autoplay
                 autoplayInterval={4000}
               />
-            )}
+            )} 
             <Card style={styles.featuresCard}>
               <View style={styles.featuresContainer}>
-                {Object.keys(featureNavigationMap).map((feature, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.touchableOpacityWrapper}
-                    onPress={() =>
-                      navigation.navigate(featureNavigationMap[feature])
-                    }
-                  >
-                    <LinearGradient
-                      colors={getGradientColors(index)}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.featureButton}
-                    >
-                      <Text style={styles.featureButtonText}>{feature}</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                ))}
+              {Object.keys(featureNavigationMap).map((feature, index) => (
+          <AnimatedTouchableOpacity
+            key={index}
+            style={[
+              styles.touchableOpacityWrapper,
+              { transform: [{ scale: animations[index] }] },
+            ]}
+            onPressIn={() => handlePressIn(index)}
+            onPressOut={() => handlePressOut(index)}
+            onPress={() => navigation.navigate(featureNavigationMap[feature])}
+          >
+            <LinearGradient
+              colors={getGradientColors(index)}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.featureButton}
+            >
+              <Text style={styles.featureButtonText}>{feature}</Text>
+            </LinearGradient>
+          </AnimatedTouchableOpacity>
+        ))}
               </View>
             </Card>
           </Refresh>
@@ -317,16 +336,11 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 10,
   },
-  touchableOpacityWrapper: { width: "45%", marginBottom: 10 },
+  touchableOpacityWrapper: { width: "48%", marginBottom: 10 },
   featureButton: {
-    padding: 10,
+    padding: 10, 
     borderRadius: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 5,
-    justifyContent: "center",
+    justifyContent: "center", 
     alignItems: "center",
   },
   featureButtonText: { fontSize: 16, fontWeight: "bold", color: "#fff" },
@@ -339,7 +353,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 5,
+    elevation: 25, 
     shadowOffset: { width: 0, height: 4 },
   },
   productCardContent: { flexDirection: "column", alignItems: "center" },

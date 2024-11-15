@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { Color } from "../helper/Color"; // Ensure you have an appropriate Color module
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import RightArrow from "./RightArrow"; // Ensure this is correctly imported
 
 const IconCard = (props) => {
   const {
@@ -10,14 +9,13 @@ const IconCard = (props) => {
     Icon,
     name,
     MaterialCommunityIcon,
-    backgroundColor = "#e5e5e5", // Default background color
     imageSource,
   } = props;
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.container, { backgroundColor }]}
+      style={[styles.container]}
       accessibilityLabel={name}
       activeOpacity={0.8} // Feedback on press
     >
@@ -53,15 +51,15 @@ export default IconCard;
 const styles = StyleSheet.create({
   container: {
     marginVertical: 8,
-    marginHorizontal: 16,
+    marginHorizontal: 6,
     borderRadius: 10,
     overflow: "hidden",
     backgroundColor: Color.WHITE,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowColor: "blue",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 30,
   },
   contentContainer: {
     alignItems: "center",
@@ -75,8 +73,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconImage: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     resizeMode: "contain",
     borderRadius: 8,
   },

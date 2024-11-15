@@ -33,6 +33,7 @@ import UserRoleService from "../../services/UserRoleService";
 
 const Users = () => {
   const [user, setUser] = useState([]);
+  console.debug("user--------------->>>", user)
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -116,6 +117,7 @@ const Users = () => {
         }
 
       });
+      console.debug("response--------------->>>", response)
     } catch (err) {
       console.log(err);
       setIsLoading(false);
@@ -391,7 +393,7 @@ const Users = () => {
   return (
     <Layout
       title='Users'
-      addButton={permission && permission.addPermission ? true : false}
+      addButton={permission && permission.addPermission ? true : true}
       buttonOnPress={AddNew}
       isLoading={isLoading}
       refreshing={refreshing}
