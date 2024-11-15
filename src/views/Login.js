@@ -440,7 +440,6 @@ const Login = ({ }) => {
             />
           </View>
           <View>
-            <Text>{label}</Text>
             <View
               style={styles.textFeildDivider}
             >
@@ -479,9 +478,9 @@ const Login = ({ }) => {
 
             <VerticalSpace paddingBottom={10} />
 
-            {AppID.isZunoMart() && (
+            {/* {AppID.isZunoMart() && (
               <Button title="Signup" onPress={() => navigation.navigate("Signup")} style={{ borderRadius: 10 }} />
-            )}
+            )} */}
 
 
             <View
@@ -489,9 +488,9 @@ const Login = ({ }) => {
             ></View>
           </View>
 
-          <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
+          {/* <Text style={styles.forgotPassword} onPress={handleForgotPassword}>
             Forgot Password?
-          </Text>
+          </Text> */}
           <View
             style={styles.flexEnd}
           ></View>
